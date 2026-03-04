@@ -1,4 +1,4 @@
-package com.skillbnk
+package com.bootcampshub.ai
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

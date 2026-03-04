@@ -1,0 +1,54 @@
+
+*Workstream – Mar 04, 2026* 
+
+*skillBNK Mobile App:*
+- Fix bugs as much as possible from mobile app.
+- Work on mobile app animations.
+
+
+- In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
+
+
+
+
+
+
+*Note*: Goal: Achieve 100% completion of today’s worksteam objectives.
+
+spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
+
+*Work Update – Mar 04, 2026*
+
+*SkillBNK app latest version (3.15.6) released on testflight*
+
+*skillBNK Mobile App following task completed*
+
+* Fixed an issue where opening the *end date* of a copied event incorrectly displayed the *start date*.
+* Fixed an issue where *cloning an event* and creating it caused the event to be created as a *to-do* item.
+* Resolved an issue where the app *froze* when selecting the *purpose of a note*.
+* Fixed an issue where uploaded attachment file names had an extra *“%20”* added to the name.
+* Fixed an issue where uploaded attachments in notes were *not scrollable*.
+* Fixed an issue where selecting *Heading 2* added an *extra line* under the text.
+* Fixed *statistics alignment* issues in the mock interview section.
+* Updated the *notes section UI design*.
+* Improved *responsiveness* of the mock interview page.
+* Fixed an issue where users were *unable to post comments* in mock interview.
+* Implemented an *InfoRow* component to display an icon, label, value, and an optional pill-style value.
+* Replaced repeated summary rows with *InfoRow instances* for: duration, status, complexity, score, start date, and completion date.
+* Styled the interview summary using a *rounded container*, *background blur*, and *divider lines*.
+* Improved readability and maintainability by consolidating UI elements into a cleaner, structured layout.
+* Added a *header and descriptive text* to guide users in the summary section.
+* Fixed issues with *dark theme implementation* on the share interview page.
+* Fixed responsiveness issues in the *search results* section.
+* Improved the interview start *info section layout* so content displays properly across one or multiple lines.
+* Removed *extra spacing* in the feedback section of mock interview.
+* Fixed an issue where clicking *View More* incorrectly redirected to the interview details page.
+* Removed the *black border* appearing in the comments three-dot modal.
+* Reduced *excessive spacing* on the interview details page.
+* Fixed an issue where *interview marking* was not displayed correctly on the interview details page.
+
+📌 Note: 100% of today’s tasks have been successfully completed.
+
+
+
+

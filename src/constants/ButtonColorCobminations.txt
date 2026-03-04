@@ -1,0 +1,40 @@
+Foreground buttons:---------------------------------------------
+Primary Button: 
+    - Text: PureWhite
+    - Bg: Primary
+
+Disable Primary button:
+    - text: BodyText
+    - bg: PrimaryOpacity
+    - border: BorderColor
+
+Secondary Button:
+    - Text: 
+    - Bg: 
+    - Border:
+
+Disable Secondary Button: 
+    - Text: 
+    - Bg: 
+    - Border:
+
+Background Button:---------------------------------------------
+Primary Button: 
+    - Text: PureWhite
+    - Bg: Primary
+
+Disable Primary button:
+    - text: BodyText
+    - bg: PrimaryOpacity
+    - border: BorderColor
+
+Secondary Button:
+    - Text: 
+    - Bg: 
+    - Border:
+
+Disable Secondary Button: 
+    - Text: 
+    - Bg: 
+    - Border:
+ 
