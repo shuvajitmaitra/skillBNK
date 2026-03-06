@@ -49,6 +49,7 @@ const ProgramItem: React.FC<ProgramItemProps> = ({myprogram}) => {
   const navigation = useNavigation<NavigationProp<ProgramStackParamList>>();
   const {user} = useSelector((state: RootState) => state.auth);
   const {bootcamp = []} = useSelector((state: any) => state.dashboard);
+  if (!bootcamp) return;
 
   const handleCourseDetails = (routeName?: string) => {
     navigation.navigate('ProgramDetails', {
@@ -193,7 +194,7 @@ const ProgramItem: React.FC<ProgramItemProps> = ({myprogram}) => {
                 />
               }
               field="Completed"
-              result={bootcamp.reduce(
+              result={bootcamp?.reduce(
                 (acc: number, item: {completedItems: number}) =>
                   item.completedItems + acc,
                 0,
@@ -211,7 +212,7 @@ const ProgramItem: React.FC<ProgramItemProps> = ({myprogram}) => {
                 <FeatherIcon name="clock" size={20} color={Colors.PureYellow} />
               }
               field="Remaining"
-              result={bootcamp.reduce(
+              result={bootcamp?.reduce(
                 (acc: number, item: {incompletedItems: number}) =>
                   item.incompletedItems + acc,
                 0,
@@ -273,18 +274,20 @@ const ProgramItem: React.FC<ProgramItemProps> = ({myprogram}) => {
 
       {/* Lessons grid (2 columns, fills space) */}
       <View style={styles.lessonGrid}>
-        {bootcamp?.map((item: any) => (
-          <LessonItemContainer
-            key={
-              item?.category?.slug ?? String(item?.category?._id ?? item?.id)
-            }
-            containerStyle={styles.lessonItem}
-            title={item?.category?.name}
-            count={item?.totalItems}
-            Colors={Colors}
-            onPress={() => handleCourseDetails(item?.category?.slug)}
-          />
-        ))}
+        {bootcamp &&
+          bootcamp.length > 0 &&
+          bootcamp?.map((item: any) => (
+            <LessonItemContainer
+              key={
+                item?.category?.slug ?? String(item?.category?._id ?? item?.id)
+              }
+              containerStyle={styles.lessonItem}
+              title={item?.category?.name}
+              count={item?.totalItems}
+              Colors={Colors}
+              onPress={() => handleCourseDetails(item?.category?.slug)}
+            />
+          ))}
       </View>
     </View>
   );

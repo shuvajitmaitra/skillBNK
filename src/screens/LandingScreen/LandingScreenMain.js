@@ -20,10 +20,8 @@ import {Linking} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme} from '../../context/ThemeContext';
 import BootCampsList from '../../components/LandingCom/BootCampsList';
-import environment from '../../constants/environment';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import FacebookIcon from '../../assets/Icons/FacebookIcon';
 import {theme} from '../../utility/commonFunction';
 
 const LandingScreenMain = () => {
@@ -37,7 +35,7 @@ const LandingScreenMain = () => {
   const [company, setCompany] = useState({});
   const [branches, setBranches] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
-  const slug = environment.production ? 'Tech-Serve4-U-LLC' : 'first-org-test';
+  const slug = 'Tech-Serve4-U-LLC';
   const getCompanyDetails = async () => {
     setIsLoading(true);
     try {

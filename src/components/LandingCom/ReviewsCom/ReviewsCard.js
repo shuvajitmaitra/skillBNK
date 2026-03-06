@@ -1,15 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import { useTheme } from '../../../context/ThemeContext';
+import {useTheme} from '../../../context/ThemeContext';
 import CustomFonts from '../../../constants/CustomFonts';
-import { responsiveFontSize } from 'react-native-responsive-dimensions';
-import { RegularFonts } from '../../../constants/Fonts';
-import { Image } from 'react-native';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
+import {RegularFonts} from '../../../constants/Fonts';
+import {Image} from 'react-native';
 import HorizontalLine from '../../../constants/HorizontalLine';
 import DefaultUserIcon from '../../../assets/Icons/DefaultUserIcon';
-// import {Rating} from '@kolking/react-native-rating';
+import {Rating} from '@kolking/react-native-rating';
 
-const ReviewsCard = ({ review }) => {
+const ReviewsCard = ({review}) => {
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const date = new Date(review.createdAt);
@@ -24,7 +24,7 @@ const ReviewsCard = ({ review }) => {
     <View key={review._id}>
       <View style={styles.profileContainer}>
         {profileImage && profileImage !== '' ? (
-          <Image style={styles.image} source={{ uri: profileImage }} />
+          <Image style={styles.image} source={{uri: profileImage}} />
         ) : (
           <DefaultUserIcon />
         )}
@@ -33,7 +33,7 @@ const ReviewsCard = ({ review }) => {
           {review?.reviewedBy?.fullName}
         </Text>
       </View>
-      {/* <Rating
+      <Rating
         style={{marginTop: 15}}
         variant="stars"
         rating={review?.starCount}
@@ -41,7 +41,7 @@ const ReviewsCard = ({ review }) => {
         size={16}
         baseColor={Colors.BodyText}
         fillColor={Colors.StarColor}
-      /> */}
+      />
       <Text style={styles.dateText}>{formattedDate}</Text>
       <Text style={styles.reviewsDescription}>{review?.text}</Text>
       <HorizontalLine />

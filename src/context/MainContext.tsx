@@ -18,6 +18,7 @@ import {
   setOrganization,
 } from '../utility/mmkvHelpers';
 import {mStore} from '../utility/mmkvStoreName';
+import {showToast} from '../components/HelperFunction';
 
 interface MainContextType {
   handleVerify2: () => Promise<void>;
@@ -92,7 +93,11 @@ export const MainProvider: React.FC<MainProviderProps> = ({children}) => {
           store.dispatch(setAppLoading(false));
         })
         .catch(err => {
-          console.log('Error from app.js', err);
+          console.log('Error from app.js', err.response.data);
+          showToast({
+            message: err.response.data.message || 'Something went wrong',
+            background: 'red',
+          });
           setIsLoading(false);
           resetApp();
           storage?.clearAll();

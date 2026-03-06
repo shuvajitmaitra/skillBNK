@@ -292,7 +292,7 @@ const CalendarV2: React.FC<CalendarProps> = ({
                 )}
 
                 <Text numberOfLines={1} style={styles.itemText}>
-                  {item?.title.slice(0, 20)}
+                  {item?.title}
                 </Text>
               </TouchableOpacity>
             ))}

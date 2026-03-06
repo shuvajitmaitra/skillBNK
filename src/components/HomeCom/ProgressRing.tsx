@@ -16,135 +16,160 @@ type ProgressRingProps = {
   centerStyle?: any;
 };
 
-export const ProgressRing = ({
-  size = 90,
-  strokeWidth = 6,
-  progress = 0.24,
-  color = '#2F66FF',
-  trackColor = '#E9EEF9',
-  glowColor = '#2F66FF',
-  textStyle,
-  subTextStyle,
-  centerStyle,
-}: ProgressRingProps) => {
-  const r = (size - strokeWidth) / 2;
-  const c = 2 * Math.PI * r;
-  console.log('Progress Ring');
-  const prog = useRef(new Animated.Value(0)).current; // 0..1
-  const glow = useRef(new Animated.Value(0)).current;
+const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 
-  const percentRef = useRef<Text>(null);
+export const ProgressRing = React.memo(
+  ({
+    size = 90,
+    strokeWidth = 6,
+    progress = 0.24,
+    color = '#2F66FF',
+    trackColor = '#E9EEF9',
+    glowColor = '#2F66FF',
+    textStyle,
+    subTextStyle,
+    centerStyle,
+  }: ProgressRingProps) => {
+    const r = useMemo(() => (size - strokeWidth) / 2, [size, strokeWidth]);
+    const c = useMemo(() => 2 * Math.PI * r, [r]);
 
-  useEffect(() => {
-    // ring sweep
-    prog.setValue(0);
-    Animated.timing(prog, {
-      toValue: Math.max(0, Math.min(1, progress)),
-      duration: 1800,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false, // strokeDashoffset needs JS driver
-    }).start();
+    const prog = useRef(new Animated.Value(clamp01(progress))).current; // keep current
+    const glow = useRef(new Animated.Value(0)).current;
+    const lastProgress = useRef(clamp01(progress));
+    console.log('Progress Ring --------------Re-rendering');
+    const percentRef = useRef<Text>(null);
 
-    // percent counter without re-render
-    const id = prog.addListener(({value}) => {
-      const p = Math.round(value * 100);
-      percentRef.current?.setNativeProps({text: `${p}%`});
-    });
+    // Animate ring + update percent (only when progress truly changes)
+    useEffect(() => {
+      const next = clamp01(progress);
+      if (next === lastProgress.current) return; // prevents restarting animation
+      lastProgress.current = next;
 
-    return () => prog.removeListener(id);
-  }, [progress, prog]);
+      const anim = Animated.timing(prog, {
+        toValue: next,
+        duration: 1800,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false, // strokeDashoffset uses JS driver
+      });
 
-  useEffect(() => {
-    // subtle pulsing glow
-    glow.setValue(0);
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(glow, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
+      const id = prog.addListener(({value}) => {
+        const p = Math.round(value * 100);
+        percentRef.current?.setNativeProps?.({text: `${p}%`});
+      });
+
+      anim.start();
+
+      return () => {
+        prog.removeListener(id);
+        anim.stop();
+      };
+    }, [progress, prog]);
+
+    // Glow loop: start once
+    useEffect(() => {
+      glow.setValue(0);
+      const loop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(glow, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glow, {
+            toValue: 0,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ]),
+      );
+      loop.start();
+      return () => loop.stop();
+    }, [glow]);
+
+    // Correct dashOffset: progress is 0..1
+    const dashOffset = useMemo(
+      () =>
+        prog.interpolate({
+          inputRange: [0, 1],
+          outputRange: [c, 0], // full empty -> full filled
         }),
-        Animated.timing(glow, {
-          toValue: 0,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ]),
+      [c, prog],
     );
-    loop.start();
-    return () => loop.stop();
-  }, [glow]);
 
-  const dashOffset = useMemo(() => {
-    // offset anim: from full empty to target
-    return prog.interpolate({
+    const glowOpacity = glow.interpolate({
       inputRange: [0, 1],
-      outputRange: [c, c - c * Math.max(0, Math.min(1, progress * 100))],
+      outputRange: [0.15, 0.35],
     });
-  }, [c, prog, progress]);
+    const glowScale = glow.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 1.06],
+    });
 
-  const glowOpacity = glow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.15, 0.35],
-  });
-  const glowScale = glow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 1.06],
-  });
-
-  return (
-    <View style={{width: size, height: size}}>
-      {/* Glow */}
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          StyleSheet.absoluteFillObject,
-          {
-            borderRadius: 999,
-            opacity: glowOpacity,
-            transform: [{scale: glowScale}],
-            borderWidth: strokeWidth,
-            borderColor: glowColor,
-          },
-        ]}
-      />
-
-      <Svg width={size} height={size}>
-        <Circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          stroke={trackColor}
-          strokeWidth={strokeWidth}
-          fill="none"
-          strokeLinecap="round"
+    return (
+      <View style={{width: size, height: size}}>
+        {/* Glow */}
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              borderRadius: 999,
+              opacity: glowOpacity,
+              transform: [{scale: glowScale}],
+              borderWidth: strokeWidth,
+              borderColor: glowColor,
+            },
+          ]}
         />
 
-        <AnimatedCircle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          stroke={color}
-          strokeWidth={strokeWidth}
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray={`${c} ${c}`}
-          strokeDashoffset={dashOffset}
-          rotation={-90}
-          originX={size / 2}
-          originY={size / 2}
-        />
-      </Svg>
+        <Svg width={size} height={size}>
+          <Circle
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            stroke={trackColor}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeLinecap="round"
+          />
 
-      <View style={[stylesLocal.ringCenter, centerStyle]}>
-        <Text ref={percentRef} style={[stylesLocal.ringPercent, textStyle]}>
-          {progress * 100}%
-        </Text>
-        <Text style={[stylesLocal.ringComplete, subTextStyle]}>COMPLETE</Text>
+          <AnimatedCircle
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            stroke={color}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray={`${c} ${c}`}
+            strokeDashoffset={dashOffset}
+            rotation={-90}
+            originX={size / 2}
+            originY={size / 2}
+          />
+        </Svg>
+
+        <View style={[stylesLocal.ringCenter, centerStyle]}>
+          <Text ref={percentRef} style={[stylesLocal.ringPercent, textStyle]}>
+            {Math.round(clamp01(progress) * 100)}%
+          </Text>
+          <Text style={[stylesLocal.ringComplete, subTextStyle]}>COMPLETE</Text>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  },
+  // Custom memo compare: avoids re-render if props didn't change
+  (prev, next) =>
+    prev.size === next.size &&
+    prev.strokeWidth === next.strokeWidth &&
+    prev.progress === next.progress &&
+    prev.color === next.color &&
+    prev.trackColor === next.trackColor &&
+    prev.glowColor === next.glowColor &&
+    prev.textStyle === next.textStyle &&
+    prev.subTextStyle === next.subTextStyle &&
+    prev.centerStyle === next.centerStyle,
+);
 
 const stylesLocal = StyleSheet.create({
   ringCenter: {

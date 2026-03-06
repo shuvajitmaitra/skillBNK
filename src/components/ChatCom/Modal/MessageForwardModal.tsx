@@ -12,7 +12,7 @@ import React, {useEffect, useState} from 'react';
 import ReactNativeModal from 'react-native-modal';
 import {useTheme} from '../../../context/ThemeContext';
 import {TColors} from '../../../types';
-import {gGap, gHeight} from '../../../constants/Sizes';
+import {gGap} from '../../../constants/Sizes';
 import {RootState} from '../../../types/redux/root';
 import {useDispatch, useSelector} from 'react-redux';
 import {MaterialIcon} from '../../../constants/Icons';
@@ -28,6 +28,8 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../types/navigation';
 import {markRead, setSingleChat} from '../../../store/reducer/chatReducer';
+import {withOpacity} from '../Mention/utils';
+import {randomHexColor} from '../../../utility/commonFunction';
 
 const MessageForwardModal = () => {
   const Colors = useTheme();
@@ -238,9 +240,7 @@ const getStyles = (Colors: TColors) =>
     },
     container: {
       backgroundColor: Colors.Background_color,
-      maxHeight: gHeight(650),
-      borderTopLeftRadius: gGap(20),
-      borderTopRightRadius: gGap(20),
+      maxHeight: '90%',
       overflow: 'hidden',
       gap: gGap(10),
     },
@@ -339,12 +339,12 @@ const getStyles = (Colors: TColors) =>
       width: gGap(40),
       height: gGap(40),
       borderRadius: gGap(20),
-      backgroundColor: Colors.PrimaryOpacityColor,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 1,
       overflow: 'hidden',
-      borderColor: Colors.BorderColor,
+      backgroundColor: withOpacity(randomHexColor(), 0.2),
+      borderColor: withOpacity(randomHexColor(), 0.3),
     },
     nameContainer: {
       marginLeft: gGap(12),

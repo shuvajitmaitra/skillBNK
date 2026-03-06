@@ -74,6 +74,7 @@ const setupSocketListeners = socket => {
             chatId: data?.message?.chat,
             latestMessage: data?.message,
             counter: 1,
+            type: data.message.type,
           }),
         );
         addNewMessage(data.message.chat, data.message);

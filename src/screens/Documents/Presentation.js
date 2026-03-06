@@ -1,3 +1,4 @@
+import React, {useEffect, useMemo, useState, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -5,11 +6,10 @@ import {
   Image,
   TextInput,
   ImageBackground,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
-import React from 'react';
 import {
   responsiveScreenWidth,
   responsiveScreenFontSize,
@@ -25,87 +25,134 @@ import {useTheme} from '../../context/ThemeContext';
 import NoDataAvailable from '../../components/SharedComponent/NoDataAvailable';
 import {RegularFonts} from '../../constants/Fonts';
 import {formattingDate, theme} from '../../utility/commonFunction';
+import {gGap} from '../../constants/Sizes';
+import Images from '../../constants/Images';
 
 export default function Presentation() {
-  // --------------------------
-  // ----------- Import theme Colors -----------
-  // --------------------------
   const Colors = useTheme();
-  const styles = getStyles(Colors);
-
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [contents, setContents] = React.useState([]);
-  const [records, setRecords] = React.useState([]);
-  const [search, setSearch] = React.useState(null);
-
+  const styles = useMemo(() => getStyles(Colors), [Colors]);
   const navigation = useNavigation();
 
-  const handleNavigation = contentId => {
-    navigation.navigate('PresentationDetailsView', {contentId: contentId});
-  };
-  const handleProgramNavigation = () => {
-    navigation.navigate('ProgramStack', {screen: 'Program'});
-  };
-  const handleSearch = text => {
-    const filteredContents = records?.filter(item =>
-      item.name.toLowerCase().includes(text.toLowerCase()),
-    );
-    setContents(filteredContents);
-    setSearch(text);
-  };
+  const [initialLoading, setInitialLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  React.useEffect(() => {
-    (async () => {
+  const [contents, setContents] = useState([]);
+  const [records, setRecords] = useState([]);
+  const [search, setSearch] = useState('');
+
+  const [pagination, setPagination] = useState({
+    total: 0,
+    currentPage: 1,
+    totalPages: 1,
+    hasNext: false,
+    hasPrev: false,
+    limit: 10,
+  });
+
+  const handleNavigation = useCallback(
+    contentId => {
+      navigation.navigate('PresentationDetailsView', {contentId});
+    },
+    [navigation],
+  );
+
+  const handleProgramNavigation = useCallback(() => {
+    navigation.navigate('ProgramStack', {screen: 'Program'});
+  }, [navigation]);
+
+  const fetchPage = useCallback(
+    async (page, isLoadMore = false) => {
       try {
-        setIsLoading(true);
-        let rescontent = await axiosInstance.get('/content/labcontent');
-        setContents(rescontent.data.contents);
-        setRecords(rescontent.data.contents);
-        setIsLoading(false);
-        // console.log("Contents data:", JSON.stringify(contents, null, 2));
+        if (isLoadMore) setLoadingMore(true);
+        else setInitialLoading(true);
+
+        const res = await axiosInstance.get('/content/labcontent', {
+          params: {page, limit: pagination.limit},
+        });
+
+        const nextPagination = res?.data?.pagination ?? pagination;
+        const newItems = res?.data?.contents ?? [];
+
+        setPagination(nextPagination);
+
+        if (isLoadMore) {
+          setRecords(prev => [...prev, ...newItems]);
+          // if not searching, keep UI list in sync
+          setContents(prev => (search ? prev : [...prev, ...newItems]));
+        } else {
+          setRecords(newItems);
+          setContents(newItems);
+        }
       } catch (error) {
-        setIsLoading(false);
         console.log(error);
+      } finally {
+        setInitialLoading(false);
+        setLoadingMore(false);
       }
-    })();
+    },
+    [pagination, search],
+  );
+
+  useEffect(() => {
+    fetchPage(1, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const DocumentItem = ({title, date, id, thumbnail, update}) => {
-    console.log('thumbnail', JSON.stringify(thumbnail, null, 1));
-    return (
+  const handleSearch = useCallback(
+    text => {
+      setSearch(text);
+
+      const q = text?.trim()?.toLowerCase();
+      if (!q) {
+        setContents(records);
+        return;
+      }
+
+      const filtered = records.filter(item =>
+        (item?.name ?? '').toLowerCase().includes(q),
+      );
+      setContents(filtered);
+    },
+    [records],
+  );
+
+  const onEndReached = useCallback(() => {
+    // Don’t paginate while searching (optional, but usually expected)
+    if (search?.trim()) return;
+
+    if (loadingMore || initialLoading) return;
+    if (!pagination?.hasNext) return;
+
+    fetchPage((pagination.currentPage ?? 1) + 1, true);
+  }, [search, loadingMore, initialLoading, pagination, fetchPage]);
+
+  const DocumentItem = useCallback(
+    ({title, date, id, thumbnail}) => (
       <TouchableOpacity
         onPress={() => handleNavigation(id)}
         activeOpacity={0.8}
         style={styles.documentItemContainer}>
         <Image
           style={styles.documentImg}
-          source={
-            !thumbnail
-              ? require('../../assets/ApplicationImage/MainPage/Presentation/document1.png')
-              : {uri: thumbnail}
-          }
+          source={!thumbnail ? Images.DEFAULT_IMAGE : {uri: thumbnail}}
         />
 
         <View style={styles.documentDetails}>
           <Text style={styles.documentTitle}>{title}</Text>
           <Text style={styles.documentDate}>{formattingDate(date)}</Text>
-          {/* <Text style={styles.documentDate}>{formatingDate(update)}</Text> */}
+
           <View style={styles.readDocContainer}>
             <Text style={styles.readDoc}>Read Document</Text>
-            <AntDesign
-              style={styles.readDocArrow}
-              name="arrowright"
-              size={20}
-              color={Colors.Primary}
-            />
+            <AntDesign name="arrowright" size={20} color={Colors.Primary} />
           </View>
         </View>
       </TouchableOpacity>
-    );
-  };
+    ),
+    [Colors.Primary, handleNavigation, styles],
+  );
 
-  const LockDocumentItem = ({title, date, update}) => {
-    return (
+  const LockDocumentItem = useCallback(
+    ({title, date}) => (
       <View style={styles.documentItemContainer}>
         <ImageBackground
           style={styles.documentImg}
@@ -114,33 +161,61 @@ export default function Presentation() {
             <LockIcon />
           </View>
         </ImageBackground>
+
         <View style={styles.documentDetails}>
           <Text style={styles.documentTitle}>{title}</Text>
           <Text style={styles.documentDate}>{formattingDate(date)}</Text>
-          {/* <Text style={styles.documentDate}>{formateDate(update)}</Text> */}
           <View style={styles.readDocContainer}>
             <Text style={styles.readDocLocked}>Locked</Text>
           </View>
         </View>
       </View>
-    );
-  };
+    ),
+    [styles],
+  );
 
-  if (isLoading) {
+  const renderItem = useCallback(
+    ({item}) => {
+      if (item?.isLocked) {
+        return (
+          <LockDocumentItem
+            title={item?.name}
+            date={item?.createdAt}
+            thumbnail={item?.thumbnail}
+          />
+        );
+      }
+
+      return (
+        <DocumentItem
+          id={item?._id}
+          title={item?.name}
+          date={item?.createdAt}
+          thumbnail={item?.thumbnail}
+        />
+      );
+    },
+    [DocumentItem, LockDocumentItem],
+  );
+
+  const keyExtractor = useCallback(item => item?._id, []);
+
+  const ListFooterComponent = useMemo(() => {
+    if (!loadingMore) return;
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: Colors.Foreground,
-        }}>
-        <ActivityIndicator size={50} animating={true} color={Colors.Primary} />
+      <View style={styles.footerLoading}>
+        <ActivityIndicator animating color={Colors.Primary} />
+      </View>
+    );
+  }, [loadingMore, Colors.Primary, styles.footerLoading]);
+
+  if (initialLoading) {
+    return (
+      <View style={[styles.center, {backgroundColor: Colors.Foreground}]}>
+        <ActivityIndicator size={50} animating color={Colors.Primary} />
       </View>
     );
   }
-
-  // console.log("contents", JSON.stringify(contents, null, 1));
 
   return (
     <View style={styles.container}>
@@ -148,63 +223,41 @@ export default function Presentation() {
       <Text style={styles.subHeading}>
         Easy Access to Course Documents & Labs
       </Text>
+
       <View style={styles.searchBoxContainer}>
         <View style={styles.searchBox}>
           <TextInput
             keyboardAppearance={theme()}
             onChangeText={handleSearch}
+            value={search}
             style={styles.search}
             placeholder="Search..."
             placeholderTextColor={Colors.BodyText}
           />
           <AntDesign name="search1" size={22} color={Colors.BodyText} />
         </View>
+
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => {
-            handleProgramNavigation();
-          }}
+          onPress={handleProgramNavigation}
           style={styles.searchFilter}>
           <Text style={styles.buttonText}>Go to Bootcamp</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          {contents.length > 0 ? (
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{marginBottom: responsiveScreenHeight(2), gap: 20}}>
-                {contents.map(item => {
-                  if (item.isLocked) {
-                    return (
-                      <LockDocumentItem
-                        key={item?._id}
-                        title={item.name}
-                        date={item.createdAt}
-                        update={item.updateAt}
-                        thumbnail={item.thumbnail}
-                      />
-                    );
-                  } else {
-                    return (
-                      <DocumentItem
-                        key={item?._id}
-                        id={item?._id}
-                        title={item.name}
-                        date={item.createdAt}
-                        update={item.updateAt}
-                        thumbnail={item.thumbnail}
-                      />
-                    );
-                  }
-                })}
-              </View>
-            </ScrollView>
-          ) : (
-            <NoDataAvailable />
-          )}
-        </View>
-      </ScrollView>
+      <FlatList
+        data={contents}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          contents?.length ? styles.listContent : {flex: 1}
+        }
+        ListEmptyComponent={<NoDataAvailable />}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={ListFooterComponent}
+      />
     </View>
   );
 }
@@ -213,15 +266,26 @@ const getStyles = Colors =>
   StyleSheet.create({
     container: {
       flex: 1,
-      // paddingTop: responsiveScreenHeight(7),
-      paddingHorizontal: responsiveScreenWidth(4),
+      paddingHorizontal: responsiveScreenWidth(3),
       backgroundColor: Colors.Background_color,
     },
+    center: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
     title: {
       color: Colors.Heading,
       fontFamily: CustomFonts.SEMI_BOLD,
       fontSize: RegularFonts.HL,
     },
+    subHeading: {
+      fontFamily: CustomFonts.REGULAR,
+      fontSize: responsiveScreenFontSize(1.6),
+      color: Colors.BodyText,
+    },
+
     searchBoxContainer: {
       flexDirection: 'row',
       marginVertical: responsiveScreenHeight(2),
@@ -242,20 +306,6 @@ const getStyles = Colors =>
       paddingRight: responsiveScreenWidth(3),
       flex: 0.65,
     },
-    searchFilter: {
-      width: responsiveScreenWidth(12),
-      height: responsiveScreenHeight(5),
-      backgroundColor: Colors.Primary,
-      borderRadius: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      flex: 0.35,
-    },
-    buttonText: {
-      color: Colors.PureWhite,
-      fontFamily: CustomFonts.MEDIUM,
-      fontSize: responsiveScreenFontSize(1.6),
-    },
     search: {
       flex: 1,
       height: responsiveScreenHeight(5.5),
@@ -264,6 +314,28 @@ const getStyles = Colors =>
       fontFamily: CustomFonts.REGULAR,
       fontSize: responsiveScreenFontSize(1.8),
     },
+
+    searchFilter: {
+      height: responsiveScreenHeight(5),
+      backgroundColor: Colors.Primary,
+      borderRadius: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flex: 0.35,
+      paddingHorizontal: responsiveScreenWidth(2),
+    },
+    buttonText: {
+      color: Colors.PureWhite,
+      fontFamily: CustomFonts.MEDIUM,
+      fontSize: responsiveScreenFontSize(1.6),
+      textAlign: 'center',
+    },
+
+    listContent: {
+      paddingBottom: responsiveScreenHeight(2),
+      gap: gGap(10),
+    },
+
     documentItemContainer: {
       width: responsiveScreenWidth(92),
       paddingVertical: responsiveScreenHeight(2),
@@ -282,6 +354,7 @@ const getStyles = Colors =>
       resizeMode: 'contain',
       borderRadius: 50,
       overflow: 'hidden',
+      backgroundColor: 'white',
     },
     lockDocumentImg: {
       width: responsiveScreenWidth(22),
@@ -323,59 +396,12 @@ const getStyles = Colors =>
       color: Colors.Red,
       fontFamily: CustomFonts.REGULAR,
       fontSize: responsiveScreenFontSize(1.7),
-      marginRight: responsiveScreenWidth(1),
       marginBottom: 1,
     },
 
-    // popupContent: {
-    //   padding: 16,
-    //   backgroundColor: Colors.Foreground,
-    //   borderRadius: 8,
-    //   width: responsiveScreenWidth(50),
-    //   height: responsiveScreenHeight(23),
-    //   position: "absolute",
-    //   top: responsiveScreenHeight(-3),
-    // },
-    // popupArrow: {
-    //   borderTopColor: Colors.Foreground,
-    //   position: "absolute",
-    //   marginTop: responsiveScreenHeight(-3),
-    // },
-    // popupContryText: {
-    //   fontFamily: CustomFonts.SEMI_BOLD,
-    //   marginBottom: responsiveScreenHeight(0.4),
-    //   fontSize: responsiveScreenFontSize(1.9),
-    //   marginLeft: responsiveScreenWidth(2),
-    //   color: Colors.Heading,
-    // },
-    // popupOption: {
-    //   flexDirection: "row",
-    //   alignItems: "center",
-    //   marginTop: responsiveScreenHeight(0.8),
-    // },
-    // popUpcheckbox: {
-    //   borderRadius: 50,
-    //   marginRight: responsiveScreenWidth(2),
-    //   width: responsiveScreenWidth(4.5),
-    //   height: responsiveScreenWidth(4.5),
-    // },
-    // popUpcheckboxText: {
-    //   fontFamily: CustomFonts.REGULAR,
-    //   fontSize: responsiveScreenFontSize(1.7),
-    // },
-
-    // radioContainer: {
-    //   flexDirection: "row",
-    //   alignItems: "center",
-    // },
-    // radioText: {
-    //   fontFamily: CustomFonts.REGULAR,
-    //   fontSize: responsiveScreenFontSize(1.7),
-    //   color: Colors.Heading,
-    // },
-    subHeading: {
-      fontFamily: CustomFonts.REGULAR,
-      fontSize: responsiveScreenFontSize(1.6),
-      color: Colors.BodyText,
+    footerLoading: {
+      paddingVertical: responsiveScreenHeight(2),
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   });

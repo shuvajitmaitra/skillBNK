@@ -1,4 +1,4 @@
-import { MMKV } from 'react-native-mmkv';
+import {MMKV} from 'react-native-mmkv';
 
 let storage: MMKV | null;
 
@@ -9,4 +9,4 @@ try {
   storage = null; // fallback: AsyncStorage etc.
 }
 
-export { storage };
+export {storage};

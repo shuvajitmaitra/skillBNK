@@ -72,9 +72,11 @@ const MessageOptionModal = ({
       value: 'forward',
       icon: <ForwardIcon />,
       function: () => {
-        dispatch(
-          setForwardInfo({...messageOptionData, forwardModalVisible: true}),
-        );
+        setTimeout(() => {
+          dispatch(
+            setForwardInfo({...messageOptionData, forwardModalVisible: true}),
+          );
+        }, 10);
         dispatch(setMessageOptionData(null));
       },
     },

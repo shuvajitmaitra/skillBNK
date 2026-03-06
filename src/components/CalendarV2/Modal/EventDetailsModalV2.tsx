@@ -65,6 +65,7 @@ import CalendarIcon from '../../../assets/Icons/CalendarIcon';
 import TaskIcon from '../../../assets/Icons/TaskIcon';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Skeleton from '../../SharedComponent/Skeleton';
+import {withOpacity} from '../../ChatCom/Mention/utils';
 import RNText from '../../SharedComponent/RNText';
 if (
   Platform.OS === 'android' &&
@@ -187,7 +188,26 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
     });
     setAttendeeClicked(!attendeeClicked);
   };
+  console.log('event', JSON.stringify(event, null, 2));
+  const renderMeetingSource = (t: 'call' | 'meet' | 'custom' | 'zoom') => {
+    switch (t) {
+      case 'call':
+        return 'Join with Phone Call';
 
+      case 'meet':
+        return 'Join with Google Meet';
+
+      case 'zoom':
+        return 'Join with Zoom';
+
+      case 'custom':
+        return 'Join with Custom Link';
+
+      default:
+        return 'Join Meeting';
+    }
+  };
+  const isOrganizer = user._id === event.organizer?._id;
   return (
     <Modal
       // backdropColor={Colors.BackDropColor}
@@ -312,10 +332,20 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
                 disabled={true}
                 onPress={() => handleOpenLink(meetingLink)}
                 style={styles.meetingLink}>
-                <TextRender text={meetingLink} />
-                {/* <Text numberOfLines={1} style={styles.meetingLinkText}>
+                {event?.location?.type && (
+                  <RNText
+                    style={{
+                      color: '#2e67eb',
+                      fontSize: gGap(16),
+                      fontWeight: '600',
+                      textDecorationLine: 'underline',
+                    }}>
+                    {renderMeetingSource(event.location?.type)}
+                  </RNText>
+                )}
+                <Text numberOfLines={1} style={styles.meetingLinkText}>
                   {meetingLink}
-                </Text> */}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -343,44 +373,46 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
                     <Text style={styles.infoTitle}>
                       {attendeeCount} Invited Guests
                     </Text>
-                    <View style={styles.attendeeStatuses}>
-                      <View style={styles.attendeeStatus}>
-                        <View style={styles.statusDot}>
-                          <Text style={styles.checkmark}>✓</Text>
-                        </View>
-                        <Text style={styles.statusCount}>
-                          {acceptedCount} Accepted
-                        </Text>
-                      </View>
-                      <View style={styles.attendeeStatus}>
-                        <View style={[styles.statusDot, styles.deniedDot]}>
-                          <Text
-                            style={{
-                              color: Colors.PureWhite,
-                              fontSize: gFontSize(8),
-                            }}>
-                            ✕
+                    {isOrganizer && (
+                      <View style={styles.attendeeStatuses}>
+                        <View style={styles.attendeeStatus}>
+                          <View style={styles.statusDot}>
+                            <Text style={styles.checkmark}>✓</Text>
+                          </View>
+                          <Text style={styles.statusCount}>
+                            {acceptedCount} Accepted
                           </Text>
                         </View>
-                        <Text style={styles.statusCount}>
-                          {deniedCount} Denied
-                        </Text>
-                      </View>
-                      <View style={styles.attendeeStatus}>
-                        <View style={[styles.statusDot, styles.pendingDot]}>
-                          <Text
-                            style={{
-                              color: Colors.PureWhite,
-                              fontSize: gFontSize(8),
-                            }}>
-                            !
+                        <View style={styles.attendeeStatus}>
+                          <View style={[styles.statusDot, styles.deniedDot]}>
+                            <Text
+                              style={{
+                                color: Colors.PureWhite,
+                                fontSize: gFontSize(8),
+                              }}>
+                              ✕
+                            </Text>
+                          </View>
+                          <Text style={styles.statusCount}>
+                            {deniedCount} Denied
                           </Text>
                         </View>
-                        <Text style={styles.statusCount}>
-                          {pendingCount} Pending
-                        </Text>
+                        <View style={styles.attendeeStatus}>
+                          <View style={[styles.statusDot, styles.pendingDot]}>
+                            <Text
+                              style={{
+                                color: Colors.PureWhite,
+                                fontSize: gFontSize(8),
+                              }}>
+                              !
+                            </Text>
+                          </View>
+                          <Text style={styles.statusCount}>
+                            {pendingCount} Pending
+                          </Text>
+                        </View>
                       </View>
-                    </View>
+                    )}
                   </View>
                   {event.permissions?.seeGuestList && (
                     <TouchableOpacity
@@ -451,7 +483,7 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
               </View>
             )}
           </View>
-          {event.type === 'event' && (
+          {/* {event.type === 'event' && (
             <View
               style={{
                 flexDirection: 'row',
@@ -496,7 +528,7 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
                 </RNText>
               </View>
             </View>
-          )}
+          )} */}
           {/* Description/Agenda */}
           <View style={styles.agendaContainer}>
             <Text style={styles.agendaHeading}>
@@ -537,7 +569,7 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
           />
           <ConfirmationModal2 />
           <AddNewEventModalV2 />
-          {event.type === 'event' && user._id !== event.organizer?._id && (
+          {event.type === 'event' && !isOrganizer && (
             <View
               style={{
                 flexDirection: 'row',
@@ -585,8 +617,27 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
                           null,
                         ));
                   }}
-                  style={[styles.actionBtnCon]}>
-                  <Text style={styles.actionBtnTxt}>Yes</Text>
+                  style={[
+                    styles.actionBtnCon,
+                    {
+                      backgroundColor:
+                        event.myResponseStatus === 'accepted'
+                          ? Colors.Primary
+                          : Colors.PrimaryOpacityColor,
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.actionBtnTxt,
+                      {
+                        color:
+                          event.myResponseStatus === 'accepted'
+                            ? Colors.PureWhite
+                            : Colors.Primary,
+                      },
+                    ]}>
+                    Yes
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={async () => {
@@ -614,15 +665,55 @@ const EventDetailsModalV2: React.FC<{from?: string}> = ({from}) => {
                           null,
                         ));
                   }}
-                  style={[styles.actionBtnCon]}>
-                  <Text style={styles.actionBtnTxt}>No</Text>
+                  style={[
+                    styles.actionBtnCon,
+                    {
+                      backgroundColor:
+                        event.myResponseStatus === 'declined'
+                          ? Colors.Primary
+                          : Colors.PrimaryOpacityColor,
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.actionBtnTxt,
+                      {
+                        color:
+                          event.myResponseStatus === 'declined'
+                            ? Colors.PureWhite
+                            : Colors.Primary,
+                      },
+                    ]}>
+                    No
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={async () => {
                     setProposeData({...proposeData, proposeVisible: true});
                   }}
-                  style={[styles.actionBtnCon]}>
-                  <Text style={styles.actionBtnTxt}>Propose new time</Text>
+                  style={[
+                    styles.actionBtnCon,
+                    {
+                      backgroundColor:
+                        event.myResponseStatus === 'proposednewtime' ||
+                        event.myResponseStatus === 'proposedNewTime'
+                          ? Colors.Primary
+                          : Colors.PrimaryOpacityColor,
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.actionBtnTxt,
+                      {
+                        color:
+                          event.myResponseStatus === 'proposednewtime' ||
+                          event.myResponseStatus === 'proposedNewTime'
+                            ? Colors.PureWhite
+                            : Colors.Primary,
+                      },
+                    ]}>
+                    Propose new time
+                  </Text>
                 </TouchableOpacity>
                 <ProposeNewTimeModalV2
                   data={proposeData}
@@ -680,7 +771,7 @@ const getStyles = (Colors: TColors) =>
       paddingVertical: gGap(8),
       paddingHorizontal: gGap(10),
       borderWidth: 1,
-      borderColor: Colors.BorderColor,
+      borderColor: withOpacity(Colors.Primary, 0.2),
       borderRadius: borderRadius.small,
       backgroundColor: Colors.PrimaryOpacityColor,
     },

@@ -1,4 +1,4 @@
-import React, { useRef, useReducer } from 'react';
+import React, {useRef, useReducer} from 'react';
 import {
   Image,
   ScrollView,
@@ -18,7 +18,7 @@ import {
   responsiveScreenWidth,
   responsiveScreenFontSize,
 } from 'react-native-responsive-dimensions';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {
   pick,
   types,
@@ -32,30 +32,30 @@ import {
 } from 'react-native-image-picker';
 
 import CustomFonts from '../../constants/CustomFonts';
-import { useDispatch, useSelector } from 'react-redux';
-import { formatDate } from '../../utility/formatDate';
+import {useDispatch, useSelector} from 'react-redux';
+import {formatDate} from '../../utility/formatDate';
 import MyButton from '../../components/AuthenticationCom/MyButton';
-import { useTheme } from '../../context/ThemeContext';
+import {useTheme} from '../../context/ThemeContext';
 import axiosInstance from '../../utility/axiosInstance';
 import FacebookSvg from '../../assets/Icons/FacebookSvg';
 import InstagramIcon from '../../assets/Icons/InstagramIcon';
 import Linkedin from '../../assets/Icons/Linkedin';
 import Twitter from '../../assets/Icons/Twitter';
 import GithubIcon from '../../assets/Icons/GithubIcon';
-import { setUser } from '../../store/reducer/authReducer';
+import {setUser} from '../../store/reducer/authReducer';
 import UploadIcon from '../../assets/Icons/UploadIcon';
-import { extractFileName, showToast } from '../../components/HelperFunction';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {extractFileName, showToast} from '../../components/HelperFunction';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import RequireFieldStar from '../../constants/RequireFieldStar';
 import ArrowLeft from '../../assets/Icons/ArrowLeft';
 import CameraIcon from '../../assets/Icons/CameraIcon';
-import { RootState } from '../../types/redux/root';
-import { HomeStackParamList } from '../../types/navigation';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { TColors } from '../../types';
-import { borderRadius, fontSizes, gGap, gHeight } from '../../constants/Sizes';
+import {RootState} from '../../types/redux/root';
+import {HomeStackParamList} from '../../types/navigation';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {TColors} from '../../types';
+import {borderRadius, fontSizes, gGap, gHeight} from '../../constants/Sizes';
 import CustomDropDown from '../../components/SharedComponent/CustomDropDown';
-import { replaceSpaceWithDash, theme } from '../../utility/commonFunction';
+import {replaceSpaceWithDash, theme} from '../../utility/commonFunction';
 
 interface EditProfileState {
   firstName: string;
@@ -80,12 +80,8 @@ interface EditProfileState {
 }
 
 type EditProfileAction =
-  | {
-      type: 'SET_FIELD';
-      field: keyof EditProfileState;
-      value: string | boolean;
-    }
-  | { type: 'SET_MULTIPLE_FIELDS'; payload: Partial<EditProfileState> };
+  | {type: 'SET_FIELD'; field: keyof EditProfileState; value: string | boolean}
+  | {type: 'SET_MULTIPLE_FIELDS'; payload: Partial<EditProfileState>};
 
 function reducer(
   state: EditProfileState,
@@ -93,9 +89,9 @@ function reducer(
 ): EditProfileState {
   switch (action.type) {
     case 'SET_FIELD':
-      return { ...state, [action.field]: action.value };
+      return {...state, [action.field]: action.value};
     case 'SET_MULTIPLE_FIELDS':
-      return { ...state, ...action.payload };
+      return {...state, ...action.payload};
     default:
       return state;
   }
@@ -104,16 +100,16 @@ function reducer(
 export default function MyProfileEdit() {
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollToBottom = () => {
-    scrollViewRef.current?.scrollToEnd({ animated: true });
+    scrollViewRef.current?.scrollToEnd({animated: true});
   };
 
   const Colors = useTheme();
   const styles = getStyles(Colors);
-  const { user } = useSelector((state: RootState) => state.auth);
+  const {user} = useSelector((state: RootState) => state.auth);
   const navigation =
     useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const reduxDispatch = useDispatch();
-  const { top } = useSafeAreaInsets();
+  const {top} = useSafeAreaInsets();
 
   // Consolidated state via useReducer
   const initialState: EditProfileState = {
@@ -233,8 +229,8 @@ export default function MyProfileEdit() {
       });
 
       console.log('result', JSON.stringify(result, null, 2));
-      dispatchFormState({ type: 'SET_FIELD', field: 'isLoading', value: true });
-      const { uri, name: n } = result;
+      dispatchFormState({type: 'SET_FIELD', field: 'isLoading', value: true});
+      const {uri, name: n} = result;
       const name = replaceSpaceWithDash(n || '');
       dispatchFormState({
         type: 'SET_FIELD',
@@ -249,7 +245,7 @@ export default function MyProfileEdit() {
       });
       const url = '/document/userdocumentfile';
       const response = await axiosInstance.post(url, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {'Content-Type': 'multipart/form-data'},
       });
 
       console.log('response', JSON.stringify(response, null, 2));
@@ -257,7 +253,7 @@ export default function MyProfileEdit() {
         scrollToBottom();
         dispatchFormState({
           type: 'SET_MULTIPLE_FIELDS',
-          payload: { resume: response.data.fileUrl, isLoading: false },
+          payload: {resume: response.data.fileUrl, isLoading: false},
         });
       } else {
         dispatchFormState({
@@ -267,17 +263,13 @@ export default function MyProfileEdit() {
         });
       }
     } catch (error: any) {
-      dispatchFormState({
-        type: 'SET_FIELD',
-        field: 'isLoading',
-        value: false,
-      });
+      dispatchFormState({type: 'SET_FIELD', field: 'isLoading', value: false});
       if (error?.response) {
         console.error('Server error:', error.response.data);
       } else if (error?.request) {
         console.error('Network error:', error.request);
       } else {
-        showToast({ message: 'Cancel resume picker' });
+        showToast({message: 'Cancel resume picker'});
       }
     }
   };
@@ -290,7 +282,7 @@ export default function MyProfileEdit() {
       value: mediaData.uri || '',
     });
     try {
-      dispatchFormState({ type: 'SET_FIELD', field: 'isLoading', value: true });
+      dispatchFormState({type: 'SET_FIELD', field: 'isLoading', value: true});
       const formData = new FormData();
       const data = {
         uri: mediaData.uri,
@@ -302,12 +294,12 @@ export default function MyProfileEdit() {
 
       axiosInstance
         .patch('/user/updateimage', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: {'Content-Type': 'multipart/form-data'},
         })
         .then(res => {
           if (res.data.success) {
             navigation.navigate('MyProfile');
-            showToast({ message: 'Profile picture changed' });
+            showToast({message: 'Profile picture changed'});
             reduxDispatch(setUser(res.data.user));
             dispatchFormState({
               type: 'SET_FIELD',
@@ -343,11 +335,7 @@ export default function MyProfileEdit() {
           }
         });
     } catch (error: any) {
-      dispatchFormState({
-        type: 'SET_FIELD',
-        field: 'isLoading',
-        value: false,
-      });
+      dispatchFormState({type: 'SET_FIELD', field: 'isLoading', value: false});
       if (error.response) {
         console.log(
           'Server error:',
@@ -384,27 +372,24 @@ export default function MyProfileEdit() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-    >
-      <View style={{ backgroundColor: Colors.Background_color }}>
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
+      <View style={{backgroundColor: Colors.Background_color}}>
         <StatusBar barStyle={'light-content'} backgroundColor={'transparent'} />
-        <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView ref={scrollViewRef} contentContainerStyle={{flexGrow: 1}}>
           <View style={styles.container}>
-            <View style={[styles.topContainer, { paddingTop: top }]}>
+            <View style={[styles.topContainer, {paddingTop: top}]}>
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
-                style={styles.topArrowContainer}
-              >
+                style={styles.topArrowContainer}>
                 <ArrowLeft color={Colors.PureWhite} />
                 <Text style={styles.topText}>Back</Text>
               </TouchableOpacity>
               <Text style={styles.myProfile}>Edit Profile</Text>
-              <View style={{ flex: 0.3, height: 10 }} />
+              <View style={{flex: 0.3, height: 10}} />
             </View>
             <ImageBackground
               source={require('../../assets/ApplicationImage/MainPage/MyProfileBG5.png')}
-              style={styles.bgimg}
-            >
+              style={styles.bgimg}>
               <View
                 style={{
                   position: 'absolute',
@@ -415,8 +400,7 @@ export default function MyProfileEdit() {
                   borderRadius: borderRadius.circle,
                   alignItems: 'center',
                   justifyContent: 'center',
-                }}
-              >
+                }}>
                 {formState.isLoading && (
                   <View
                     style={{
@@ -424,19 +408,17 @@ export default function MyProfileEdit() {
                       zIndex: 1,
                       alignItems: 'center',
                       justifyContent: 'center',
-                    }}
-                  >
+                    }}>
                     <ActivityIndicator color={Colors.Primary} size={40} />
                   </View>
                 )}
                 <Image
-                  source={{ uri: formState.profilePicture }}
+                  source={{uri: formState.profilePicture}}
                   style={styles.profileImg}
                 />
                 <TouchableOpacity
                   onPress={selectImage}
-                  style={styles.photoIconContainer}
-                >
+                  style={styles.photoIconContainer}>
                   <CameraIcon />
                 </TouchableOpacity>
               </View>
@@ -504,8 +486,7 @@ export default function MyProfileEdit() {
                     fontSize: fontSizes.small,
                     fontFamily: CustomFonts.REGULAR,
                     color: Colors.Red,
-                  }}
-                >
+                  }}>
                   {' '}
                   (Not editable)
                 </Text>
@@ -529,8 +510,7 @@ export default function MyProfileEdit() {
                     fontSize: fontSizes.small,
                     fontFamily: CustomFonts.REGULAR,
                     color: Colors.Red,
-                  }}
-                >
+                  }}>
                   {' '}
                   (Not editable)
                 </Text>
@@ -545,15 +525,15 @@ export default function MyProfileEdit() {
               />
             </View>
             <View style={styles.fieldContainer}>
-              <Text style={[styles.fieldText, { marginBottom: gGap(5) }]}>
+              <Text style={[styles.fieldText, {marginBottom: gGap(5)}]}>
                 Gender
               </Text>
               <CustomDropDown
                 options={[
-                  { data: 'male', type: 'Male' },
-                  { data: 'female', type: 'Female' },
-                  { data: 'other', type: 'Other' },
-                  { data: 'prefer-not-to-say', type: 'Prefer not to say' },
+                  {data: 'male', type: 'Male'},
+                  {data: 'female', type: 'Female'},
+                  {data: 'other', type: 'Other'},
+                  {data: 'prefer-not-to-say', type: 'Prefer not to say'},
                 ]}
                 type={
                   user.gender === 'male'
@@ -576,15 +556,15 @@ export default function MyProfileEdit() {
               />
             </View>
             <View style={styles.fieldContainer}>
-              <Text style={[styles.fieldText, { marginBottom: gGap(5) }]}>
+              <Text style={[styles.fieldText, {marginBottom: gGap(5)}]}>
                 Education
               </Text>
               <CustomDropDown
                 options={[
-                  { data: 'highschool', type: 'High School' },
-                  { data: 'bachelors', type: "Bachelor's" },
-                  { data: 'masters', type: "Master's" },
-                  { data: 'phd', type: 'PhD' },
+                  {data: 'highschool', type: 'High School'},
+                  {data: 'bachelors', type: "Bachelor's"},
+                  {data: 'masters', type: "Master's"},
+                  {data: 'phd', type: 'PhD'},
                 ]}
                 type={
                   user?.education === 'highschool'
@@ -612,8 +592,7 @@ export default function MyProfileEdit() {
               <Text style={styles.fieldText}>Resume</Text>
               <TouchableOpacity
                 onPress={uploadResume}
-                style={styles.resumeContainer}
-              >
+                style={styles.resumeContainer}>
                 <UploadIcon />
                 <Text numberOfLines={1} style={styles.downloadFile}>
                   {formState.resumeName ||
@@ -1174,5 +1153,5 @@ const getStyles = (Colors: TColors) =>
     lineUp: {
       marginLeft: responsiveScreenWidth(2),
     },
-    socialField: { width: '100%', paddingLeft: responsiveScreenWidth(2) },
+    socialField: {width: '100%', paddingLeft: responsiveScreenWidth(2)},
   });

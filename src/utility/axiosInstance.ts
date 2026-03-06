@@ -1,11 +1,12 @@
 import axios from 'axios';
-import environment from '../constants/environment';
 import {storage} from './mmkvInstance';
 import {mStore} from './mmkvStoreName';
 
-let apiUrl = environment.production
-  ? 'https://api.skillbnk.com/api'
-  : 'https://staging-api.skillbnk.com/api';
+let apiUrl = 'https://api.skillbnk.com/api';
+
+// let apiUrl = environment.production
+//   ? 'https://api.skillbnk.com/api'
+//   : 'https://staging-api.skillbnk.com/api';
 
 const axiosInstance = axios.create({
   baseURL: apiUrl,

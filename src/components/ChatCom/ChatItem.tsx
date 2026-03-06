@@ -29,6 +29,8 @@ import {TColors} from '../../types';
 import BellOffIcon from '../../assets/Icons/BellOffIcon';
 import PinIcon from '../../assets/Icons/PinIcon';
 import {convertToCorrectMarkdown} from './MessageHelper';
+import {withOpacity} from './Mention/utils';
+import {randomHexColor} from '../../utility/commonFunction';
 
 function formatTime(dateString: string) {
   const today = moment().startOf('day');
@@ -114,6 +116,7 @@ const ChatItem = ({chat, setChecked, active}: TProps) => {
       .replace(/\n{2,}/g, '\n') // Collapse newlines
       .trim();
   }
+
   return (
     <TouchableOpacity
       style={[styles.container]}
@@ -138,7 +141,10 @@ const ChatItem = ({chat, setChecked, active}: TProps) => {
           </View>
         ) : !chat?.isChannel && chat?.otherUser?.profilePicture ? (
           <Image
-            style={styles.profileImage}
+            style={[
+              styles.profileImage,
+              {backgroundColor: withOpacity(randomHexColor(), 0.3)},
+            ]}
             source={
               chat?.otherUser?.profilePicture
                 ? {
@@ -283,6 +289,8 @@ const ChatItem = ({chat, setChecked, active}: TProps) => {
                 <Text style={{color: Colors.BodyText}}>
                   {generateActivityText(chat?.latestMessage, senderName)}
                 </Text>
+              ) : chat?.latestMessage?.type === 'delete' ? (
+                <Text style={styles.deletedMessage}>Message deleted</Text>
               ) : (
                 <Text style={{color: Colors.BodyText}}>
                   {`${senderName}: ${getText(
@@ -334,6 +342,11 @@ const getStyles = (Colors: TColors) =>
       // backgroundColor: 'blue',
       gap: 10,
     },
+    deletedMessage: {
+      color: 'red',
+      fontFamily: CustomFonts.REGULAR,
+      fontStyle: 'italic',
+    },
     subContainer: {
       backgroundColor: 'red',
       flexDirection: 'row',
@@ -350,12 +363,12 @@ const getStyles = (Colors: TColors) =>
       borderRadius: 50,
       resizeMode: 'cover',
       position: 'relative',
-      backgroundColor: Colors.PrimaryOpacityColor,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 1,
       overflow: 'hidden',
-      borderColor: Colors?.BorderColor,
+      backgroundColor: withOpacity(randomHexColor(), 0.2),
+      borderColor: withOpacity(randomHexColor(), 0.3),
     },
     activeDot: {
       width: responsiveScreenWidth(2.8),

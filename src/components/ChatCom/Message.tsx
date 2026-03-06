@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import Markdown from 'react-native-markdown-display';
 import {
@@ -42,6 +42,7 @@ import {fontSizes, gFontSize, gGap, gMargin} from '../../constants/Sizes';
 import {showToast} from '../HelperFunction';
 import {loadChats} from '../../actions/chat-noti';
 import {IoniconsIcon} from '../../constants/Icons';
+import RNText from '../SharedComponent/RNText';
 type MessageProps = {
   item: IMessage;
   setViewImage?: React.Dispatch<
@@ -144,9 +145,9 @@ const Message = ({item, setViewImage}: MessageProps) => {
     return (
       <>
         <View style={styles.activityContainer}>
-          <Text style={styles.activityText}>
+          <RNText style={styles.activityText}>
             {generateActivityText(item, senderName)}
-          </Text>
+          </RNText>
         </View>
       </>
     );
@@ -221,10 +222,10 @@ const Message = ({item, setViewImage}: MessageProps) => {
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View style={styles.messageHeader}>
-                <Text style={styles.name}>{item.sender.fullName}</Text>
-                <Text style={styles.timeText}>
+                <RNText style={styles.name}>{item.sender.fullName}</RNText>
+                <RNText style={styles.timeText}>
                   {moment(item.editedAt || item?.createdAt).format(' h:mm A')}
-                </Text>
+                </RNText>
               </View>
               {item?.pinnedBy?._id && (
                 <View
@@ -242,13 +243,13 @@ const Message = ({item, setViewImage}: MessageProps) => {
               </TouchableOpacity>
             </View>
             {/* {offline?._id && (
-              <Text
+              <RNText
                 style={{
                   fontSize: gFontSize(8),
                   color: Colors.BodyText,
                 }}>{`Offline at ${moment(offline.offlineAt).format(
                 'hh:mm A MMM DD, YYYY',
-              )}`}</Text>
+              )}`}</RNText>
             )} */}
             {/* -------------------------- */}
             {/* -----------  ----------- */}
@@ -313,7 +314,7 @@ const Message = ({item, setViewImage}: MessageProps) => {
                 }}>
                 {!readMoreClicked && item?.text?.length > 300 && (
                   <TouchableOpacity onPress={() => setReadMoreClicked(true)}>
-                    <Text style={styles.readMoreText}>Read more</Text>
+                    <RNText style={styles.readMoreText}>Read more</RNText>
                   </TouchableOpacity>
                 )}
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -330,20 +331,20 @@ const Message = ({item, setViewImage}: MessageProps) => {
                         size={20}
                         color={Colors.BodyText}
                       />
-                      <Text
+                      <RNText
                         style={{
                           color: Colors.BodyText,
                           fontFamily: CustomFonts.REGULAR,
                         }}>
                         forwarded
-                      </Text>
+                      </RNText>
                     </View>
                   )}
 
                   {item.editedAt && (
-                    <Text style={{color: Colors.Red, paddingLeft: gGap(5)}}>
+                    <RNText style={{color: Colors.Red, paddingLeft: gGap(5)}}>
                       (Edited)
-                    </Text>
+                    </RNText>
                   )}
 
                   {my && !item.parentMessage && (

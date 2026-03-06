@@ -1,17 +1,17 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Images from '../../constants/Images';
-import { useTheme } from '../../context/ThemeContext';
-import { responsiveFontSize } from 'react-native-responsive-dimensions';
+import {useTheme} from '../../context/ThemeContext';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 import CustomFonts from '../../constants/CustomFonts';
-import { useNavigation } from '@react-navigation/native';
-// import {Rating} from '@kolking/react-native-rating';
+import {useNavigation} from '@react-navigation/native';
+import {Rating} from '@kolking/react-native-rating';
 
-const CourseCard = ({ item, orgSlug }) => {
+const CourseCard = ({item, orgSlug}) => {
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const navigation = useNavigation();
-  const { title, totalDuration, image, totalReviews, averageStarCount, price } =
+  const {title, totalDuration, image, totalReviews, averageStarCount, price} =
     item;
   const handleCourseDetails = () => {
     navigation.navigate('BootCampsDetails', {
@@ -32,7 +32,7 @@ const CourseCard = ({ item, orgSlug }) => {
         <Image
           source={
             image && image !== ''
-              ? { uri: image }
+              ? {uri: image}
               : Images.DEFAULT_IMAGE || Images.DEFAULT_IMAGE
           }
           style={styles.image}
@@ -45,14 +45,14 @@ const CourseCard = ({ item, orgSlug }) => {
       </Text>
       <View style={styles.ratingContainer}>
         {starRating > 0 && <Text style={styles.ratingText}>{starRating}</Text>}
-        {/* <Rating
+        <Rating
           variant="stars"
           rating={starRating}
           disabled={true}
           size={16}
           baseColor={Colors.BodyText}
           fillColor={Colors.StarColor}
-        /> */}
+        />
         <Text style={styles.totalReviewsText}>({totalReviews})</Text>
       </View>
 
@@ -70,8 +70,7 @@ const CourseCard = ({ item, orgSlug }) => {
         </View>
         <TouchableOpacity
           style={styles.learnMoreButton}
-          onPress={handleCourseDetails}
-        >
+          onPress={handleCourseDetails}>
           <Text style={styles.learnMoreText}>Learn More</Text>
         </TouchableOpacity>
       </View>

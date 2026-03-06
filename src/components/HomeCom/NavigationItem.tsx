@@ -115,7 +115,7 @@ const NavigationItem: React.FC<NavigationItemProps> = React.memo(
               flex: 1,
             }}>
             <Text style={styles.navigationItemText}>{item.title}</Text>
-            {item.badge && (
+            {Boolean(item?.badge) && (
               <View
                 style={{
                   backgroundColor: withOpacity(item.backgroundColor, 0.3),
@@ -131,7 +131,7 @@ const NavigationItem: React.FC<NavigationItemProps> = React.memo(
                     fontWeight: '700',
                     fontSize: 11,
                   }}>
-                  {item.badge}
+                  {item?.badge}
                 </Text>
               </View>
             )}

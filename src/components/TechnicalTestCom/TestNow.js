@@ -11,33 +11,29 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   responsiveScreenWidth,
   responsiveScreenFontSize,
   responsiveScreenHeight,
 } from 'react-native-responsive-dimensions';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTheme } from '../../context/ThemeContext';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {useTheme} from '../../context/ThemeContext';
 import MyButton from '../AuthenticationCom/MyButton';
 import CustomFonts from '../../constants/CustomFonts';
 import ArrowLeftWhite from '../../assets/Icons/ArrowLeftWhite';
 import ArrowRightWhite from '../../assets/Icons/ArrowRightWhite';
 import CrossCircle from '../../assets/Icons/CrossCircle';
 import axiosInstance from '../../utility/axiosInstance';
-import { submitAssignments } from '../../store/reducer/TechnicalTestReducer';
-import { showToast } from '../HelperFunction';
+import {submitAssignments} from '../../store/reducer/TechnicalTestReducer';
+import {showToast} from '../HelperFunction';
 import Images from '../../constants/Images';
 import CommentSection from '../CommentCom/CommentSection';
-import { useGlobalAlert } from '../SharedComponent/GlobalAlertContext';
-import { formattingDate, theme } from '../../utility/commonFunction';
-import { getComments } from '../../actions/chat-noti';
-import {
-  pick,
-  types,
-  DocumentPickerResponse,
-} from '@react-native-documents/picker';
+import {useGlobalAlert} from '../SharedComponent/GlobalAlertContext';
+import {formattingDate, theme} from '../../utility/commonFunction';
+import {getComments} from '../../actions/chat-noti';
+import DocumentPicker, {types} from 'react-native-document-picker';
 import RequireFieldStar from '../../constants/RequireFieldStar';
 import CommentField from '../CommentCom/CommentField';
 import TextRender from '../SharedComponent/TextRender';
@@ -80,14 +76,14 @@ export const getFileTypeFromUri = (uri = '') => {
 export default function TestNow(routes) {
   const Colors = useTheme();
   const styles = getStyles(Colors);
-  const { showAlert } = useGlobalAlert();
+  const {showAlert} = useGlobalAlert();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [questionNumber, setQuestionNumber] = useState(
     routes.route.params.questionNumber,
   );
   const [confirmModalVisible, setConfirmModalVisible] = useState(null);
-  const { assignments } = useSelector(state => state.technicalTest);
+  const {assignments} = useSelector(state => state.technicalTest);
   const question = assignments[questionNumber];
   const [attachment, setAttachment] = useState(
     assignments[questionNumber]?.submission?.attachments,
@@ -140,7 +136,7 @@ export default function TestNow(routes) {
       JSON.stringify(answer, attachment)
     ) {
       setQuestionNumber(questionNumber - 1);
-    } else setConfirmModalVisible({ from: 'back' });
+    } else setConfirmModalVisible({from: 'back'});
   };
   const handleNextButton = () => {
     if (questionNumber === routes.route.params.data?.length - 1) return;
@@ -150,7 +146,7 @@ export default function TestNow(routes) {
       JSON.stringify(answer, attachment)
     ) {
       setQuestionNumber(questionNumber + 1);
-    } else setConfirmModalVisible({ from: 'next' });
+    } else setConfirmModalVisible({from: 'next'});
   };
 
   const handleSubmitAnswer = () => {
@@ -167,7 +163,7 @@ export default function TestNow(routes) {
       .post('/assignment/submitanswer', data)
       .then(res => {
         dispatch(
-          submitAssignments({ answer: res?.data?.answer, questionNumber }),
+          submitAssignments({answer: res?.data?.answer, questionNumber}),
         );
         if (res.data.success) {
           setIsLoading(false);
@@ -202,7 +198,7 @@ export default function TestNow(routes) {
   const UploadAnyFile = async () => {
     try {
       // Allow users to pick multiple files with specified types
-      const results = await pick({
+      const results = await DocumentPicker.pick({
         type: [types.images, types.pdf, types.doc, types.docx],
         allowMultiSelection: true, // Enable multiple selection
       });
@@ -270,7 +266,7 @@ export default function TestNow(routes) {
       setAttachment(prev => [...(prev || []), ...validUploadedFiles]);
 
       if (validUploadedFiles.length > 0) {
-        showToast({ message: 'Files uploaded successfully' });
+        showToast({message: 'Files uploaded successfully'});
       } else {
         showAlert({
           title: 'Upload Failed',
@@ -281,7 +277,7 @@ export default function TestNow(routes) {
 
       setIsUploading(false);
     } catch (err) {
-      if (err) {
+      if (DocumentPicker.isCancel(err)) {
         // User canceled the picker, no action needed
         console.log('User canceled file picker');
       } else {
@@ -309,8 +305,7 @@ export default function TestNow(routes) {
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: Colors.Foreground,
-        }}
-      >
+        }}>
         <ActivityIndicator color={Colors.Primary} size={40} />
       </View>
     );
@@ -320,8 +315,7 @@ export default function TestNow(routes) {
     <KeyboardAvoidingView
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
+      style={{flex: 1}}>
       <View>
         <StatusBar
           translucent={true}
@@ -364,8 +358,7 @@ export default function TestNow(routes) {
                         borderWidth: 1,
                         borderColor: Colors.BorderColor,
                       },
-                    ]}
-                  >
+                    ]}>
                     <ArrowLeftWhite
                       color={
                         questionNumber === 0
@@ -380,8 +373,7 @@ export default function TestNow(routes) {
                             ? Colors.DisableSecondaryButtonTextColor
                             : Colors.SecondaryButtonTextColor,
                         fontFamily: CustomFonts.REGULAR,
-                      }}
-                    >
+                      }}>
                       Back
                     </Text>
                   </TouchableOpacity>
@@ -398,8 +390,7 @@ export default function TestNow(routes) {
                             ? Colors.DisablePrimaryBackgroundColor
                             : Colors.PrimaryButtonBackgroundColor,
                       },
-                    ]}
-                  >
+                    ]}>
                     <Text
                       style={[
                         {
@@ -409,8 +400,7 @@ export default function TestNow(routes) {
                               : Colors.PrimaryButtonTextColor,
                           fontFamily: CustomFonts.REGULAR,
                         },
-                      ]}
-                    >
+                      ]}>
                       Next
                     </Text>
                     <ArrowRightWhite
@@ -534,8 +524,7 @@ export default function TestNow(routes) {
                 <Text style={styles.idStyle}>Upload Attachment (Optional)</Text>
                 <TouchableOpacity
                   onPress={UploadAnyFile}
-                  style={styles.attachment}
-                >
+                  style={styles.attachment}>
                   <Text style={styles.uploadText}>Upload Attachment</Text>
                 </TouchableOpacity>
                 <Text style={styles.attachmentText}>
@@ -548,23 +537,22 @@ export default function TestNow(routes) {
                   attachment?.length && {
                     marginVertical: responsiveScreenHeight(1.5),
                   },
-                ]}
-              >
+                ]}>
                 {attachment?.map(item => (
-                  <View key={item} style={{ position: 'relative' }}>
+                  <View key={item} style={{position: 'relative'}}>
                     {getFileTypeFromUri(item) === 'image' ? (
                       <Image
-                        style={{ height: 100, width: 100, borderRadius: 8 }}
-                        source={{ uri: item }}
+                        style={{height: 100, width: 100, borderRadius: 8}}
+                        source={{uri: item}}
                       />
                     ) : getFileTypeFromUri(item) === 'pdf' ? (
                       <Image
-                        style={{ height: 100, width: 100, borderRadius: 8 }}
+                        style={{height: 100, width: 100, borderRadius: 8}}
                         source={require('../../assets/Images/pdf.png')}
                       />
                     ) : getFileTypeFromUri(item) === 'document' ? (
                       <Image
-                        style={{ height: 100, width: 100, borderRadius: 8 }}
+                        style={{height: 100, width: 100, borderRadius: 8}}
                         source={require('../../assets/Images/doc.png')}
                       />
                     ) : (
@@ -576,17 +564,13 @@ export default function TestNow(routes) {
                           backgroundColor: Colors.PrimaryOpacityColor,
                           justifyContent: 'center',
                           alignItems: 'center',
-                        }}
-                      >
-                        <Text style={{ color: Colors.Heading }}>
-                          Unsupported
-                        </Text>
+                        }}>
+                        <Text style={{color: Colors.Heading}}>Unsupported</Text>
                       </View>
                     )}
                     <TouchableOpacity
                       onPress={() => removeDocument(item)}
-                      style={styles.CrossCircle}
-                    >
+                      style={styles.CrossCircle}>
                       <CrossCircle color={'red'} />
                     </TouchableOpacity>
                   </View>

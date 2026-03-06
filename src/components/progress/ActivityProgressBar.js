@@ -24,8 +24,8 @@ const ActivityProgressBar = ({item}) => {
           </TouchableOpacity>
         </View>
         <Text style={styles.headerText}>
-          <Text style={styles.headerBold}>{item?.count}</Text> out of{' '}
-          <Text style={styles.headerBold}>{item?.limit}</Text>
+          <Text style={styles.headerBold}>{item?.count || 0}</Text> out of{' '}
+          <Text style={styles.headerBold}>{item?.limit || 10}</Text>
         </Text>
       </View>
       <View style={styles.progress}>

@@ -1,10 +1,11 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {useTheme} from '../../context/ThemeContext';
 import CustomFonts from '../../constants/CustomFonts';
 import {RegularFonts} from '../../constants/Fonts';
 import {formatDynamicDate} from '../../utility/commonFunction';
 import {TColors} from '../../types';
+import RNText from '../SharedComponent/RNText';
 
 const MessageDateContainer = ({time}: {time: string | Date}) => {
   const Colors = useTheme();
@@ -13,7 +14,7 @@ const MessageDateContainer = ({time}: {time: string | Date}) => {
     <View style={styles.container}>
       <View style={styles.Divider} />
       <View style={styles.dateContainer}>
-        <Text style={styles.dateText}>{formatDynamicDate(time)}</Text>
+        <RNText style={styles.dateText}>{formatDynamicDate(time)}</RNText>
       </View>
       <View style={styles.Divider} />
     </View>

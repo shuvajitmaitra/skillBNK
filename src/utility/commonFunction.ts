@@ -15,12 +15,12 @@ import axiosInstance from './axiosInstance';
 import {loadCommunityPosts} from '../actions/chat-noti';
 import {setComInfo} from '../store/reducer/communityReducer';
 import {OneSignal} from 'react-native-onesignal';
+export const randomHexColor = (): `#${string}` => {
+  const n = Math.floor(Math.random() * 0xffffff); // 0..16777215
+  return `#${n.toString(16).padStart(6, '0')}` as `#${string}`;
+};
 export function replaceSpaceWithDash(value: string): string {
-  console.log('Original String:', value);
-
   const result = value.replace(/\s+/g, '-');
-
-  console.log('Modified String:', result);
 
   return result;
 }

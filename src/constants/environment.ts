@@ -1,11 +1,9 @@
 export default {
+  local: false,
   production: true,
-  local: true,
-  version: '3.15.6',
-  // mock_interview_url: 'https://portal.skillbnk.com/mobile/mockinterview',
-  mock_interview_url: 'http://192.168.68.104:4001/mobile/mockinterview',
+  version: '3.15.7',
   FRONTEND_URL: false
-    ? 'http://192.168.68.104:3000'
+    ? 'http://192.168.68.104:4001/mobile'
     : 'https://portal.skillbnk.com/mobile',
   OPEN_AI_API_KEY:
     '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',

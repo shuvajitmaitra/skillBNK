@@ -436,7 +436,7 @@ const getStyles = (Colors: TColors) =>
     subHeading: {
       fontFamily: CustomFonts.REGULAR,
       fontSize: responsiveScreenFontSize(1.6),
-      color: Colors.PureWhite,
+      color: Colors.BodyText,
     },
     separator: {
       minHeight: responsiveScreenHeight(10),

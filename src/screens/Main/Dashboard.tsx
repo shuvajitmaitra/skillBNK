@@ -50,7 +50,7 @@ export type NavItem = {
   circleColor: string;
   visible?: boolean;
   onPress: () => void;
-  badge?: string;
+  badge?: number;
 };
 
 // -------------------- Screen --------------------
@@ -174,7 +174,7 @@ const Dashboard: React.FC = () => {
             ? handleDefaultRoute()
             : handleMyProgramNavigation();
         },
-        badge: `${myEnrollments.length}`,
+        badge: myEnrollments.length || 0,
       },
 
       {
@@ -205,7 +205,7 @@ const Dashboard: React.FC = () => {
         icon: <CalenderIconBig color={Colors.PureWhite} />,
         visible: hasCalendar,
         onPress: handleNewCalendarNavigation,
-        badge: `${pendingInvitationCount}`,
+        badge: pendingInvitationCount || 0,
       },
 
       {
@@ -231,7 +231,7 @@ const Dashboard: React.FC = () => {
         icon: <MessageIconLive2 size={30} color={Colors.PureWhite} />,
         visible: hasChat,
         onPress: handleMyChatNavigation,
-        badge: `${unreadCounts}`,
+        badge: unreadCounts || 0,
       },
 
       {

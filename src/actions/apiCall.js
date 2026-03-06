@@ -473,7 +473,7 @@ export const handleDelete = id => {
         store.dispatch(
           updateLatestMessage({
             chatId: res.data.message.chat,
-            latestMessage: {text: ''},
+            latestMessage: {text: '', type: 'delete'},
             counter: 1,
           }),
         );

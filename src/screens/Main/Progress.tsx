@@ -97,6 +97,7 @@ const Progress: React.FC<ProgressScreenProps> = () => {
     axiosInstance
       .get('/progress/myprogress')
       .then(res => {
+        console.log('my Progress Data', JSON.stringify(res.data, null, 2));
         setTotalResults(res.data.metrics);
         setMyprogress(res.data.results || []);
         setIsLoading(false);
@@ -149,11 +150,13 @@ const Progress: React.FC<ProgressScreenProps> = () => {
         calendar: {},
         assignment: {},
         showTell: {},
+        myNotes: {},
         course: {
           courseId: selectedCourse,
         },
       })
       .then(res => {
+        console.log('dashboard Data', JSON.stringify(res.data, null, 2));
         if (res.data.success) {
           dispatch(setDashboardData(res.data.data));
           console.log('Data stored');

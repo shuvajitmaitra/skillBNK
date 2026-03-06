@@ -14,11 +14,10 @@ import {
   setTotalBootCamp,
   setTotalCourse,
 } from '../../store/reducer/landingReducer';
-import environment from '../../constants/environment';
 
 const BootCampsList = ({type}) => {
   // const slug = "first-org-test"; //"Tech-Serve4-U-LLC";
-  const slug = environment.production ? 'Tech-Serve4-U-LLC' : 'first-org-test';
+  const slug = 'Tech-Serve4-U-LLC';
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const [limit, setLimit] = useState(5);

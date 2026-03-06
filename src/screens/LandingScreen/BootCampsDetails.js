@@ -1,16 +1,16 @@
-import { StatusBar, StyleSheet, Text, View, Platform } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../context/ThemeContext';
+import {StatusBar, StyleSheet, Text, View, Platform} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {useTheme} from '../../context/ThemeContext';
 import {
   responsiveFontSize,
   responsiveScreenFontSize,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import CustomFonts from '../../constants/CustomFonts';
 import CalendarIconSmall from '../../assets/Icons/CalendarIconSmall';
 import GlobeIcon from '../../assets/Icons/GlobeIcon';
-import { Image } from 'react-native';
+import {Image} from 'react-native';
 import Images from '../../constants/Images';
 import EnrollmentCard from '../../components/LandingCom/EnrollmentCard';
 import axiosInstance from '../../utility/axiosInstance';
@@ -23,8 +23,8 @@ import Benefits from '../../components/LandingCom/Benefits';
 import CourseRoadmap from '../../components/LandingCom/CourseRoadmap';
 import CourseContent from '../../components/LandingCom/CourseContent';
 import AlumniCom from '../../components/LandingCom/AlumniCom';
-import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import FrequentlyAsked from '../../components/LandingCom/FrequentlyAsked';
 import NextCareer from '../../components/LandingCom/NextCareer';
 import SalaryRole from '../../components/LandingCom/SalaryRole';
@@ -34,20 +34,20 @@ import ClassDeliveryBy from '../../components/LandingCom/ClassDeliveryBy';
 // import DownloadApp from "../../components/LandingCom/DownloadApp";
 // import FinanceOption from "../../components/LandingCom/FinanceOption";
 import StudentsReviews from '../../components/LandingCom/StudentsReviews';
-// import {Rating} from '@kolking/react-native-rating';
-import { FlatList } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { setBootCampDetails } from '../../store/reducer/landingReducer';
+import {Rating} from '@kolking/react-native-rating';
+import {FlatList} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {setBootCampDetails} from '../../store/reducer/landingReducer';
 import CourseCard from '../../components/LandingCom/CourseCard';
 import ArrowLeft from '../../assets/Icons/ArrowLeft';
-import { theme } from '../../utility/commonFunction';
+import {theme} from '../../utility/commonFunction';
 
-const BootCampsDetails = ({ route }) => {
-  const { courseId, slug, orgSlug } = route.params;
+const BootCampsDetails = ({route}) => {
+  const {courseId, slug, orgSlug} = route.params;
   const [type, setType] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const { bootCampDetails } = useSelector(state => state.landing);
-  const { top } = useSafeAreaInsets();
+  const {bootCampDetails} = useSelector(state => state.landing);
+  const {top} = useSafeAreaInsets();
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const navigation = useNavigation();
@@ -64,7 +64,7 @@ const BootCampsDetails = ({ route }) => {
   const image = course?.image;
 
   const dateObject = new Date(course?.updatedAt);
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = {year: 'numeric', month: 'long', day: 'numeric'};
   const formattedDate = dateObject.toLocaleDateString('en-US', options);
   const roundDuration = Math.floor(bootCampDetails?.totalDuration / 3600);
   const starRating = parseFloat(
@@ -110,13 +110,12 @@ const BootCampsDetails = ({ route }) => {
   };
   useEffect(() => {
     getCourseData();
-    getPrograms({ currentPage: 1, limit: 10, type });
+    getPrograms({currentPage: 1, limit: 10, type});
     return () => {
       setOthersItem([]);
       setTotalItems(0);
       setPage(1);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
   const handleBackButton = () => {
@@ -173,7 +172,7 @@ const BootCampsDetails = ({ route }) => {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: Colors.Background_color }}>
+      <View style={{flex: 1, backgroundColor: Colors.Background_color}}>
         <Loading backgroundColor={'transparent'} />
       </View>
     );
@@ -188,15 +187,13 @@ const BootCampsDetails = ({ route }) => {
         </Text>
         <FlatList
           data={othersItem}
-          renderItem={({ item }) => (
-            <CourseCard item={item} orgSlug={orgSlug} />
-          )}
+          renderItem={({item}) => <CourseCard item={item} orgSlug={orgSlug} />}
           keyExtractor={item => item._id}
           onEndReached={() =>
             othersItem.length + 1 < totalItems &&
-            getPrograms({ currentPage: page, limit: 10, type })
+            getPrograms({currentPage: page, limit: 10, type})
           }
-          ListFooterComponent={<View style={{ marginBottom: 20 }} />}
+          ListFooterComponent={<View style={{marginBottom: 20}} />}
         />
       </View>
     );
@@ -212,13 +209,11 @@ const BootCampsDetails = ({ route }) => {
         backgroundColor: Colors.Background_color,
         paddingTop: top,
         flex: 1,
-      }}
-    >
+      }}>
       {Platform.OS === 'ios' && (
         <TouchableOpacity
           onPress={handleBackButton}
-          style={styles.backNavigation}
-        >
+          style={styles.backNavigation}>
           <ArrowLeft />
           <Text style={styles.navigationText}>Back</Text>
         </TouchableOpacity>
@@ -238,14 +233,14 @@ const BootCampsDetails = ({ route }) => {
                 {starRating > 0 && (
                   <Text style={styles.ratingText}>{starRating}</Text>
                 )}
-                {/* <Rating
+                <Rating
                   variant="stars"
                   rating={starRating}
                   disabled={true}
                   size={16}
                   baseColor={Colors.BodyText}
                   fillColor={Colors.StarColor}
-                /> */}
+                />
                 <Text style={styles.totalReviewsText}>
                   ({bootCampDetails?.review?.totalReviews})
                 </Text>
@@ -276,7 +271,7 @@ const BootCampsDetails = ({ route }) => {
                     {course?.instructor?.image && (
                       <Image
                         style={styles.instructorImage}
-                        source={{ uri: course?.instructor?.image }}
+                        source={{uri: course?.instructor?.image}}
                       />
                     )}
                     <Text style={styles.mentorNameText}>
@@ -290,7 +285,7 @@ const BootCampsDetails = ({ route }) => {
                 <Image
                   source={
                     image && image !== ''
-                      ? { uri: image }
+                      ? {uri: image}
                       : Images.DEFAULT_IMAGE || Images.DEFAULT_IMAGE
                   }
                   style={styles.image}
@@ -303,7 +298,7 @@ const BootCampsDetails = ({ route }) => {
           </>
         }
         data={sectionLayout || []}
-        renderItem={({ item }) => item}
+        renderItem={({item}) => item}
         keyExtractor={(item, index) => index.toString()}
         ListFooterComponent={renderListFooter}
       />
