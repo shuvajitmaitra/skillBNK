@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import {AppState, Platform, AppStateStatus} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { AppState, Platform, AppStateStatus } from 'react-native';
 import MessageScreen from '../screens/Chat/MessageScreen';
 import ThreadScreen from '../screens/Chat/ThreadScreen';
 import ChatProfile from '../screens/Chat/ChatProfile';
@@ -10,24 +10,24 @@ import {
   loadNotifications,
   loadProgramInfo,
 } from '../actions/chat-noti';
-import {connectSocket, disconnectSocket} from '../utility/socketManager';
+import { connectSocket, disconnectSocket } from '../utility/socketManager';
 import {
   fetchOnlineUsers,
   getMyNavigation,
   userOrganizationInfo,
 } from '../actions/apiCall';
-import axiosInstance, {configureAxiosHeader} from '../utility/axiosInstance';
-import {storage} from '../utility/mmkvInstance';
+import axiosInstance, { configureAxiosHeader } from '../utility/axiosInstance';
+import { storage } from '../utility/mmkvInstance';
 import CommentScreen from '../screens/Comment/CommentScreen';
 import DefaultRoute from '../components/SharedComponent/DefaultRoute';
 import OtaScreen from '../screens/OTA/OtaScreen';
 import environment from '../constants/environment';
-import {navigate} from './NavigationService';
-import {setUpdateInfo} from '../store/reducer/otaReducer';
-import {RootStackParamList} from '../types/navigation';
+import { navigate } from './NavigationService';
+import { setUpdateInfo } from '../store/reducer/otaReducer';
+import { RootStackParamList } from '../types/navigation';
 import ChatSheet from '../components/ChatCom/Sheet/ChatSheet';
 import ConfirmationModal2 from '../components/SharedComponent/ConfirmationModal2';
-import {loadMyNotes} from '../actions/myNoteApiCall';
+import { loadMyNotes } from '../actions/myNoteApiCall';
 import NoteDetails from '../screens/Notes/NoteDetails';
 import {
   clearFilterParameters,
@@ -35,10 +35,10 @@ import {
 } from '../store/reducer/calendarReducerV2';
 import NoteCreateScreen from '../screens/Notes/NoteCreateScreen';
 import MyProfileEdit from '../screens/Main/MyProfileEdit';
-import {handleSignOut, loadComPostNewly} from '../utility/commonFunction';
-import {setChatFooterInfo} from '../store/reducer/chatFooterReducer';
-import {setNavigation} from '../store/reducer/authReducer';
-import {usePushNotification} from '../hook/usePushNotification';
+import { handleSignOut, loadComPostNewly } from '../utility/commonFunction';
+import { setChatFooterInfo } from '../store/reducer/chatFooterReducer';
+import { setNavigation } from '../store/reducer/authReducer';
+import { usePushNotification } from '../hook/usePushNotification';
 import BottomTabNavigator from './BottomTabNavigator';
 import ProtectedWebView from '../screens/MockInterview/ProtectedWebView';
 
@@ -74,7 +74,7 @@ const RootStackNavigator: React.FC = () => {
 
   const hasInitialized = useRef(false);
 
-  // const organization = storage.getString('organization');
+  // const organization = storage?.getString('organization');
   const activeEnrolment = storage?.getString('active_enrolment');
   const enrollmentId = activeEnrolment && JSON.parse(activeEnrolment)._id;
 
@@ -185,66 +185,66 @@ const RootStackNavigator: React.FC = () => {
 
   return (
     <>
-      <RootStack.Navigator screenOptions={{animation: 'fade'}}>
+      <RootStack.Navigator screenOptions={{ animation: 'fade' }}>
         <RootStack.Screen
           name="BottomTabNavigator"
           component={BottomTabNavigator}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="MessageScreen"
           component={MessageScreen}
-          options={{headerShown: false, title: 'Messages'}}
+          options={{ headerShown: false, title: 'Messages' }}
         />
         <RootStack.Screen
           name="ThreadScreen"
           component={ThreadScreen}
-          options={{headerShown: false, title: 'Thread'}}
+          options={{ headerShown: false, title: 'Thread' }}
         />
         <RootStack.Screen
           name="ChatProfile"
           component={ChatProfile}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="CommentScreen"
           component={CommentScreen}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="MockInterview"
           component={ProtectedWebView}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="DefaultRoute"
           component={DefaultRoute}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="OtaScreen"
           component={OtaScreen}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="ChatSheet"
           component={ChatSheet}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="NoteDetails"
           component={NoteDetails}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="NoteCreateScreen"
           component={NoteCreateScreen}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <RootStack.Screen
           name="MyProfileEdit"
           component={MyProfileEdit}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
       </RootStack.Navigator>
       <ConfirmationModal2 />

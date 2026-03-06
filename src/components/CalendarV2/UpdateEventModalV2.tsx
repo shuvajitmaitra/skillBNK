@@ -1,6 +1,6 @@
 // components/UpdateEventModalV2.tsx
-import React, {useCallback, useEffect, useState} from 'react';
-import {useTheme} from '../../context/ThemeContext';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 import {
   ScrollView,
   StyleSheet,
@@ -22,25 +22,25 @@ import BinIcon from '../../assets/Icons/BinIcon';
 import Images from '../../constants/Images';
 import RequireFieldStar from '../../constants/RequireFieldStar';
 import CustomButton from './CustomButtonV2';
-import {TColors, TUser} from '../../types';
-import {borderRadius, gGap, gHeight, gPadding} from '../../constants/Sizes';
-import {RootState} from '../../types/redux/root';
-import {useDispatch, useSelector} from 'react-redux';
-import {eventPriority} from '../../constants/CustomeData';
+import { TColors, TUser } from '../../types';
+import { borderRadius, gGap, gHeight, gPadding } from '../../constants/Sizes';
+import { RootState } from '../../types/redux/root';
+import { useDispatch, useSelector } from 'react-redux';
+import { eventPriority } from '../../constants/CustomeData';
 import InviteMemberModalV2 from './Modal/InviteMemberModalV2';
 import {
   setSelectedEventV2,
   updateCalInfo,
 } from '../../store/reducer/calendarReducerV2';
-import {showToast} from '../HelperFunction';
+import { showToast } from '../HelperFunction';
 import EventDateTimeSectionV2 from './EventDateTimeSectionV2';
 import EventLocationV2 from './EventLocationV2';
 import EventPermissionsV2 from './EventPermissionsV2';
 import EventColorPickerV2 from './Modal/EventColorPickerV2';
 import EventNotificationContainerV2 from './EventNotificationContainerV2';
-import {handleUpdateEvent} from '../../actions/apiCall2';
+import { handleUpdateEvent } from '../../actions/apiCall2';
 import EventDeleteOptionModalV2 from './Modal/EventDeleteOptionModalV2';
-import {openConfirmModal, theme} from '../../utility/commonFunction';
+import { openConfirmModal, theme } from '../../utility/commonFunction';
 import EventPurposeV2 from './EventPurposeV2';
 import ConfirmationModal2 from '../SharedComponent/ConfirmationModal2';
 // import moment from 'moment';
@@ -108,8 +108,8 @@ const UpdateEventModalV2: React.FC = () => {
   const dispatch = useDispatch();
   const Colors: TColors = useTheme();
   const styles = getStyles(Colors);
-  const {user} = useSelector((state: RootState) => state.auth);
-  const {selectedEventV2, eventReminders} = useSelector(
+  const { user } = useSelector((state: RootState) => state.auth);
+  const { selectedEventV2, eventReminders } = useSelector(
     (state: RootState) => state.calendarV2,
   );
   const [params, setParams] = useState<any>({});
@@ -141,7 +141,7 @@ const UpdateEventModalV2: React.FC = () => {
       //     name: 'Updated_Agenda.pdf',
       //     type: 'application/pdf',
       //     size: 300000,
-      //     url: 'https://storage.example.com/files/updated_agenda.pdf',
+      //     url: 'https://storage?.example.com/files/updated_agenda.pdf',
       //   },
       // ],
       purpose: {
@@ -162,7 +162,7 @@ const UpdateEventModalV2: React.FC = () => {
   useEffect(() => {
     setInvitations(
       selectedEventV2?.attendees
-        ? selectedEventV2.attendees.map((item: {user: any}) => item.user)
+        ? selectedEventV2.attendees.map((item: { user: any }) => item.user)
         : [],
     );
 
@@ -173,7 +173,7 @@ const UpdateEventModalV2: React.FC = () => {
 
   const handleUncheck = (id: string) => {
     if (invitations.length === 1) {
-      return showToast({message: 'Needs at least one Attendee'});
+      return showToast({ message: 'Needs at least one Attendee' });
     }
     setInvitations((prevInvitations: TUser[]) =>
       prevInvitations.filter(item => item._id !== id),
@@ -192,7 +192,7 @@ const UpdateEventModalV2: React.FC = () => {
         <TouchableOpacity
           onPress={() => {
             dispatch(setSelectedEventV2(null));
-            dispatch(updateCalInfo({updateEventVisible: false}));
+            dispatch(updateCalInfo({ updateEventVisible: false }));
           }}
           style={{
             backgroundColor: '#F97066',
@@ -201,7 +201,8 @@ const UpdateEventModalV2: React.FC = () => {
             right: gGap(-15),
             borderRadius: 100,
             zIndex: 1,
-          }}>
+          }}
+        >
           <CrossCircle size={35} color="white" />
         </TouchableOpacity>
         {/* <ModalBackAndCrossButton
@@ -248,7 +249,7 @@ const UpdateEventModalV2: React.FC = () => {
                 placeholder="Enter event name"
                 value={params?.title}
                 onChangeText={text =>
-                  setParams((pre: any) => ({...pre, title: text}))
+                  setParams((pre: any) => ({ ...pre, title: text }))
                 }
               />
             </View>
@@ -268,18 +269,18 @@ const UpdateEventModalV2: React.FC = () => {
                 e,
               }}
               setState={d => {
-                setParams({...params, ...d});
+                setParams({ ...params, ...d });
               }}
             />
             <EventPurposeV2
               setState={i => {
-                setParams({...params, purpose: i});
+                setParams({ ...params, purpose: i });
               }}
               state={params.purpose}
             />
 
             {/* Priority */}
-            <View style={[styles.fieldContainer, {marginTop: gGap(10)}]}>
+            <View style={[styles.fieldContainer, { marginTop: gGap(10) }]}>
               <Text style={styles.Text}>Priority</Text>
               <CustomDropDown
                 options={eventPriority}
@@ -289,7 +290,7 @@ const UpdateEventModalV2: React.FC = () => {
                     : 'Select Priority'
                 }
                 setState={data =>
-                  setParams((pre: any) => ({...pre, priority: data}))
+                  setParams((pre: any) => ({ ...pre, priority: data }))
                 }
               />
             </View>
@@ -304,7 +305,7 @@ const UpdateEventModalV2: React.FC = () => {
                 }
                 onSelect={(hex: string) =>
                   // setEvent(pre => ({...pre, eventColor: hex}))
-                  setParams({...params, eventColor: hex})
+                  setParams({ ...params, eventColor: hex })
                 }
               />
             )}
@@ -316,7 +317,8 @@ const UpdateEventModalV2: React.FC = () => {
               selectedEventV2?.type == 'event' && (
                 <TouchableOpacity
                   onPress={toggleInviteMemberModal}
-                  style={styles.invitationsButtonContainer}>
+                  style={styles.invitationsButtonContainer}
+                >
                   <Text style={styles.invitationsButtonText}>
                     Invite or add guests
                     <RequireFieldStar />
@@ -335,7 +337,7 @@ const UpdateEventModalV2: React.FC = () => {
                         <Image
                           source={
                             item.profilePicture
-                              ? {uri: item.profilePicture}
+                              ? { uri: item.profilePicture }
                               : Images.DEFAULT_IMAGE
                           }
                           style={styles.checkedImage}
@@ -347,7 +349,8 @@ const UpdateEventModalV2: React.FC = () => {
                       {(user._id === selectedEventV2?.organizer?._id ||
                         selectedEventV2?.permissions?.inviteOthers) && (
                         <TouchableOpacity
-                          onPress={() => handleUncheck(item._id)}>
+                          onPress={() => handleUncheck(item._id)}
+                        >
                           <BinIcon color={Colors.Red} />
                         </TouchableOpacity>
                       )}
@@ -395,13 +398,13 @@ const UpdateEventModalV2: React.FC = () => {
                 placeholderTextColor={Colors.BodyText}
                 style={[
                   styles.inputField,
-                  {minHeight: responsiveScreenHeight(10)},
+                  { minHeight: responsiveScreenHeight(10) },
                 ]}
                 placeholder="Enter Meeting Agenda/Follow Up/Action Item"
                 multiline
                 value={params?.description}
                 onChangeText={text => {
-                  setParams({...params, description: text});
+                  setParams({ ...params, description: text });
                 }}
               />
             </View>
@@ -418,7 +421,8 @@ const UpdateEventModalV2: React.FC = () => {
               style={{
                 color: Colors.Heading,
                 fontFamily: CustomFonts.MEDIUM,
-              }}>
+              }}
+            >
               Add reminders
             </Text>
             <EventNotificationContainerV2 />
@@ -443,7 +447,7 @@ const UpdateEventModalV2: React.FC = () => {
             }}
             toggleModal={() => {
               dispatch(setSelectedEventV2(null));
-              dispatch(updateCalInfo({updateEventVisible: false}));
+              dispatch(updateCalInfo({ updateEventVisible: false }));
             }}
           />
           <CustomButton
@@ -475,7 +479,7 @@ const UpdateEventModalV2: React.FC = () => {
                     }
 
                     if (!selectedEventV2?.title?.trim()) {
-                      return showToast({message: 'Title is required'});
+                      return showToast({ message: 'Title is required' });
                     }
 
                     // if (!params?.description?.trim()) {
@@ -541,11 +545,11 @@ const UpdateEventModalV2: React.FC = () => {
                       permissions,
                     });
                     dispatch(setSelectedEventV2(null));
-                    dispatch(updateCalInfo({updateEventVisible: false}));
+                    dispatch(updateCalInfo({ updateEventVisible: false }));
                   },
                 });
               } else {
-                dispatch(updateCalInfo({isEventDeleteOptionVisible: true}));
+                dispatch(updateCalInfo({ isEventDeleteOptionVisible: true }));
               }
             }}
           />
@@ -566,13 +570,13 @@ const UpdateEventModalV2: React.FC = () => {
 
       <EventDeleteOptionModalV2
         onCancel={() => {
-          dispatch(updateCalInfo({isEventDeleteOptionVisible: false}));
+          dispatch(updateCalInfo({ isEventDeleteOptionVisible: false }));
         }}
         onRemove={option => {
           console.log('option-----', JSON.stringify(option, null, 2));
 
           if (!params?.title?.trim()) {
-            return showToast({message: 'Title is required'});
+            return showToast({ message: 'Title is required' });
           }
           // if (!params?.description?.trim()) {
           //   return showToast({message: 'Description is required'});
@@ -632,8 +636,8 @@ const UpdateEventModalV2: React.FC = () => {
             permissions,
           });
           dispatch(setSelectedEventV2(null));
-          dispatch(updateCalInfo({updateEventVisible: false}));
-          dispatch(updateCalInfo({isEventDeleteOptionVisible: false}));
+          dispatch(updateCalInfo({ updateEventVisible: false }));
+          dispatch(updateCalInfo({ isEventDeleteOptionVisible: false }));
         }}
       />
       <ConfirmationModal2 />

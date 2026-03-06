@@ -1,19 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, useColorScheme, StatusBar} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  useColorScheme,
+  StatusBar,
+} from 'react-native';
 import {
   responsiveScreenFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
-import {useTheme} from '../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 import CustomFonts from '../../constants/CustomFonts';
 import ScreenHeader from '../../components/SharedComponent/ScreenHeader';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GlobalRadioGroup from '../../components/SharedComponent/GlobalRadioButton';
-import {RegularFonts} from '../../constants/Fonts';
-import {TColors} from '../../types';
-import {storage} from '../../utility/mmkvInstance';
-import {theme} from '../../utility/commonFunction';
+import { RegularFonts } from '../../constants/Fonts';
+import { TColors } from '../../types';
+import { storage } from '../../utility/mmkvInstance';
+import { theme } from '../../utility/commonFunction';
 type DisplayMode = 'dark' | 'default' | 'light';
 
 const DisplaySettingsScreen = () => {
@@ -24,12 +30,12 @@ const DisplaySettingsScreen = () => {
     storage?.getString('displayMode') || 'default',
   );
   const options = [
-    {value: 'default', label: 'Default'},
-    {value: 'dark', label: 'Dark'},
+    { value: 'default', label: 'Default' },
+    { value: 'dark', label: 'Dark' },
   ];
   useEffect(() => {
     if (storage?.getString('displayMode')) {
-      setChecked(storage.getString('displayMode') as DisplayMode);
+      setChecked(storage?.getString('displayMode') as DisplayMode);
     }
   }, []);
   const storeDisplayMode = async (mode: string) => {
@@ -48,9 +54,9 @@ const DisplaySettingsScreen = () => {
       storeDisplayMode('default');
     }
   };
-  const {top} = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
-    <View style={[styles.container, {paddingTop: top}]}>
+    <View style={[styles.container, { paddingTop: top }]}>
       <StatusBar
         translucent={true}
         backgroundColor={Colors.Foreground}

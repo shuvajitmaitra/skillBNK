@@ -1,14 +1,14 @@
 // StartInterviewModal.tsx
 
-import React, {useState, useRef} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import {
   responsiveScreenWidth,
   responsiveScreenFontSize,
   responsiveScreenHeight,
 } from 'react-native-responsive-dimensions';
 import CustomFonts from '../../constants/CustomFonts';
-import {useTheme} from '../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 import Modal from 'react-native-modal';
 import ModalBackAndCrossButton from '../ChatCom/Modal/ModalBackAndCrossButton';
 import ArrowLeftWhite from '../../assets/Icons/ArrowLeftWhite';
@@ -17,19 +17,19 @@ import MyButton from '../AuthenticationCom/MyButton';
 import VideoPlayer from '../ProgramCom/VideoPlayer';
 import axios from '../../utility/axiosInstance';
 import axiosInstance from '../../utility/axiosInstance';
-import {useDispatch} from 'react-redux';
-import {updateInterviewAnswer} from '../../store/reducer/InterviewReducer';
-import {showAlertModal} from '../../utility/commonFunction';
+import { useDispatch } from 'react-redux';
+import { updateInterviewAnswer } from '../../store/reducer/InterviewReducer';
+import { showAlertModal } from '../../utility/commonFunction';
 import GlobalAlertModal from '../SharedComponent/GlobalAlertModal';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+// import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import AudioMessage from '../ChatCom/AudioMessage';
 import CrossCircle from '../../assets/Icons/CrossCircle';
 import AudioWaveform from '../ChatCom/ChatFooter/AudioWaveform';
 import SendIcon from '../../assets/Icons/SendIcon';
-import {TColors, TInterview} from '../../types';
-import {showToast} from '../HelperFunction';
+import { TColors, TInterview } from '../../types';
+import { showToast } from '../HelperFunction';
 
-const audioRecorderPlayer = new AudioRecorderPlayer();
+// const audioRecorderPlayer = new AudioRecorderPlayer();
 
 type StartInterviewModalProps = {
   interview: TInterview;
@@ -54,7 +54,7 @@ export default function StartInterviewModal({
   const [recordingDuration, setRecordingDuration] = useState<number>(0);
 
   // Ref to hold the timer interval ID
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<number | null>(null);
 
   // Helper function to format seconds as HH:MM:SS
   const formatTime = (seconds: number): string => {
@@ -67,56 +67,56 @@ export default function StartInterviewModal({
   };
 
   const startRecording = async (): Promise<void> => {
-    try {
-      const result = await audioRecorderPlayer.startRecorder();
-      setRecording(true);
-      // Start the timer to update every second
-      timerRef.current = setInterval(() => {
-        setRecordingDuration(prev => prev + 1);
-      }, 1000);
-      audioRecorderPlayer.addRecordBackListener(e => {
-        console.log('Recording', e);
-        return;
-      });
-      console.log('Recording started', result);
-    } catch (error) {
-      console.error('Failed to start recording:', error);
-    }
+    // try {
+    //   const result = await audioRecorderPlayer.startRecorder();
+    //   setRecording(true);
+    //   // Start the timer to update every second
+    //   timerRef.current = setInterval(() => {
+    //     setRecordingDuration(prev => prev + 1);
+    //   }, 1000);
+    //   audioRecorderPlayer.addRecordBackListener(e => {
+    //     console.log('Recording', e);
+    //     return;
+    //   });
+    //   console.log('Recording started', result);
+    // } catch (error) {
+    //   console.error('Failed to start recording:', error);
+    // }
   };
 
   const stopRecording = async (): Promise<void> => {
-    try {
-      const result = await audioRecorderPlayer.stopRecorder();
-      setRecording(false);
-      setRecordedURI(result);
-      // Clear the timer when recording stops
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      audioRecorderPlayer.removeRecordBackListener();
-      console.log('Recording stopped, file saved at:', result);
-    } catch (error) {
-      console.error('Failed to stop recording:', error);
-    }
+    // try {
+    //   const result = await audioRecorderPlayer.stopRecorder();
+    //   setRecording(false);
+    //   setRecordedURI(result);
+    //   // Clear the timer when recording stops
+    //   if (timerRef.current) {
+    //     clearInterval(timerRef.current);
+    //     timerRef.current = null;
+    //   }
+    //   audioRecorderPlayer.removeRecordBackListener();
+    //   console.log('Recording stopped, file saved at:', result);
+    // } catch (error) {
+    //   console.error('Failed to stop recording:', error);
+    // }
   };
 
   const cancelRecording = async (): Promise<void> => {
-    try {
-      await audioRecorderPlayer.stopRecorder();
-      audioRecorderPlayer.removeRecordBackListener();
-      setRecording(false);
-      setRecordedURI('');
-      // Clear and reset the timer
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      setRecordingDuration(0);
-      console.log('Recording canceled');
-    } catch (error) {
-      console.error('Failed to cancel recording:', error);
-    }
+    // try {
+    //   await audioRecorderPlayer.stopRecorder();
+    //   audioRecorderPlayer.removeRecordBackListener();
+    //   setRecording(false);
+    //   setRecordedURI('');
+    //   // Clear and reset the timer
+    //   if (timerRef.current) {
+    //     clearInterval(timerRef.current);
+    //     timerRef.current = null;
+    //   }
+    //   setRecordingDuration(0);
+    //   console.log('Recording canceled');
+    // } catch (error) {
+    //   console.error('Failed to cancel recording:', error);
+    // }
   };
 
   const reRecord = (): void => {
@@ -288,8 +288,9 @@ export default function StartInterviewModal({
                 <Text
                   style={[
                     styles.btnText,
-                    {color: Colors.SecondaryButtonTextColor},
-                  ]}>
+                    { color: Colors.SecondaryButtonTextColor },
+                  ]}
+                >
                   Next
                 </Text>
                 <ArrowRightWhite color={Colors.SecondaryButtonTextColor} />
@@ -307,11 +308,14 @@ export default function StartInterviewModal({
         <Text
           style={[
             styles.question,
-            {color: Colors.BodyText, marginTop: responsiveScreenHeight(0)},
-          ]}>
+            { color: Colors.BodyText, marginTop: responsiveScreenHeight(0) },
+          ]}
+        >
           Hints: {interview?.questions[currentIndex]?.hint || 'Try yourself'}
         </Text>
-        <Text style={[styles.title, {marginBottom: responsiveScreenHeight(1)}]}>
+        <Text
+          style={[styles.title, { marginBottom: responsiveScreenHeight(1) }]}
+        >
           Record Audio
         </Text>
         {!uploaded.includes(currentIndex) ? (
@@ -322,11 +326,13 @@ export default function StartInterviewModal({
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 5,
-              }}>
+              }}
+            >
               {!recording && !recordedURI && (
                 <TouchableOpacity
                   style={styles.recordBtn}
-                  onPress={startRecording}>
+                  onPress={startRecording}
+                >
                   <Text style={styles.recordBtnText}>Start Recording</Text>
                 </TouchableOpacity>
               )}
@@ -334,7 +340,8 @@ export default function StartInterviewModal({
                 <TouchableOpacity
                   onPress={() => {
                     cancelRecording();
-                  }}>
+                  }}
+                >
                   <CrossCircle size={30} />
                 </TouchableOpacity>
               )}
@@ -365,13 +372,18 @@ export default function StartInterviewModal({
                 <View style={styles.btnContainerLast}>
                   <TouchableOpacity
                     style={styles.reRecordBtn}
-                    onPress={reRecord}>
+                    onPress={reRecord}
+                  >
                     <Text style={styles.reRecordBtnText}>Re-record</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.uploadBtn, {opacity: recordedURI ? 1 : 0.5}]}
+                    style={[
+                      styles.uploadBtn,
+                      { opacity: recordedURI ? 1 : 0.5 },
+                    ]}
                     onPress={sendAudio}
-                    disabled={!recordedURI}>
+                    disabled={!recordedURI}
+                  >
                     <Text style={styles.uploadBtnText}>Upload</Text>
                   </TouchableOpacity>
                 </View>
@@ -380,7 +392,7 @@ export default function StartInterviewModal({
           </View>
         ) : (
           <View style={[styles.recorderContainer]}>
-            <View style={[styles.uploadBtn, {alignSelf: 'center'}]}>
+            <View style={[styles.uploadBtn, { alignSelf: 'center' }]}>
               <Text style={styles.uploadBtnText}>Answer uploaded</Text>
             </View>
           </View>

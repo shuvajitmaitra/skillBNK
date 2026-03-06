@@ -1,10 +1,10 @@
-import {io} from 'socket.io-client';
+import { io } from 'socket.io-client';
 import environment from '../constants/environment';
 import setupSocketListeners from './socketHandler';
 import store from '../store';
-import {setSocketStatus} from '../store/reducer/chatReducer';
-import {storage} from './mmkvInstance';
-import {mStore} from './mmkvStoreName';
+import { setSocketStatus } from '../store/reducer/chatReducer';
+import { storage } from './mmkvInstance';
+import { mStore } from './mmkvStoreName';
 
 let socketUrl = environment.production
   ? 'https://api.skillbnk.com'
@@ -20,10 +20,10 @@ export const connectSocket = async () => {
   }
 
   // Retrieve connection parameters
-  const value = storage.getString(mStore.USER_TOKEN);
-  const orgJSON = storage.getString(mStore.ORGANIZATION);
+  const value = storage?.getString(mStore.USER_TOKEN);
+  const orgJSON = storage?.getString(mStore.ORGANIZATION);
   const organization = JSON.parse(orgJSON)?._id;
-  const proJSON = storage.getString(mStore.ACTIVE_ENROLLMENT);
+  const proJSON = storage?.getString(mStore.ACTIVE_ENROLLMENT);
   const enrollment = JSON.parse(proJSON)?._id;
 
   // Configure socket options

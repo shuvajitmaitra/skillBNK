@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -14,18 +14,18 @@ import {
 } from 'react-native-responsive-dimensions';
 import ImageView from 'react-native-image-viewing';
 import CustomFonts from '../../../constants/CustomFonts';
-import {useTheme} from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 import Modal from 'react-native-modal';
 import ModalBackAndCrossButton from '../../ChatCom/Modal/ModalBackAndCrossButton';
-import {loadHolidays, loadWeekends} from '../../../actions/chat-noti';
-import {useSelector} from 'react-redux';
+import { loadHolidays, loadWeekends } from '../../../actions/chat-noti';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import Images from '../../../constants/Images';
-import {storage} from '../../../utility/mmkvInstance';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { storage } from '../../../utility/mmkvInstance';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NoDataAvailable from '../../SharedComponent/NoDataAvailable';
-import {RootState} from '../../../types/redux/root';
-import {TColors} from '../../../types';
+import { RootState } from '../../../types/redux/root';
+import { TColors } from '../../../types';
 
 // Interfaces
 export interface IHoliday {
@@ -61,12 +61,12 @@ export default function HolidayModalV2({
 }: HolidayProps) {
   const Colors = useTheme();
   const styles = getStyles(Colors);
-  const enroll = storage.getString('active_enrolment');
+  const enroll = storage?.getString('active_enrolment');
   let enrollId = enroll ? JSON.parse(enroll)?._id : undefined;
-  const [viewImage, setViewImage] = useState<{uri: string; index: number}[]>(
+  const [viewImage, setViewImage] = useState<{ uri: string; index: number }[]>(
     [],
   );
-  const {holidays, weekends} = useSelector(
+  const { holidays, weekends } = useSelector(
     (state: RootState) => state.calendar,
   );
   const [selected, setSelected] = useState('holidays');
@@ -92,7 +92,7 @@ export default function HolidayModalV2({
       : `${moment(start).format('ddd')} - ${moment(end).format('ddd')}`;
 
   const items = selected === 'holidays' ? holidays : weekends;
-  const {top} = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
 
   return (
     <Modal
@@ -102,9 +102,10 @@ export default function HolidayModalV2({
         justifyContent: 'flex-start',
         paddingTop: top,
       }}
-      isVisible={isHolidayVisible}>
+      isVisible={isHolidayVisible}
+    >
       <ModalBackAndCrossButton
-        containerStyle={{paddingHorizontal: 20}}
+        containerStyle={{ paddingHorizontal: 20 }}
         toggleModal={toggleHoliday}
       />
       <View style={styles.headerContainer}>
@@ -117,12 +118,14 @@ export default function HolidayModalV2({
             style={[
               styles.holidayButtonContainer,
               selected === 'holidays' && styles.clickedStyle,
-            ]}>
+            ]}
+          >
             <Text
               style={[
                 styles.holidayButton,
-                selected === 'holidays' && {color: Colors.PureWhite},
-              ]}>
+                selected === 'holidays' && { color: Colors.PureWhite },
+              ]}
+            >
               Holidays
             </Text>
           </TouchableOpacity>
@@ -132,12 +135,14 @@ export default function HolidayModalV2({
                 styles.holidayButtonContainer,
                 selected === 'weekends' && styles.clickedStyle,
               ]}
-              onPress={() => setSelected('weekends')}>
+              onPress={() => setSelected('weekends')}
+            >
               <Text
                 style={[
                   styles.holidayButton,
-                  selected === 'weekends' && {color: Colors.PureWhite},
-                ]}>
+                  selected === 'weekends' && { color: Colors.PureWhite },
+                ]}
+              >
                 Weekends
               </Text>
             </TouchableOpacity>
@@ -170,11 +175,12 @@ export default function HolidayModalV2({
                 <TouchableOpacity
                   onPress={() =>
                     setViewImage &&
-                    setViewImage(items.map(i => ({uri: i.image, index})))
-                  }>
+                    setViewImage(items.map(i => ({ uri: i.image, index })))
+                  }
+                >
                   <Image
                     source={
-                      item?.image ? {uri: item.image} : Images.DEFAULT_IMAGE
+                      item?.image ? { uri: item.image } : Images.DEFAULT_IMAGE
                     }
                     style={{
                       width: responsiveScreenWidth(10),
@@ -193,7 +199,8 @@ export default function HolidayModalV2({
                 height: responsiveScreenHeight(70),
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}>
+              }}
+            >
               <NoDataAvailable />
             </View>
           )}
