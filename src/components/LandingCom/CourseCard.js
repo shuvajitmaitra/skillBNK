@@ -5,7 +5,6 @@ import {useTheme} from '../../context/ThemeContext';
 import {responsiveFontSize} from 'react-native-responsive-dimensions';
 import CustomFonts from '../../constants/CustomFonts';
 import {useNavigation} from '@react-navigation/native';
-import {Rating} from '@kolking/react-native-rating';
 
 const CourseCard = ({item, orgSlug}) => {
   const Colors = useTheme();
@@ -45,14 +44,14 @@ const CourseCard = ({item, orgSlug}) => {
       </Text>
       <View style={styles.ratingContainer}>
         {starRating > 0 && <Text style={styles.ratingText}>{starRating}</Text>}
-        <Rating
+        {/* <Rating
           variant="stars"
           rating={starRating}
           disabled={true}
           size={16}
           baseColor={Colors.BodyText}
           fillColor={Colors.StarColor}
-        />
+        /> */}
         <Text style={styles.totalReviewsText}>({totalReviews})</Text>
       </View>
 

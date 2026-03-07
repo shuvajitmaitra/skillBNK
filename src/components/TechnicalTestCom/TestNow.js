@@ -33,7 +33,7 @@ import CommentSection from '../CommentCom/CommentSection';
 import {useGlobalAlert} from '../SharedComponent/GlobalAlertContext';
 import {formattingDate, theme} from '../../utility/commonFunction';
 import {getComments} from '../../actions/chat-noti';
-import DocumentPicker, {types} from 'react-native-document-picker';
+import {pick, types} from 'react-native-document-picker';
 import RequireFieldStar from '../../constants/RequireFieldStar';
 import CommentField from '../CommentCom/CommentField';
 import TextRender from '../SharedComponent/TextRender';
@@ -198,7 +198,7 @@ export default function TestNow(routes) {
   const UploadAnyFile = async () => {
     try {
       // Allow users to pick multiple files with specified types
-      const results = await DocumentPicker.pick({
+      const results = await pick({
         type: [types.images, types.pdf, types.doc, types.docx],
         allowMultiSelection: true, // Enable multiple selection
       });
@@ -277,7 +277,7 @@ export default function TestNow(routes) {
 
       setIsUploading(false);
     } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
+      if (err) {
         // User canceled the picker, no action needed
         console.log('User canceled file picker');
       } else {

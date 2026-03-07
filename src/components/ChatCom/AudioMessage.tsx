@@ -6,7 +6,11 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import Sound from 'react-native-sound';
+import Sound, {
+  PlayBackType,
+  PlaybackEndType,
+  useSound,
+} from 'react-native-nitro-sound';
 import Waveform from './WaveForm';
 import {useTheme} from '../../context/ThemeContext';
 import {responsiveScreenWidth} from 'react-native-responsive-dimensions';
@@ -16,9 +20,10 @@ import PlayIcon from '../../assets/Icons/PlayIcon';
 import PauseIcon from '../../assets/Icons/PauseIcon';
 import {TColors} from '../../types';
 
-Sound.setCategory('Playback');
+// react-native-nitro-sound-এ category সেট করার দরকার নেই → internally handle করে
 
 const formatTime = (time: number) => {
+  // time যদি seconds-এ আসে
   return new Date(time * 1000).toISOString().substr(14, 5);
 };
 
@@ -33,91 +38,167 @@ const AudioMessage: React.FC<AudioMessageProps> = ({
   background,
   color = '#ffffff',
 }) => {
-  const [sound, setSound] = useState<Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentPlaybackTime, setCurrentPlaybackTime] = useState<number>(0);
   const [totalDuration, setTotalDuration] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<Error | null>(null);
-  // Use useRef without optional chaining on assignment.
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const intervalRef = useRef<any | null>(null);
+  const removePlaybackListener = useRef<(() => void) | null>(null);
+  const removeEndListener = useRef<(() => void) | null>(null);
+  const {
+    sound,
+    state,
+    startPlayer,
+    pausePlayer,
+    resumePlayer,
+    stopPlayer,
+    seekToPlayer,
+    mmssss,
+  } = useSound({
+    subscriptionDuration: 0.05, // 50ms updates
+  });
+  console.log('state', JSON.stringify(state, null, 2));
   useEffect(() => {
     let isMounted = true;
-    let loadedSound: Sound | null = null;
 
-    loadedSound = new Sound(audioUrl, undefined, error => {
-      if (error) {
-        console.log('Error loading audio:', error);
-        setLoadError(error);
-        setIsLoading(false);
-        return;
+    const loadAudio = async () => {
+      try {
+        setIsLoading(true);
+        setLoadError(null);
+        setIsPlaying(false);
+        setCurrentPlaybackTime(0);
+        setProgress(0);
+
+        // Previous sound clean up
+        Sound.stopPlayer().catch(() => {});
+        cleanupListeners();
+        Sound.addPlayBackListener((e: PlayBackType) => {
+          console.log('Playback progress:', e.currentPosition, e.duration);
+
+          setTotalDuration(e.duration || 0);
+          setIsLoading(false);
+        });
+
+        // Prepare + get duration
+        await Sound.startPlayer(audioUrl); // prepare + play (but we pause immediately)
+        await Sound.pausePlayer();
+
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      } catch (err: any) {
+        console.log('Audio prepare error:', err);
+        if (isMounted) {
+          setLoadError(err);
+          setIsLoading(false);
+        }
       }
-      if (isMounted && loadedSound) {
-        setSound(loadedSound);
-        setTotalDuration(loadedSound.getDuration());
-        setIsLoading(false);
-      }
-    });
+    };
+
+    loadAudio();
 
     return () => {
       isMounted = false;
-      if (loadedSound) {
-        loadedSound.stop(() => {});
-        loadedSound.release();
-        if (AudioManager.getInstance().currentAudio === loadedSound) {
-          AudioManager.getInstance().reset();
-        }
+      Sound.stopPlayer().catch(() => {});
+      cleanupListeners();
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
   }, [audioUrl]);
 
+  const cleanupListeners = () => {
+    if (removePlaybackListener.current) {
+      removePlaybackListener.current();
+      removePlaybackListener.current = null;
+    }
+    if (removeEndListener.current) {
+      removeEndListener.current();
+      removeEndListener.current = null;
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       return () => {
-        if (sound) {
-          sound.pause();
-          if (intervalRef.current !== null) {
+        if (isPlaying) {
+          Sound.pausePlayer().catch(() => {});
+          setIsPlaying(false);
+          if (intervalRef.current) {
             clearInterval(intervalRef.current);
+            intervalRef.current = null;
           }
         }
       };
-    }, [sound]),
+    }, [isPlaying]),
   );
 
-  const handlePlayPause = () => {
-    if (sound) {
-      if (isPlaying) {
-        sound.pause();
+  const handlePlayPause = async () => {
+    if (isPlaying) {
+      try {
+        await Sound.pausePlayer();
         setIsPlaying(false);
-        if (intervalRef.current !== null) {
+        if (intervalRef.current) {
           clearInterval(intervalRef.current);
+          intervalRef.current = null;
         }
-      } else {
-        if (Math.floor(currentPlaybackTime) === Math.floor(totalDuration)) {
-          sound.setCurrentTime(0);
-        }
-        AudioManager.getInstance().setAudio(sound);
-        sound.play((success: boolean) => {
-          if (success) {
-            setIsPlaying(false);
-            setProgress(0);
-            setCurrentPlaybackTime(0);
-            if (intervalRef.current !== null) {
-              clearInterval(intervalRef.current);
-            }
-          }
-        });
-        setIsPlaying(true);
-        // Direct assignment without optional chaining.
-        intervalRef.current = setInterval(() => {
-          sound.getCurrentTime((seconds: number) => {
-            setCurrentPlaybackTime(seconds);
-            setProgress(seconds / totalDuration);
-          });
-        }, 1000);
+      } catch (err) {
+        console.log('Pause error:', err);
       }
+      return;
+    }
+
+    try {
+      cleanupListeners();
+
+      // যদি শেষ হয়ে থাকে তাহলে restart
+      if (currentPlaybackTime >= totalDuration - 0.3) {
+        await Sound.stopPlayer();
+        await Sound.startPlayer(audioUrl);
+      } else {
+        await Sound.resumePlayer(); // বা startPlayer() যদি paused না থাকে
+      }
+      // Progress listener
+      removePlaybackListener.current = Sound.addPlayBackListener(
+        (e: PlayBackType) => {
+          setCurrentPlaybackTime(e.currentPosition);
+          if (totalDuration > 0) {
+            setProgress(e.currentPosition / totalDuration);
+          }
+        },
+      );
+
+      // End listener
+      removeEndListener.current = Sound.addPlaybackEndListener(
+        (e: PlaybackEndType) => {
+          setIsPlaying(false);
+          setCurrentPlaybackTime(totalDuration);
+          setProgress(1);
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          cleanupListeners();
+        },
+      );
+
+      setIsPlaying(true);
+
+      // Fallback interval যদি listener smooth না হয়
+      intervalRef.current = setInterval(() => {
+        const pos = Sound.getCurrentTime();
+        setCurrentPlaybackTime(pos);
+        if (totalDuration > 0) {
+          setProgress(pos / totalDuration);
+        }
+      }, 180); // ~5-6 fps update
+    } catch (err) {
+      console.log('Play error:', err);
+      setIsPlaying(false);
     }
   };
 
@@ -163,9 +244,6 @@ interface GetStylesProps {
 
 const getStyles = ({Colors, color}: GetStylesProps) =>
   StyleSheet.create({
-    playIcon: {
-      color: Colors.Primary,
-    },
     audioTimer: {
       marginLeft: responsiveScreenWidth(2),
       color: color || Colors.PureWhite,

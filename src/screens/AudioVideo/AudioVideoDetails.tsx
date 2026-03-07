@@ -19,7 +19,6 @@ import ArrowRightWhite from '../../assets/Icons/ArrowRightWhite';
 import moment from 'moment';
 import Markdown from 'react-native-markdown-display';
 import Images from '../../constants/Images';
-import Sound from 'react-native-sound';
 import {useSelector} from 'react-redux';
 import VideoPlayer from '../../components/ProgramCom/VideoPlayer';
 import CommentField from '../../components/CommentCom/CommentField';
@@ -28,8 +27,12 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TColors} from '../../types';
 import {MarkdownStylesProps} from '../../types/markdown/markdown';
 import {ProgramStackParamList} from '../../types/navigation';
+import {
+  createSound,
+  PlayBackType,
+  PlaybackEndType,
+} from 'react-native-nitro-sound';
 
-// Define the type for our screen props using NativeStackScreenProps
 type AudioVideoDetailsProps = NativeStackScreenProps<
   ProgramStackParamList,
   'AudioVideoDetails'
@@ -44,78 +47,109 @@ const AudioVideoDetails: React.FC<AudioVideoDetailsProps> = ({route}) => {
   const [activeButton, setActiveButton] = useState<string>('summary');
   const [content, setContent] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  // Type the ref to hold a Sound instance or null
-  const soundRef = useRef<Sound | null>(null);
+
+  // Ref now holds SoundInstance from createSound()
+  const soundRef = useRef<ReturnType<typeof createSound> | null>(null);
+
+  // Listener cleanup refs
+  const removePlaybackListener = useRef<(() => void) | null>(null);
+  const removeEndListener = useRef<(() => void) | null>(null);
 
   const Colors = useTheme();
   const styles = getStyles(Colors);
 
-  // Load and play audio when currentMediaIndex changes
+  // Cleanup function for listeners
+  const cleanupListeners = () => {
+    if (removePlaybackListener.current) {
+      removePlaybackListener.current();
+      removePlaybackListener.current = null;
+    }
+    if (removeEndListener.current) {
+      removeEndListener.current();
+      removeEndListener.current = null;
+    }
+  };
+
+  // Load & manage audio when currentMediaIndex changes
   useEffect(() => {
-    // Cleanup previous sound
+    // 1. Cleanup previous audio
     if (soundRef.current) {
-      soundRef.current.stop(() => {
-        soundRef.current?.release();
-        soundRef.current = null;
+      soundRef.current.stopPlayer().catch(() => {});
+      cleanupListeners();
+      soundRef.current = null;
+    }
+    setIsPlaying(false);
+
+    const currentMedia = medias[currentMediaIndex];
+    if (!currentMedia || currentMedia.mediaType !== 'audio') {
+      return;
+    }
+
+    const url = currentMedia.url;
+    if (!url) return;
+
+    // 2. Create new independent sound instance
+    const player = createSound();
+    soundRef.current = player;
+
+    // 3. Start / prepare & play
+    player
+      .startPlayer(url)
+      .then(() => {
+        setIsPlaying(true);
+
+        // Progress listener (~every 500ms)
+        player.addPlayBackListener((e: PlayBackType) => {
+          // e.currentPosition is in seconds
+          console.log('Playback progress:', e.currentPosition, e.duration);
+          // You can use this for a progress bar if you add one later
+        });
+        removePlaybackListener.current = () => {
+          // Cleanup for playback listener if needed
+        };
+
+        // Completion / end listener
+        player.addPlaybackEndListener((e: PlaybackEndType) => {
+          console.log('Playback finished:', e);
+          setIsPlaying(false);
+          cleanupListeners();
+        });
+        removeEndListener.current = () => {
+          // Cleanup for end listener if needed
+        };
+      })
+      .catch(err => {
+        console.log('Failed to start audio:', err);
+        setIsPlaying(false);
       });
-    }
 
-    // If the current media is audio, load and play it
-    if (medias[currentMediaIndex]?.mediaType === 'audio') {
-      const sound = new Sound(
-        medias[currentMediaIndex]?.url,
-        Sound.MAIN_BUNDLE,
-        error => {
-          if (error) {
-            console.log('Failed to load the sound', error);
-            return;
-          }
-          soundRef.current = sound;
-          sound.play(success => {
-            if (success) {
-              console.log('Successfully finished playing');
-              setIsPlaying(false);
-            } else {
-              console.log('Playback failed due to audio decoding errors');
-              setIsPlaying(false);
-            }
-          });
-          setIsPlaying(true);
-        },
-      );
-    }
-
-    // Cleanup when the effect is re-run
+    // 4. Cleanup on unmount / index change
     return () => {
       if (soundRef.current) {
-        soundRef.current.stop(() => {
-          soundRef.current?.release();
-          soundRef.current = null;
-        });
+        soundRef.current.stopPlayer().catch(() => {});
+        cleanupListeners();
+        soundRef.current = null;
       }
     };
   }, [currentMediaIndex, medias]);
 
-  // Update content based on activeButton and currentMediaIndex
+  // Update content when button or media changes
   useEffect(() => {
-    if (medias[currentMediaIndex] && medias[currentMediaIndex].data) {
-      setContent(
-        (medias[currentMediaIndex].data[activeButton] as string) ||
-          'No Summary',
-      );
+    const currentMedia = medias[currentMediaIndex];
+    if (currentMedia?.data) {
+      setContent((currentMedia.data[activeButton] as string) || 'No Summary');
     } else {
       setContent('No Summary');
     }
   }, [activeButton, currentMediaIndex, medias]);
-  // console.log('medias', JSON.stringify(medias, null, 2));
-  // Handle component unmount
+
+  // Final unmount cleanup
   useEffect(() => {
     return () => {
       if (soundRef.current) {
-        soundRef.current.stop(() => {
-          soundRef.current?.release();
-          soundRef.current = null;
-        });
+        soundRef.current.stopPlayer().catch(() => {});
+        cleanupListeners();
+        soundRef.current = null;
       }
     };
   }, []);
@@ -132,23 +166,16 @@ const AudioVideoDetails: React.FC<AudioVideoDetailsProps> = ({route}) => {
     }
   };
 
-  const togglePlayback = (): void => {
+  const togglePlayback = async () => {
     if (soundRef.current) {
       if (isPlaying) {
-        soundRef.current.pause(() => {
+        await soundRef.current.pausePlayer().catch(() => {});
+        setIsPlaying(false);
+      } else {
+        setIsPlaying(true);
+        await soundRef.current.resumePlayer().catch(() => {
           setIsPlaying(false);
         });
-      } else {
-        soundRef.current.play((success: boolean) => {
-          if (success) {
-            console.log('Successfully finished playing');
-            setIsPlaying(false);
-          } else {
-            console.log('Playback failed due to audio decoding errors');
-            setIsPlaying(false);
-          }
-        });
-        setIsPlaying(true);
       }
     }
   };

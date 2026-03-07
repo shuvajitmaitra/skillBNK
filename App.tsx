@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   StatusBar,
   LogBox,
@@ -8,22 +8,22 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import store, { persistor } from './src/store/index';
-import SplashScreen from 'react-native-splash-screen';
-import { AlertProvider } from './src/components/SharedComponent/GlobalAlertContext';
-import { MainProvider } from './src/context/MainContext';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import store, {persistor} from './src/store/index';
+// import SplashScreen from 'react-native-splash-screen';
+import {AlertProvider} from './src/components/SharedComponent/GlobalAlertContext';
+import {MainProvider} from './src/context/MainContext';
 import Navigation from './src/navigation/Navigation';
 
 import 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
-import { ThemeProvider, useTheme } from './src/context/ThemeContext';
-import { toastConfig } from './src/constants/ToastConfig';
-import { theme } from './src/utility/commonFunction';
-import { LogLevel, OneSignal } from 'react-native-onesignal';
-import { ONESIGNAL_APP_ID } from './src/hook/usePushNotification';
+import {ThemeProvider, useTheme} from './src/context/ThemeContext';
+import {toastConfig} from './src/constants/ToastConfig';
+import {theme} from './src/utility/commonFunction';
+import {LogLevel, OneSignal} from 'react-native-onesignal';
+import {ONESIGNAL_APP_ID} from './src/hook/usePushNotification';
 
 LogBox.ignoreLogs(['Setting a timer']);
 LogBox.ignoreLogs(['fontFamily']);
@@ -53,7 +53,7 @@ const AppWrapper: React.FC = () => {
       <PersistGate loading={<ReduxLoading />} persistor={persistor}>
         <ThemeProvider>
           <AlertProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
+            <GestureHandlerRootView style={{flex: 1}}>
               <MainProvider>
                 <App />
                 <Toast config={toastConfig} />
@@ -69,7 +69,7 @@ const AppWrapper: React.FC = () => {
 const App: React.FC = () => {
   const Colors = useTheme();
   useEffect(() => {
-    SplashScreen.hide();
+    // SplashScreen.hide();
     OneSignal.Debug.setLogLevel(LogLevel.Verbose);
     OneSignal.initialize(ONESIGNAL_APP_ID);
 
@@ -87,7 +87,7 @@ const App: React.FC = () => {
         backgroundColor={Colors.Background_color}
         barStyle={theme() === 'light' ? 'dark-content' : 'light-content'}
       />
-      <View style={{ backgroundColor: Colors.Foreground, flex: 1 }}>
+      <View style={{backgroundColor: Colors.Foreground, flex: 1}}>
         <Navigation />
       </View>
     </>
