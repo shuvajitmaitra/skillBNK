@@ -16,6 +16,7 @@ import {fontSizes, gGap} from '../../constants/Sizes';
 import {responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import CustomFonts from '../../constants/CustomFonts';
 import CrossCircle from '../../assets/Icons/CrossCircle';
+import {withOpacity} from './Mention/utils';
 
 export default function UserModalVoice({
   handleCreateChat,
@@ -147,7 +148,7 @@ export default function UserModalVoice({
                     style={{
                       width: gGap(30),
                       height: gGap(30),
-                      backgroundColor: Colors.Foreground,
+                      backgroundColor: withOpacity(Colors.Primary, 0.2),
                       borderRadius: 100,
                     }}
                     source={

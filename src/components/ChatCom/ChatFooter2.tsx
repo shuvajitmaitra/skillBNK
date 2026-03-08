@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   Alert,
   Keyboard,
@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   launchImageLibrary,
   ImagePickerResponse,
@@ -34,8 +34,8 @@ import AttachmentIcon from '../../assets/Icons/AttachmentIcon';
 import GalleryIcon from '../../assets/Icons/GalleryIcon';
 import ArrowTopIcon from '../../assets/Icons/ArrowTopIcon';
 
-import { useTheme } from '../../context/ThemeContext';
-import { RegularFonts } from '../../constants/Fonts';
+import {useTheme} from '../../context/ThemeContext';
+import {RegularFonts} from '../../constants/Fonts';
 import axiosInstance from '../../utility/axiosInstance';
 
 import {
@@ -47,19 +47,20 @@ import {
   updateRepliesCount,
   updateThreadMessage,
 } from '../../store/reducer/chatSlice';
-import { updateLatestMessage } from '../../store/reducer/chatReducer';
-import { RootState } from '../../types/redux/root';
-import { TColors } from '../../types';
-import { showToast } from '../HelperFunction';
+import {updateLatestMessage} from '../../store/reducer/chatReducer';
+import {RootState} from '../../types/redux/root';
+import {TColors} from '../../types';
+import {showToast} from '../HelperFunction';
 import EditMessageFilePreview from './ChatFooter/EditMessageFilePreview';
 import AiModal from '../SharedComponent/AiModal/AiModal';
-import { IMessage, Sender, TFile } from '../../types/chat/messageTypes';
+import {IMessage, Sender, TFile} from '../../types/chat/messageTypes';
 import CalendarIconSmall from '../../assets/Icons/CalendarIconSmall';
-import { setNewEventData } from '../../store/reducer/calendarReducerV2';
-import { MaterialIcon } from '../../constants/Icons';
-import { gGap } from '../../constants/Sizes';
+import {setNewEventData} from '../../store/reducer/calendarReducerV2';
+import {MaterialIcon} from '../../constants/Icons';
+import {gGap} from '../../constants/Sizes';
 // import ProgramIcon from '../../assets/Icons/ProgramIcon';
 import PurposeModal from './Modal/PurposeModal';
+import {withOpacity} from './Mention/utils';
 
 // Regular expressions and helper function for link conversion.
 const URL_REGEX =
@@ -115,11 +116,11 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
   parentId = '',
 }) => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state: RootState) => state.auth);
-  const { localMessages, threadMessages, selectedMessage, draftMessages } =
+  const {user} = useSelector((state: RootState) => state.auth);
+  const {localMessages, threadMessages, selectedMessage, draftMessages} =
     useSelector((state: RootState) => state.chatSlice);
 
-  const { singleChat } = useSelector((state: RootState) => state.chat);
+  const {singleChat} = useSelector((state: RootState) => state.chat);
 
   const Colors = useTheme();
   const styles = getStyles(Colors);
@@ -492,7 +493,7 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
           text: '',
         }),
       );
-      const newMessage = { ...res.data.message, editedAt: new Date() };
+      const newMessage = {...res.data.message, editedAt: new Date()};
       if (!message.parentMessage) {
         dispatch(updateMessage(newMessage));
         dispatch(
@@ -567,7 +568,7 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
             styles={styles}
           />
           <EditMessageFilePreview files={editFile || []} />
-          <View style={[styles.mainContainer, { paddingVertical: 10 }]}>
+          <View style={[styles.mainContainer, {paddingVertical: 10}]}>
             <View style={styles.container}>
               <ChatMessageInput
                 handleKey={handleKey}
@@ -595,22 +596,19 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
             <View
               style={[
                 styles.bottomContainer,
-                !startRecording && { marginBottom: 20 },
-              ]}
-            >
+                !startRecording && {marginBottom: 20},
+              ]}>
               {!startRecording && (
                 <TouchableOpacity
                   onPress={handleDocumentSelection}
-                  style={styles.buttonContainer}
-                >
+                  style={styles.buttonContainer}>
                   {uploading ? <LoadingSmall /> : <AttachmentIcon />}
                 </TouchableOpacity>
               )}
               {!startRecording && (
                 <TouchableOpacity
                   onPress={selectImage}
-                  style={styles.buttonContainer}
-                >
+                  style={styles.buttonContainer}>
                   <GalleryIcon />
                 </TouchableOpacity>
               )}
@@ -671,8 +669,7 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
         backgroundColor: Colors.Background_color,
         paddingTop: 10,
         marginTop: 10,
-      }}
-    >
+      }}>
       <View style={[styles.mainContainer]}>
         {!startRecording && (
           <Pressable style={styles.toggleButton} onPress={toggleBottom}>
@@ -705,8 +702,7 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
                 toggleMessageClicked();
                 setShowBottom(false);
               }}
-              style={styles.initialContainer}
-            >
+              style={styles.initialContainer}>
               <Text style={styles.messageText}>
                 {text?.trim() ? text : parentId ? 'Reply...' : 'Message...'}
               </Text>
@@ -729,22 +725,19 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
         <View
           style={[
             styles.bottomContainer,
-            !startRecording && { marginBottom: 20 },
-          ]}
-        >
+            !startRecording && {marginBottom: 20},
+          ]}>
           {!startRecording && (
             <TouchableOpacity
               onPress={handleDocumentSelection}
-              style={styles.buttonContainer}
-            >
+              style={styles.buttonContainer}>
               {uploading ? <LoadingSmall /> : <AttachmentIcon />}
             </TouchableOpacity>
           )}
           {!startRecording && (
             <TouchableOpacity
               onPress={selectImage}
-              style={styles.buttonContainer}
-            >
+              style={styles.buttonContainer}>
               <GalleryIcon />
             </TouchableOpacity>
           )}
@@ -752,22 +745,20 @@ const ChatFooter2: React.FC<ChatFooter2Props> = ({
             onPress={() => {
               setShowBottom(!showBottom);
               dispatch(
-                setNewEventData({ isModalVisible: true, eventType: 'event' }),
+                setNewEventData({isModalVisible: true, eventType: 'event'}),
               );
             }}
-            style={styles.buttonContainer}
-          >
+            style={styles.buttonContainer}>
             <CalendarIconSmall color={Colors.BodyText} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               setShowBottom(!showBottom);
               dispatch(
-                setNewEventData({ isModalVisible: true, eventType: 'task' }),
+                setNewEventData({isModalVisible: true, eventType: 'task'}),
               );
             }}
-            style={styles.buttonContainer}
-          >
+            style={styles.buttonContainer}>
             <MaterialIcon name="task-alt" size={22} color={Colors.BodyText} />
           </TouchableOpacity>
           {/* <TouchableOpacity
@@ -802,7 +793,9 @@ const getStyles = (Colors: TColors) =>
     },
     buttonContainer: {
       padding: 20,
-      backgroundColor: Colors.CyanOpacity,
+      backgroundColor: withOpacity(Colors.Primary, 0.2),
+      borderColor: withOpacity(Colors.Primary, 0.3),
+      borderWidth: 1,
       borderRadius: 100,
     },
     bottomContainer: {

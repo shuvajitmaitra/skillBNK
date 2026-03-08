@@ -22,6 +22,7 @@ import {RegularFonts} from '../../constants/Fonts';
 import TextRender from '../SharedComponent/TextRender';
 import MessagePreviewContainer from './MessagePreviewContainer';
 import {FeatherIcon} from '../../constants/Icons';
+import {withOpacity} from './Mention/utils';
 
 const ChatProfileLinks = ({
   handleCreateChat,
@@ -155,6 +156,7 @@ const getStyles = (Colors: TColors) =>
       width: gGap(35),
       height: gGap(35),
       borderRadius: 20,
+      backgroundColor: withOpacity(Colors.Primary, 0.2),
     },
     contentContainer: {
       //   backgroundColor: 'red',
