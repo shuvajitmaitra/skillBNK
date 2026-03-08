@@ -67,7 +67,6 @@ const ChatProfileLinks = ({
 
     return displayText;
   };
-  console.log('chatLinksInfo', JSON.stringify(chatLinksInfo, null, 2));
   if (chatLinksInfo === null) {
     return (
       <View>

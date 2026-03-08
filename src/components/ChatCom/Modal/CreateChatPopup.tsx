@@ -43,7 +43,9 @@ const CreateChatPopup = ({
         <TouchableOpacity
           onPress={() => {
             setPosition(null);
-            toggleCreateCrowdModal();
+            setTimeout(() => {
+              toggleCreateCrowdModal();
+            }, 10);
           }}
           style={styles.buttonContainer}>
           <CrowdIcon color={Colors.BodyText} />

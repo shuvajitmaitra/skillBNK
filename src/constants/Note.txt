@@ -5,6 +5,8 @@ When I filter my posts and scroll to the bottom, all the posts disappear, and it
 78. The comment page shows a dark background as well as the x button is not properly visible issue fixed
 95. The link preview is not showing properly in the chat profile link view.
 96. After uploading a file the text shows some extra %20 text where space is included. 
+97. Creating a chat crowd freezes the app from the chat item screen.
+
 
 
 
