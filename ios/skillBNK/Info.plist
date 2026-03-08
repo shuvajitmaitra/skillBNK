@@ -26,7 +26,6 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -34,22 +33,16 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to capture photos and scan documents when you choose to use those features.</string>
-
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need access to your microphone to record audio.</string>
-
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to display images.</string>
-
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to provide location-based features in the app.</string>
-
 	<key>RCTNewArchEnabled</key>
 	<true/>
-
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -93,26 +86,21 @@
 		<string>Lato-Light.ttf</string>
 		<string>Lato-Regular.ttf</string>
 	</array>
-
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
-
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-
+	<string>BootSplash</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
-
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
@@ -120,7 +108,6 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

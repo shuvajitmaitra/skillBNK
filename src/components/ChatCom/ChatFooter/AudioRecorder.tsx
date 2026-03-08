@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Pressable } from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, TouchableOpacity, Pressable} from 'react-native';
 // import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import AudioWaveform from './AudioWaveform';
 import CrossCircle from '../../../assets/Icons/CrossCircle';
@@ -7,14 +7,15 @@ import CheckIconTwo from '../../../assets/Icons/CheckIconTwo';
 import AudioMessage from '../AudioMessage';
 import MicIcon from '../../../assets/Icons/MicIcon';
 import ChatMessageInput from '../ChatMessageInput';
-import { useTheme } from '../../../context/ThemeContext';
+import {useTheme} from '../../../context/ThemeContext';
 import axiosInstance from '../../../utility/axiosInstance';
 import SendIcon from '../../../assets/Icons/SendIcon';
 // import LoadingSmall from '../../SharedComponent/LoadingSmall';
-import { TColors } from '../../../types';
+import {TColors} from '../../../types';
 import AiIcon2 from '../../../assets/Icons/AiIcon2';
 import AiModal from '../../SharedComponent/AiModal/AiModal';
-import { showToast } from '../../HelperFunction';
+import {showToast} from '../../HelperFunction';
+import Sound from 'react-native-nitro-sound';
 
 // const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -67,7 +68,7 @@ const AudioRecorder = ({
       );
       let url = response?.data.url;
       if (!url) {
-        return showToast({ message: "Audio can't upload" });
+        return showToast({message: "Audio can't upload"});
       }
       let files = [
         {
@@ -92,43 +93,43 @@ const AudioRecorder = ({
     }
   };
   const startAudioRecording = async () => {
-    // try {
-    //   const result = await audioRecorderPlayer.startRecorder();
-    //   setRecording(true);
-    //   setStartRecording(true);
-    //   audioRecorderPlayer.addRecordBackListener(e => {
-    //     console.log('audio record');
-    //     console.log('Recording', e);
-    //     return;
-    //   });
-    //   console.log('Recording started', result);
-    // } catch (error) {
-    //   console.error('Failed to start recording:', error);
-    // }
+    try {
+      const result = await Sound.startRecorder();
+      setRecording(true);
+      setStartRecording(true);
+      Sound.addRecordBackListener(e => {
+        console.log('audio record');
+        console.log('Recording', e);
+        return;
+      });
+      console.log('Recording started', result);
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+    }
   };
 
   const stopRecording = async () => {
-    // try {
-    //   const result = await audioRecorderPlayer.stopRecorder();
-    //   setRecording(false);
-    //   setRecordedAudioPath(result);
-    //   audioRecorderPlayer.removeRecordBackListener();
-    //   console.log('Recording stopped, file saved at:', result);
-    // } catch (error) {
-    //   console.error('Failed to stop recording:', error);
-    // }
+    try {
+      const result = await Sound.stopRecorder();
+      setRecording(false);
+      setRecordedAudioPath(result);
+      Sound.removeRecordBackListener();
+      console.log('Recording stopped, file saved at:', result);
+    } catch (error) {
+      console.error('Failed to stop recording:', error);
+    }
   };
   const cancelRecording = async () => {
-    // try {
-    //   await audioRecorderPlayer.stopRecorder();
-    //   setRecording(false);
-    //   setStartRecording(false);
-    //   setRecordedAudioPath('');
-    //   audioRecorderPlayer.removeRecordBackListener();
-    //   console.log('Recording canceled');
-    // } catch (error) {
-    //   console.error('Failed to stop recording:', error);
-    // }
+    try {
+      await Sound.stopRecorder();
+      setRecording(false);
+      setStartRecording(false);
+      setRecordedAudioPath('');
+      Sound.removeRecordBackListener();
+      console.log('Recording canceled');
+    } catch (error) {
+      console.error('Failed to stop recording:', error);
+    }
   };
 
   const Colors = useTheme();
@@ -163,8 +164,7 @@ const AudioRecorder = ({
               // borderRadius: 100,
             }
           : styles.container,
-      ]}
-    >
+      ]}>
       {!recording && recordedAudioPath && (
         <View style={styles.inputContainer}>
           <ChatMessageInput
@@ -178,7 +178,7 @@ const AudioRecorder = ({
             from="audio"
           />
           {
-            <View style={text?.length > 0 ? { gap: 10, paddingTop: 10 } : {}}>
+            <View style={text?.length > 0 ? {gap: 10, paddingTop: 10} : {}}>
               {text?.length > 0 && (
                 <TouchableOpacity onPress={onAiPress}>
                   <AiIcon2 color={Colors.Primary} size={30} />
@@ -192,8 +192,7 @@ const AudioRecorder = ({
                   setText('');
                   setRecording(false);
                   setStartRecording(false);
-                }}
-              >
+                }}>
                 <SendIcon size={30} />
               </TouchableOpacity>
             </View>
@@ -212,9 +211,8 @@ const AudioRecorder = ({
             </TouchableOpacity>
           )} */}
           <TouchableOpacity
-            style={{ marginBottom: 15 }}
-            onPress={startAudioRecording}
-          >
+            style={{marginBottom: 15}}
+            onPress={startAudioRecording}>
             <MicIcon size={25} />
           </TouchableOpacity>
         </>
@@ -241,8 +239,7 @@ const AudioRecorder = ({
             onPress={() => {
               setRecordedAudioPath('');
               setStartRecording(false);
-            }}
-          >
+            }}>
             <CrossCircle />
           </Pressable>
         </View>

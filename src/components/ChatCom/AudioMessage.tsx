@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -6,26 +6,13 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import Sound, {
-  PlayBackType,
-  PlaybackEndType,
-  useSound,
-} from 'react-native-nitro-sound';
+import Sound from 'react-native-nitro-sound';
 import Waveform from './WaveForm';
 import {useTheme} from '../../context/ThemeContext';
 import {responsiveScreenWidth} from 'react-native-responsive-dimensions';
-import AudioManager from '../../utility/AudioManager';
-import {useFocusEffect} from '@react-navigation/native';
 import PlayIcon from '../../assets/Icons/PlayIcon';
 import PauseIcon from '../../assets/Icons/PauseIcon';
 import {TColors} from '../../types';
-
-// react-native-nitro-sound-এ category সেট করার দরকার নেই → internally handle করে
-
-const formatTime = (time: number) => {
-  // time যদি seconds-এ আসে
-  return new Date(time * 1000).toISOString().substr(14, 5);
-};
 
 interface AudioMessageProps {
   audioUrl: string;
@@ -33,177 +20,207 @@ interface AudioMessageProps {
   color?: string;
 }
 
+const INITIAL_TIME = '00:00';
+
+const formatTime = (ms: number) => {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
+    2,
+    '0',
+  )}`;
+};
+
 const AudioMessage: React.FC<AudioMessageProps> = ({
   audioUrl,
   background,
   color = '#ffffff',
 }) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentPlaybackTime, setCurrentPlaybackTime] = useState<number>(0);
-  const [totalDuration, setTotalDuration] = useState<number>(0);
-  const [progress, setProgress] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [loadError, setLoadError] = useState<Error | null>(null);
+  const Colors = useTheme();
+  const styles = getStyles({Colors, color});
 
-  const intervalRef = useRef<any | null>(null);
-  const removePlaybackListener = useRef<(() => void) | null>(null);
-  const removeEndListener = useRef<(() => void) | null>(null);
-  const {
-    sound,
-    state,
-    startPlayer,
-    pausePlayer,
-    resumePlayer,
-    stopPlayer,
-    seekToPlayer,
-    mmssss,
-  } = useSound({
-    subscriptionDuration: 0.05, // 50ms updates
-  });
-  console.log('state', JSON.stringify(state, null, 2));
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [playTime, setPlayTime] = useState(INITIAL_TIME);
+  const [duration, setDuration] = useState(INITIAL_TIME);
+  const [loadError, setLoadError] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const currentPositionRef = useRef(0);
+  const durationRef = useRef(0);
+  const playbackFinishedRef = useRef(false);
+  const listenersAttachedRef = useRef(false);
+
   useEffect(() => {
-    let isMounted = true;
-
-    const loadAudio = async () => {
-      try {
-        setIsLoading(true);
-        setLoadError(null);
-        setIsPlaying(false);
-        setCurrentPlaybackTime(0);
-        setProgress(0);
-
-        // Previous sound clean up
-        Sound.stopPlayer().catch(() => {});
-        cleanupListeners();
-        Sound.addPlayBackListener((e: PlayBackType) => {
-          console.log('Playback progress:', e.currentPosition, e.duration);
-
-          setTotalDuration(e.duration || 0);
-          setIsLoading(false);
-        });
-
-        // Prepare + get duration
-        await Sound.startPlayer(audioUrl); // prepare + play (but we pause immediately)
-        await Sound.pausePlayer();
-
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      } catch (err: any) {
-        console.log('Audio prepare error:', err);
-        if (isMounted) {
-          setLoadError(err);
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadAudio();
+    attachListeners();
 
     return () => {
-      isMounted = false;
-      Sound.stopPlayer().catch(() => {});
-      cleanupListeners();
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      try {
+        Sound.stopPlayer();
+      } catch {}
+      removeListeners();
     };
+  }, []);
+
+  useEffect(() => {
+    const resetAudio = async () => {
+      try {
+        await Sound.stopPlayer();
+      } catch {}
+
+      removeListeners();
+
+      setIsPlaying(false);
+      setIsPaused(false);
+      setIsLoading(false);
+      setLoadError(false);
+      setPlayTime(INITIAL_TIME);
+      setDuration(INITIAL_TIME);
+      setProgress(0);
+
+      currentPositionRef.current = 0;
+      durationRef.current = 0;
+      playbackFinishedRef.current = false;
+
+      attachListeners();
+    };
+
+    resetAudio();
   }, [audioUrl]);
 
-  const cleanupListeners = () => {
-    if (removePlaybackListener.current) {
-      removePlaybackListener.current();
-      removePlaybackListener.current = null;
-    }
-    if (removeEndListener.current) {
-      removeEndListener.current();
-      removeEndListener.current = null;
-    }
+  const removeListeners = () => {
+    try {
+      Sound.removePlayBackListener();
+    } catch {}
+    try {
+      Sound.removePlaybackEndListener?.();
+    } catch {}
+    listenersAttachedRef.current = false;
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        if (isPlaying) {
-          Sound.pausePlayer().catch(() => {});
-          setIsPlaying(false);
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-          }
-        }
-      };
-    }, [isPlaying]),
-  );
-
-  const handlePlayPause = async () => {
-    if (isPlaying) {
-      try {
-        await Sound.pausePlayer();
-        setIsPlaying(false);
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-      } catch (err) {
-        console.log('Pause error:', err);
-      }
+  const attachListeners = () => {
+    if (listenersAttachedRef.current) {
       return;
     }
 
-    try {
-      cleanupListeners();
+    Sound.addPlayBackListener((e: any) => {
+      const currentPosition = Number(e.currentPosition ?? 0);
+      const totalDuration = Number(e.duration ?? 0);
 
-      // যদি শেষ হয়ে থাকে তাহলে restart
-      if (currentPlaybackTime >= totalDuration - 0.3) {
-        await Sound.stopPlayer();
-        await Sound.startPlayer(audioUrl);
-      } else {
-        await Sound.resumePlayer(); // বা startPlayer() যদি paused না থাকে
+      currentPositionRef.current = currentPosition;
+      durationRef.current = totalDuration;
+
+      setPlayTime(formatTime(currentPosition));
+      setDuration(formatTime(totalDuration));
+      setProgress(totalDuration > 0 ? currentPosition / totalDuration : 0);
+    });
+
+    Sound.addPlaybackEndListener?.((e: any) => {
+      const currentPosition = Number(e?.currentPosition ?? 0);
+      const totalDuration = Number(e?.duration ?? 0);
+
+      const isActuallyFinished =
+        totalDuration > 0 && Math.abs(totalDuration - currentPosition) < 500;
+
+      if (!isActuallyFinished) {
+        return;
       }
-      // Progress listener
-      removePlaybackListener.current = Sound.addPlayBackListener(
-        (e: PlayBackType) => {
-          setCurrentPlaybackTime(e.currentPosition);
-          if (totalDuration > 0) {
-            setProgress(e.currentPosition / totalDuration);
-          }
-        },
-      );
 
-      // End listener
-      removeEndListener.current = Sound.addPlaybackEndListener(
-        (e: PlaybackEndType) => {
-          setIsPlaying(false);
-          setCurrentPlaybackTime(totalDuration);
-          setProgress(1);
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-          }
-          cleanupListeners();
-        },
-      );
-
-      setIsPlaying(true);
-
-      // Fallback interval যদি listener smooth না হয়
-      intervalRef.current = setInterval(() => {
-        const pos = Sound.getCurrentTime();
-        setCurrentPlaybackTime(pos);
-        if (totalDuration > 0) {
-          setProgress(pos / totalDuration);
-        }
-      }, 180); // ~5-6 fps update
-    } catch (err) {
-      console.log('Play error:', err);
+      playbackFinishedRef.current = true;
       setIsPlaying(false);
+      setIsPaused(false);
+      currentPositionRef.current = 0;
+      setProgress(1);
+      setPlayTime(formatTime(totalDuration));
+      setDuration(formatTime(totalDuration));
+    });
+
+    listenersAttachedRef.current = true;
+  };
+
+  const startFromBeginning = async () => {
+    setIsLoading(true);
+    setLoadError(false);
+    playbackFinishedRef.current = false;
+
+    try {
+      await Sound.startPlayer(audioUrl);
+      attachListeners();
+      currentPositionRef.current = 0;
+      setIsPlaying(true);
+      setIsPaused(false);
+    } catch (error) {
+      console.error('Failed to start playback:', error);
+      setLoadError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const Colors = useTheme();
-  const styles = getStyles({Colors, color});
+  const resumeFromLastPosition = async () => {
+    setIsLoading(true);
+    setLoadError(false);
+    playbackFinishedRef.current = false;
+
+    try {
+      const lastPosition = currentPositionRef.current || 0;
+
+      await Sound.startPlayer(audioUrl);
+      attachListeners();
+
+      if (lastPosition > 0) {
+        await Sound.seekToPlayer(lastPosition);
+      }
+
+      currentPositionRef.current = lastPosition;
+      setIsPlaying(true);
+      setIsPaused(false);
+    } catch (error) {
+      console.error('Failed to resume playback:', error);
+      setLoadError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePause = async () => {
+    try {
+      await Sound.pausePlayer();
+      setIsPlaying(false);
+      setIsPaused(true);
+    } catch (error) {
+      console.log('Pause error:', error);
+    }
+  };
+
+  const handlePlayPause = async () => {
+    try {
+      if (isPlaying) {
+        await handlePause();
+        return;
+      }
+
+      if (playbackFinishedRef.current) {
+        currentPositionRef.current = 0;
+        setPlayTime(INITIAL_TIME);
+        setProgress(0);
+        await startFromBeginning();
+        return;
+      }
+
+      if (isPaused && currentPositionRef.current > 0) {
+        await resumeFromLastPosition();
+        return;
+      }
+
+      await startFromBeginning();
+    } catch (error) {
+      console.log('Play/Pause error:', error);
+    }
+  };
 
   return (
     <View
@@ -230,8 +247,9 @@ const AudioMessage: React.FC<AudioMessageProps> = ({
       )}
 
       {!loadError && <Waveform progress={progress} color={color} />}
+
       <Text style={styles.audioTimer}>
-        {formatTime(currentPlaybackTime)} / {formatTime(totalDuration)}
+        {playTime} / {duration}
       </Text>
     </View>
   );

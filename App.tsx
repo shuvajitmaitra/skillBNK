@@ -24,6 +24,7 @@ import {toastConfig} from './src/constants/ToastConfig';
 import {theme} from './src/utility/commonFunction';
 import {LogLevel, OneSignal} from 'react-native-onesignal';
 import {ONESIGNAL_APP_ID} from './src/hook/usePushNotification';
+import BootSplash from 'react-native-bootsplash';
 
 LogBox.ignoreLogs(['Setting a timer']);
 LogBox.ignoreLogs(['fontFamily']);
@@ -76,6 +77,7 @@ const App: React.FC = () => {
     const t = setTimeout(() => {
       OneSignal.Notifications.requestPermission(true);
     }, 1000);
+    BootSplash.hide({fade: true});
 
     return () => clearTimeout(t);
   }, []);
