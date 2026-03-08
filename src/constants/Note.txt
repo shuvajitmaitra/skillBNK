@@ -7,6 +7,9 @@ When I filter my posts and scroll to the bottom, all the posts disappear, and it
 96. After uploading a file the text shows some extra %20 text where space is included. 
 97. Creating a chat crowd freezes the app from the chat item screen.
 - Font family issue fix from all over the app.
+- Community section progress added in the progress screen.
+- Notes section Progress added in the progress screen.
+- Community navigation and progress navigation added.
 
 
 

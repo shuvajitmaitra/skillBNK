@@ -465,11 +465,11 @@ export function calculateOverallProgress(
   }>,
 ): number {
   const totalCompleted =
-    data.length > 0
+    data && data?.length > 0
       ? data?.reduce((acc, curr) => acc + Number(curr.completedItems), 0)
       : 0;
   const totalIncomplete =
-    data.length > 0
+    data && data?.length > 0
       ? data?.reduce((acc, curr) => acc + Number(curr.incompletedItems), 0)
       : 0;
 

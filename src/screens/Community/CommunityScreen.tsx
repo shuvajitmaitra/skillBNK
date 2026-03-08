@@ -431,12 +431,11 @@ const getStyles = (Colors: TColors) =>
       fontSize: responsiveScreenFontSize(2.4),
       color: Colors.Heading,
       fontFamily: CustomFonts.SEMI_BOLD,
-      fontWeight: '500',
     },
     subHeading: {
       fontFamily: CustomFonts.REGULAR,
       fontSize: responsiveScreenFontSize(1.6),
-      color: Colors.PureWhite,
+      color: Colors.BodyText,
     },
     separator: {
       minHeight: responsiveScreenHeight(10),

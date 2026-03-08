@@ -24,6 +24,11 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {loadBootcampProgress} from '../../actions/apiCall2';
 import {calculateOverallProgress} from '../../utility/commonFunction';
 import {LoadMockInterviewInfo} from '../../actions/apiCall';
+import CommunityProgressSection from '../../components/progress/CommunityProgressSection';
+import {DashboardResponse} from '../../types/dashboard/dashboadTypes';
+import {setLoading} from '../../store/reducer/TechnicalTestReducer';
+import {navigate} from '../../navigation/NavigationService';
+import NotesProgressSection from '../../components/progress/NotesProgressSection';
 
 // Define an interface for each progress item.
 interface ProgressItem {
@@ -58,11 +63,12 @@ const Progress: React.FC<ProgressScreenProps> = () => {
   // State for metrics data.
   const [totalResults, setTotalResults] = useState<Metrics | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [data, setData] = useState<DashboardResponse | null>(null);
+  console.log('data', JSON.stringify(data, null, 2));
 
   // Get the current user from the auth slice. (Type as any or replace with your own state type.)
   const {user} = useSelector((state: any) => state.auth);
   const {bootcamp} = useSelector((state: any) => state.dashboard);
-
   // Find specific progress items by id.
   const dayToday = myprogress?.find(
     (item: ProgressItem) => item.id === 'day2day',
@@ -84,8 +90,7 @@ const Progress: React.FC<ProgressScreenProps> = () => {
   // Get additional dashboard data from Redux.
   const {mockInterview, community} = useSelector(
     (state: any) => state.dashboard.dashboardData,
-  );
-  // console.log('mockInterview', JSON.stringify(mockInterview, null, 2));
+  ); // console.log('mockInterview', JSON.stringify(mockInterview, null, 2));
   const dispatch = useDispatch();
   const Colors = useTheme();
   const styles = getStyles(Colors);
@@ -156,21 +161,17 @@ const Progress: React.FC<ProgressScreenProps> = () => {
         },
       })
       .then(res => {
-        console.log('dashboard Data', JSON.stringify(res.data, null, 2));
-        if (res.data.success) {
-          dispatch(setDashboardData(res.data.data));
-          console.log('Data stored');
-          setIsLoading(false);
-        }
+        setData(res.data.data);
+        dispatch(setDashboardData(res.data.data));
       })
       .catch(err => {
-        setIsLoading(false);
-        console.log(err);
-        // Alert.alert(err?.response?.data?.error);
         console.log(
           'err.response.data.error',
           JSON.stringify(err.response.data.error, null, 2),
         );
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [dispatch, selectedCourse]);
 
@@ -191,11 +192,12 @@ const Progress: React.FC<ProgressScreenProps> = () => {
             <View style={{maxWidth: responsiveScreenWidth(70)}}>
               <Text style={styles.profileName}>{user?.fullName}</Text>
               <Text style={styles.ProfileText}>
-                {totalResults?.totalObtainedMark} out of{' '}
-                {totalResults?.totalMark}
+                {totalResults?.totalObtainedMark || 0} out of{' '}
+                {totalResults?.totalMark || 100}
               </Text>
               <Text style={styles.ProfileText}>
-                Overall Progress {calculateOverallProgress(bootcamp)}%
+                Overall Progress{' '}
+                {bootcamp ? calculateOverallProgress(bootcamp) : 0}%
               </Text>
             </View>
             <View style={{height: 'auto', justifyContent: 'center'}}>
@@ -228,7 +230,25 @@ const Progress: React.FC<ProgressScreenProps> = () => {
           showNTell={showNTell}
           reviews={reviews}
         /> */}
-
+        <CommunityProgressSection
+          community={data?.community}
+          onPressViewMore={() => {
+            navigate('CommunityStack', {screen: 'CommunityScreen'});
+          }}
+        />
+        <NotesProgressSection
+          data={{
+            _id: '6567f3612334d200199cd900',
+            id: 'notes',
+            title: 'Notes',
+            limit: 30,
+            count: 5,
+            additionalData: {
+              totalNotes: 5,
+            },
+          }}
+          onPressViewMore={() => navigate('HomeStack', {screen: 'NotesScreen'})}
+        />
         <CalendarProgress />
         <OtherActivitiesProgress
           showNTell={showNTell}

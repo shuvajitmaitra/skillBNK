@@ -13,7 +13,8 @@ const dashboardSlice = createSlice({
   initialState,
   reducers: {
     setDashboardData: (state, action) => {
-      state.bootcamp = action.payload.bootcamp.results;
+      state.bootcamp =
+        action?.payload?.bootcamp?.results && action.payload.bootcamp.results;
       state.dashboardData = action.payload;
     },
     setPieData: (state, action) => {
