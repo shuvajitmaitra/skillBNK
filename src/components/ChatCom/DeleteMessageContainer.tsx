@@ -81,7 +81,6 @@ const getStyles = (Colors: TColors) =>
     },
     name: {
       color: Colors.Red,
-      fontWeight: '500',
       fontFamily: CustomFonts.MEDIUM,
       fontSize: responsiveScreenFontSize(1.8),
     },

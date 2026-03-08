@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+  <font app:fontStyle="italic" app:fontWeight="200" app:font="@font/worksans_thinitalic"/>
+  <font app:fontStyle="normal" app:fontWeight="200" app:font="@font/worksans_thin"/>
+  <font app:fontStyle="italic" app:fontWeight="300" app:font="@font/worksans_lightitalic"/>
+  <font app:fontStyle="normal" app:fontWeight="300" app:font="@font/worksans_light"/>
+  <font app:fontStyle="italic" app:fontWeight="400" app:font="@font/worksans_italic"/>
+  <font app:fontStyle="normal" app:fontWeight="400" app:font="@font/worksans_regular"/>
+  <font app:fontStyle="italic" app:fontWeight="500" app:font="@font/worksans_mediumitalic"/>
+  <font app:fontStyle="normal" app:fontWeight="500" app:font="@font/worksans_medium"/>
+  <font app:fontStyle="italic" app:fontWeight="600" app:font="@font/worksans_semibolditalic"/>
+  <font app:fontStyle="normal" app:fontWeight="600" app:font="@font/worksans_semibold"/>
+  <font app:fontStyle="italic" app:fontWeight="700" app:font="@font/worksans_bolditalic"/>
+  <font app:fontStyle="normal" app:fontWeight="700" app:font="@font/worksans_bold"/>
+  <font app:fontStyle="italic" app:fontWeight="800" app:font="@font/worksans_extrabolditalic"/>
+  <font app:fontStyle="normal" app:fontWeight="800" app:font="@font/worksans_extrabold"/>
+  <font app:fontStyle="italic" app:fontWeight="900" app:font="@font/worksans_blackitalic"/>
+  <font app:fontStyle="normal" app:fontWeight="900" app:font="@font/worksans_black"/>
+</font-family>

@@ -20,6 +20,9 @@ import {fontSizes, gFontSize, gGap} from '../../constants/Sizes';
 import CustomFonts from '../../constants/CustomFonts';
 import {RegularFonts} from '../../constants/Fonts';
 import TextRender from '../SharedComponent/TextRender';
+import MessagePreviewContainer from './MessagePreviewContainer';
+import LinkIcon from '../../assets/Icons/LinkIcon';
+import {FeatherIcon} from '../../constants/Icons';
 
 const ChatProfileLinks = ({
   handleCreateChat,
@@ -65,6 +68,7 @@ const ChatProfileLinks = ({
 
     return displayText;
   };
+  console.log('chatLinksInfo', JSON.stringify(chatLinksInfo, null, 2));
   if (chatLinksInfo === null) {
     return (
       <View>
@@ -102,10 +106,19 @@ const ChatProfileLinks = ({
                   </Text>
                 </View>
               </TouchableOpacity>
+
+              {item?.text && (
+                <MessagePreviewContainer text={item?.text || ''} />
+              )}
               {item?.text && <TextRender text={item?.text || ''} />}
               <TouchableOpacity
                 style={styles.linkContainer}
                 onPress={() => handleOpenLink(item?.url)}>
+                <FeatherIcon
+                  name={'external-link'}
+                  size={20}
+                  color={Colors.Primary}
+                />
                 <Text style={styles.linkText}>
                   {extractLinkText(item?.url)}
                 </Text>
@@ -172,11 +185,15 @@ const getStyles = (Colors: TColors) =>
       backgroundColor: Colors.BodyTextOpacity || '#2A2A2A',
       padding: 12,
       borderRadius: 8,
-      marginTop: 5,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
     },
     linkText: {
       fontSize: 14,
-      color: Colors.BodyText || '#3897F0',
+      color: Colors.Primary,
+      fontWeight: '500',
+      textDecorationLine: 'underline',
     },
     markdown: {
       whiteSpace: 'pre',

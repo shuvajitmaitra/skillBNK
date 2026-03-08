@@ -1,5 +1,7 @@
 package com.bootcampshub.ai
 
+import com.facebook.react.common.assets.ReactFontManager
+
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -22,6 +24,8 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    ReactFontManager.getInstance().addCustomFont(this, "Work Sans", R.font.work_sans)
+    ReactFontManager.getInstance().addCustomFont(this, "Lato", R.font.lato)
     loadReactNative(this)
   }
 }

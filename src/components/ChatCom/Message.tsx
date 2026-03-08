@@ -429,8 +429,7 @@ const getStyles = (Colors: TColors, my: boolean) =>
     name: {
       //   alignSelf: 'flex-end',
       color: Colors.Heading,
-      fontWeight: '500',
-      fontFamily: CustomFonts.MEDIUM,
+      fontFamily: CustomFonts.REGULAR,
       // marginBottom: responsiveScreenHeight(1),
       // backgroundColor: 'blue',
       fontSize: responsiveScreenFontSize(1.8),

@@ -110,12 +110,12 @@ const CommunityScreen = () => {
     },
     {
       id: 6,
-      label: 'This Week',
+      label: 'Last Week',
       value: 'lastweek',
     },
     {
       id: 7,
-      label: 'This Month',
+      label: 'Last Month',
       value: 'lastmonth',
     },
   ];
@@ -436,7 +436,7 @@ const getStyles = (Colors: TColors) =>
     subHeading: {
       fontFamily: CustomFonts.REGULAR,
       fontSize: responsiveScreenFontSize(1.6),
-      color: Colors.BodyText,
+      color: Colors.PureWhite,
     },
     separator: {
       minHeight: responsiveScreenHeight(10),
