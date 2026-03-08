@@ -1,18 +1,15 @@
-import {Text, TextStyle} from 'react-native';
 import React from 'react';
-import CustomFonts from '../../constants/CustomFonts';
+import {Text, TextProps, StyleProp, TextStyle} from 'react-native';
 
-const RNText = ({
-  children,
-  style,
-  ...props
-}: {
+interface RNTextProps extends TextProps {
   children: React.ReactNode;
-  style: TextStyle;
-}) => {
+  style?: StyleProp<TextStyle>;
+}
+
+const RNText = ({children, style, ...props}: RNTextProps) => {
   return (
-    <Text style={{...style, fontFamily: CustomFonts.MEDIUM}} {...props}>
-      {children}{' '}
+    <Text {...props} style={[style]}>
+      {children}
     </Text>
   );
 };

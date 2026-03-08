@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     color: '#546A7E',
     marginLeft: responsiveScreenWidth(2),
     fontFamily: CustomFonts.REGULAR,
-    fontWeight: '500',
   },
   line: {
     borderBottomWidth: 1,

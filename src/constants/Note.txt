@@ -1,11 +1,12 @@
 App must support 16 KB memory page sizes issue fixed and submitted in google play store.
 When I filter the posts for this month, it shows the previous month's posts, not the current month.
 When I filter my posts and scroll to the bottom, all the posts disappear, and it shows "no data available".
-- 46. Event status filtering is not working in the week view.
+46. Event status filtering is not working in the week view.
 78. The comment page shows a dark background as well as the x button is not properly visible issue fixed
 95. The link preview is not showing properly in the chat profile link view.
 96. After uploading a file the text shows some extra %20 text where space is included. 
 97. Creating a chat crowd freezes the app from the chat item screen.
+- Font family issue fix from all over the app.
 
 
 

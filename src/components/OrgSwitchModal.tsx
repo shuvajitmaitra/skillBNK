@@ -110,7 +110,6 @@ const getStyles = (Colors: TColors) =>
     },
     headingText: {
       fontSize: 20,
-      fontWeight: '700',
       fontFamily: CustomFonts.BOLD,
       color: Colors.Heading,
     },
