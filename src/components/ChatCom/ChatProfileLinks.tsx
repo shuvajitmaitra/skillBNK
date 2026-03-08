@@ -21,7 +21,6 @@ import CustomFonts from '../../constants/CustomFonts';
 import {RegularFonts} from '../../constants/Fonts';
 import TextRender from '../SharedComponent/TextRender';
 import MessagePreviewContainer from './MessagePreviewContainer';
-import LinkIcon from '../../assets/Icons/LinkIcon';
 import {FeatherIcon} from '../../constants/Icons';
 
 const ChatProfileLinks = ({

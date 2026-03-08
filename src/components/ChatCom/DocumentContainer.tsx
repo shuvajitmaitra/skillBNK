@@ -7,15 +7,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { Dispatch, SetStateAction } from 'react';
-import { useTheme } from '../../context/ThemeContext';
+import React, {Dispatch, SetStateAction} from 'react';
+import {useTheme} from '../../context/ThemeContext';
 import ChatMessageInput from './ChatMessageInput';
 import SendIcon from '../../assets/Icons/SendIcon';
 import DocumentIconFour from '../../assets/Icons/DocumentIconFour';
 import CrossCircle from '../../assets/Icons/CrossCircle';
-import { TColors } from '../../types';
-import { DocumentPickerResponse } from '@react-native-documents/picker';
+import {TColors} from '../../types';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import AiIcon2 from '../../assets/Icons/AiIcon2';
+import {extractFileName} from '../HelperFunction';
 
 type DocumentContainerProps = {
   onClose: () => void;
@@ -52,8 +53,7 @@ const DocumentContainer = ({
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // For iOS and Android
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      style={styles.docContainer}
-    >
+      style={styles.docContainer}>
       <View style={styles.inputContainer}>
         <ChatMessageInput
           chat={chat}
@@ -66,9 +66,7 @@ const DocumentContainer = ({
           from="doc"
         />
         {
-          <View
-            style={text?.length > 0 ? { gap: 10, paddingVertical: 10 } : {}}
-          >
+          <View style={text?.length > 0 ? {gap: 10, paddingVertical: 10} : {}}>
             {text?.length > 0 && (
               <TouchableOpacity onPress={onAiPress}>
                 <AiIcon2 size={30} color={Colors.Primary} />
@@ -78,8 +76,7 @@ const DocumentContainer = ({
             <TouchableOpacity
               onPress={() => {
                 uploadDocument(text);
-              }}
-            >
+              }}>
               <SendIcon size={30} />
             </TouchableOpacity>
           </View>
@@ -90,10 +87,10 @@ const DocumentContainer = ({
         <View style={styles.bottomContainer}>
           <DocumentIconFour />
           <View>
-            <Text style={styles.fileName}>{fileUrl}</Text>
+            <Text style={styles.fileName}>{extractFileName(fileUrl)}</Text>
             <Text style={styles.fileName}>{fileType}</Text>
           </View>
-          <View style={{ flexGrow: 1 }} />
+          <View style={{flexGrow: 1}} />
           <Pressable onPress={onClose}>
             <CrossCircle />
           </Pressable>

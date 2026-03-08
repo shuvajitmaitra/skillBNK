@@ -14,6 +14,7 @@ import AudioMessage from './AudioMessage';
 import FileIcon from '../../assets/Icons/FileIcon';
 import {RegularFonts} from '../../constants/Fonts';
 import {TColors} from '../../types';
+import {extractFileName} from '../HelperFunction';
 
 type MessageFileContainerProps = {
   files: any[];
@@ -118,7 +119,7 @@ const MessageFileContainer = ({
       <View style={styles.documentContainer}>
         <FileIcon file={{type: iconName}} />
         <View style={styles.documentInfo}>
-          <Text style={styles.fileName}>{item.name}</Text>
+          <Text style={styles.fileName}>{extractFileName(item.name)}</Text>
           <Text
             style={
               styles.fileDetails
