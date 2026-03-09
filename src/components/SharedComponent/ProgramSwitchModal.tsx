@@ -186,7 +186,7 @@ const ProgramSwitchModal = memo(
                       color: Colors.PrimaryButtonTextColor,
                     },
                   ]}>
-                  All
+                  All ({myEnrollments?.length || 0})
                 </Text>
               </TouchableOpacity>
               {programItems.length > 0 && (
@@ -208,7 +208,7 @@ const ProgramSwitchModal = memo(
                         color: Colors.PrimaryButtonTextColor,
                       },
                     ]}>
-                    Programs
+                    Programs ({programItems?.length || 0})
                   </Text>
                 </TouchableOpacity>
               )}
@@ -231,7 +231,7 @@ const ProgramSwitchModal = memo(
                         color: Colors.PrimaryButtonTextColor,
                       },
                     ]}>
-                    Courses
+                    Courses ({courseItems?.length || 0})
                   </Text>
                 </TouchableOpacity>
               )}
@@ -254,7 +254,7 @@ const ProgramSwitchModal = memo(
                         color: Colors.PrimaryButtonTextColor,
                       },
                     ]}>
-                    Others
+                    Others ({otherItems?.length || 0})
                   </Text>
                 </TouchableOpacity>
               )}
@@ -313,9 +313,8 @@ const getStyles = (Colors: TColors) =>
     },
     tabItemText: {
       color: Colors.BodyText,
-      fontFamily: CustomFonts.REGULAR,
+      fontFamily: CustomFonts.SEMI_BOLD,
       fontSize: fontSizes.body,
-      fontWeight: '600',
     },
     tabContainer: {
       backgroundColor: Colors.Foreground,

@@ -25,6 +25,7 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - Documents & Labs screen search and filter section redesigned.
 - Added functionalities and API integration for filter Documents by date.
 - Designed modal to select date and clear date functionalities added.
+- Displayed Program count in the switch program modal.
 
 📌 Note: 100% of today’s tasks have been successfully completed.
 
