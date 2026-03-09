@@ -55,8 +55,8 @@ export type ProgramStackParamList = {
   ActivitiesDetails: {index: number};
   Progress: undefined;
   MockInterview: undefined;
-  Presentation: undefined;
-  PresentationDetailsView: undefined;
+  DocumentsLabsScreen: undefined;
+  DocumentsLabsDetailsScreen: undefined;
   InterviewDetails: undefined;
 };
 export type CalendarStackParamList = {

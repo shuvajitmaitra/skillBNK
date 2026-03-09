@@ -153,7 +153,7 @@ const NotificationScreen: React.FC = () => {
         navigation.navigate('ProgramStack', {screen: 'ShowAndTellScreen'});
         break;
       case 'createContent':
-        navigation.navigate('ProgramStack', {screen: 'Presentation'});
+        navigation.navigate('ProgramStack', {screen: 'DocumentsLabsScreen'});
         break;
       case 'orderTransactionStatusChange':
       case 'updateTransactionStatus':

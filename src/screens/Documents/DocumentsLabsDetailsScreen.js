@@ -10,7 +10,7 @@ import {useTheme} from '../../context/ThemeContext';
 import CommentField from '../../components/CommentCom/CommentField';
 import TextRender from '../../components/SharedComponent/TextRender';
 
-export default function PresentationDetailsView({route}) {
+export default function DocumentsLabsDetailsScreen({route}) {
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const params = route.params;
@@ -50,8 +50,6 @@ export default function PresentationDetailsView({route}) {
       </View>
     );
   }
-
-  console.log('content', JSON.stringify(content, null, 1));
 
   return (
     <View style={styles.container}>

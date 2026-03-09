@@ -15,12 +15,12 @@ import ShowNTellDetails from '../screens/ShowNTell/ShowNTellDetails';
 import AudioVideoScreen from '../screens/AudioVideo/AudioVideoScreen';
 import MockInterview from '../screens/MockInterview/MockInterview';
 import Header from '../components/SharedComponent/Header';
-import Presentation from '../screens/Documents/Presentation';
-import PresentationDetailsView from '../screens/Documents/PresentationDetailsView';
+import DocumentsLabsDetailsScreen from '../screens/Documents/DocumentsLabsDetailsScreen';
 import AudioVideoDetails from '../screens/AudioVideo/AudioVideoDetails';
 import GlobalBackButton from '../components/SharedComponent/GlobalBackButton';
 import {ProgramStackParamList} from '../types/navigation';
 import MockInterviewDetails from '../screens/MockInterview/MockInterviewDetails';
+import DocumentsLabsScreen from '../screens/Documents/DocumentsLabsScreen';
 
 const ProgramStack = createStackNavigator<ProgramStackParamList>();
 const renderHeader = (navigation: any) => <Header navigation={navigation} />;
@@ -167,15 +167,15 @@ const ProgramStackScreen = () => {
       />
 
       <ProgramStack.Screen
-        name="Presentation"
-        component={Presentation}
+        name="DocumentsLabsScreen"
+        component={DocumentsLabsScreen}
         options={({navigation}) => ({
           header: () => renderHeader(navigation),
         })}
       />
       <ProgramStack.Screen
-        name="PresentationDetailsView"
-        component={PresentationDetailsView}
+        name="DocumentsLabsDetailsScreen"
+        component={DocumentsLabsDetailsScreen}
         options={() => ({
           headerTitle: '',
           animation: 'fade',

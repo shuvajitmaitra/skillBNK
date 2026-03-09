@@ -27,11 +27,19 @@ import {RegularFonts} from '../../constants/Fonts';
 import {formattingDate, theme} from '../../utility/commonFunction';
 import {gGap} from '../../constants/Sizes';
 import Images from '../../constants/Images';
+import {withOpacity} from '../../components/ChatCom/Mention/utils';
+import FilterByDateModal from '../../components/Documents/FilterByDateModal';
+import moment from 'moment';
 
-export default function Presentation() {
+export default function DocumentsLabsScreen() {
   const Colors = useTheme();
   const styles = useMemo(() => getStyles(Colors), [Colors]);
   const navigation = useNavigation();
+
+  const [filterModalInfo, setFilterModalInfo] = useState({
+    isVisible: false,
+    selectedDate: '',
+  });
 
   const [initialLoading, setInitialLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -49,9 +57,11 @@ export default function Presentation() {
     limit: 10,
   });
 
+  const selectedDate = filterModalInfo.selectedDate;
+
   const handleNavigation = useCallback(
     contentId => {
-      navigation.navigate('PresentationDetailsView', {contentId});
+      navigation.navigate('DocumentsLabsDetailsScreen', {contentId});
     },
     [navigation],
   );
@@ -61,36 +71,74 @@ export default function Presentation() {
   }, [navigation]);
 
   const fetchPage = useCallback(
-    async (page, isLoadMore = false) => {
+    async (page = 1, isLoadMore = false, passedDate) => {
       try {
-        if (isLoadMore) setLoadingMore(true);
-        else setInitialLoading(true);
+        const activeDate = passedDate !== undefined ? passedDate : selectedDate;
 
-        const res = await axiosInstance.get('/content/labcontent', {
-          params: {page, limit: pagination.limit},
-        });
+        if (isLoadMore) {
+          setLoadingMore(true);
+        } else {
+          setInitialLoading(true);
+        }
 
-        const nextPagination = res?.data?.pagination ?? pagination;
+        const params = {
+          page,
+          limit: 10,
+          ...(activeDate ? {date: activeDate} : {}),
+        };
+
+        const res = await axiosInstance.get('/content/labcontent', {params});
+
+        const nextPagination = res?.data?.pagination ?? {
+          total: 0,
+          currentPage: 1,
+          totalPages: 1,
+          hasNext: false,
+          hasPrev: false,
+          limit: 10,
+        };
+
         const newItems = res?.data?.contents ?? [];
 
         setPagination(nextPagination);
 
         if (isLoadMore) {
           setRecords(prev => [...prev, ...newItems]);
-          // if not searching, keep UI list in sync
-          setContents(prev => (search ? prev : [...prev, ...newItems]));
+          setContents(prev => {
+            const merged = [...records, ...newItems];
+            if (search?.trim()) {
+              const q = search.trim().toLowerCase();
+              return merged.filter(item =>
+                (item?.name ?? '').toLowerCase().includes(q),
+              );
+            }
+            return [...prev, ...newItems];
+          });
         } else {
           setRecords(newItems);
-          setContents(newItems);
+
+          if (search?.trim()) {
+            const q = search.trim().toLowerCase();
+            setContents(
+              newItems.filter(item =>
+                (item?.name ?? '').toLowerCase().includes(q),
+              ),
+            );
+          } else {
+            setContents(newItems);
+          }
         }
       } catch (error) {
-        console.log(error);
+        console.log(
+          'fetchPage error:',
+          error?.response?.data || error?.message || error,
+        );
       } finally {
         setInitialLoading(false);
         setLoadingMore(false);
       }
     },
-    [pagination, search],
+    [selectedDate, search, records],
   );
 
   useEffect(() => {
@@ -117,9 +165,7 @@ export default function Presentation() {
   );
 
   const onEndReached = useCallback(() => {
-    // Don’t paginate while searching (optional, but usually expected)
     if (search?.trim()) return;
-
     if (loadingMore || initialLoading) return;
     if (!pagination?.hasNext) return;
 
@@ -174,34 +220,31 @@ export default function Presentation() {
     [styles],
   );
 
-  const renderItem = useCallback(
-    ({item}) => {
-      if (item?.isLocked) {
-        return (
-          <LockDocumentItem
-            title={item?.name}
-            date={item?.createdAt}
-            thumbnail={item?.thumbnail}
-          />
-        );
-      }
-
+  const renderItem = useCallback(({item}) => {
+    if (item?.isLocked) {
       return (
-        <DocumentItem
-          id={item?._id}
+        <LockDocumentItem
           title={item?.name}
           date={item?.createdAt}
           thumbnail={item?.thumbnail}
         />
       );
-    },
-    [DocumentItem, LockDocumentItem],
-  );
+    }
+
+    return (
+      <DocumentItem
+        id={item?._id}
+        title={item?.name}
+        date={item?.createdAt}
+        thumbnail={item?.thumbnail}
+      />
+    );
+  }, []);
 
   const keyExtractor = useCallback(item => item?._id, []);
 
   const ListFooterComponent = useMemo(() => {
-    if (!loadingMore) return;
+    if (!loadingMore) return null;
     return (
       <View style={styles.footerLoading}>
         <ActivityIndicator animating color={Colors.Primary} />
@@ -224,7 +267,7 @@ export default function Presentation() {
         Easy Access to Course Documents & Labs
       </Text>
 
-      <View style={styles.searchBoxContainer}>
+      <View>
         <View style={styles.searchBox}>
           <TextInput
             keyboardAppearance={theme()}
@@ -237,12 +280,34 @@ export default function Presentation() {
           <AntDesign name="search1" size={22} color={Colors.BodyText} />
         </View>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={handleProgramNavigation}
-          style={styles.searchFilter}>
-          <Text style={styles.buttonText}>Go to Bootcamp</Text>
-        </TouchableOpacity>
+        <View style={styles.searchBoxContainer}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              setFilterModalInfo(prev => ({...prev, isVisible: true}));
+            }}
+            style={{
+              ...styles.searchFilter,
+              backgroundColor: withOpacity(Colors.Primary, 0.2),
+            }}>
+            <Text
+              style={{
+                ...styles.buttonText,
+                color: Colors.Primary,
+              }}>
+              {selectedDate
+                ? moment(selectedDate).format('MMM DD, YYYY')
+                : 'Filter By Date'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleProgramNavigation}
+            style={styles.searchFilter}>
+            <Text style={styles.buttonText}>Go to Bootcamp</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList
@@ -257,6 +322,30 @@ export default function Presentation() {
         onEndReached={onEndReached}
         onEndReachedThreshold={0.4}
         ListFooterComponent={ListFooterComponent}
+      />
+
+      <FilterByDateModal
+        isVisible={filterModalInfo.isVisible}
+        selectedDate={filterModalInfo.selectedDate}
+        onClose={() =>
+          setFilterModalInfo(prev => ({...prev, isVisible: false}))
+        }
+        onSelect={date => {
+          setFilterModalInfo(prev => ({
+            ...prev,
+            selectedDate: date,
+            isVisible: false,
+          }));
+          fetchPage(1, false, date);
+        }}
+        onClear={() => {
+          setFilterModalInfo(prev => ({
+            ...prev,
+            selectedDate: '',
+            isVisible: false,
+          }));
+          fetchPage(1, false, '');
+        }}
       />
     </View>
   );
@@ -287,29 +376,28 @@ const getStyles = Colors =>
     },
 
     searchBoxContainer: {
+      width: '100%',
       flexDirection: 'row',
-      marginVertical: responsiveScreenHeight(2),
-      justifyContent: 'space-between',
-      gap: responsiveScreenWidth(2),
       alignItems: 'center',
+      gap: gGap(12),
+      marginBottom: gGap(8),
     },
     searchBox: {
-      height: responsiveScreenHeight(5.5),
-      backgroundColor: Colors.Foreground,
-      borderRadius: 10,
-      borderWidth: 1,
-      overflow: 'hidden',
-      borderColor: Colors.BorderColor,
       flexDirection: 'row',
-      alignItems: 'center',
       justifyContent: 'space-between',
-      paddingRight: responsiveScreenWidth(3),
-      flex: 0.65,
+      height: 50,
+      borderWidth: 1,
+      borderColor: Colors.BorderColor,
+      gap: 10,
+      alignItems: 'center',
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      marginBottom: 12,
+      marginTop: 12,
     },
     search: {
       flex: 1,
-      height: responsiveScreenHeight(5.5),
-      paddingLeft: responsiveScreenWidth(4),
+      height: 50,
       color: Colors.Heading,
       fontFamily: CustomFonts.REGULAR,
       fontSize: responsiveScreenFontSize(1.8),
@@ -321,13 +409,13 @@ const getStyles = Colors =>
       borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
-      flex: 0.35,
       paddingHorizontal: responsiveScreenWidth(2),
+      flex: 1,
     },
     buttonText: {
       color: Colors.PureWhite,
       fontFamily: CustomFonts.MEDIUM,
-      fontSize: responsiveScreenFontSize(1.6),
+      fontSize: responsiveScreenFontSize(1.8),
       textAlign: 'center',
     },
 

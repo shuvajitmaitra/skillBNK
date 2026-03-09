@@ -22,6 +22,10 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - Find availability modal close button design issue fixed.
 39. After searching something if I clear the search it shows no data available instead of showing all the users.
 - The AI option should be there in edit community post modal 
+- Documents & Labs screen search and filter section redesigned.
+- Added functionalities and API integration for filter Documents by date.
+- Designed modal to select date and clear date functionalities added.
+
 📌 Note: 100% of today’s tasks have been successfully completed.
 
 

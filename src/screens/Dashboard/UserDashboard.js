@@ -142,7 +142,7 @@ export default function UserDashboard() {
             )}
             {/* {enrolled && (
               <ChartSection
-                onPress={handleNavigation('Presentation', 'PresentationStack')}
+                onPress={handleNavigation('DocumentsLabsScreen', 'PresentationStack')}
                 Colors={Colors}
                 Component={Document}
                 title={'View More'}

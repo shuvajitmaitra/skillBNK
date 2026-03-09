@@ -15,7 +15,8 @@ const DocumentsProgress = ({myUploadedDocuments}) => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.HeadingText}>Documents</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Presentation')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('DocumentsLabsScreen')}>
           <ArrowTopRight />
         </TouchableOpacity>
       </View>

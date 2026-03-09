@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import environment from '../constants/environment';
-import { useTheme } from '../context/ThemeContext';
-import { responsiveScreenWidth } from 'react-native-responsive-dimensions';
+import {useTheme} from '../context/ThemeContext';
+import {responsiveScreenWidth} from 'react-native-responsive-dimensions';
 import CustomFonts from '../constants/CustomFonts';
 import useUserStatusData from '../constants/UserStatusData';
 import HomeIconTwo from '../assets/Icons/HomeIcon2';
@@ -23,20 +23,20 @@ import DocumentIcon from '../assets/Icons/DocumentIcon';
 import PasswordIcon from '../assets/Icons/PasswordIcon';
 import DisplaySettingsIcon from '../assets/Icons/DisplaySettingsIcon';
 import OrganizationDetails from '../navigation/OrganizationDetails';
-import { showToast } from '../components/HelperFunction';
-import { RootState } from '../types/redux/root';
+import {showToast} from '../components/HelperFunction';
+import {RootState} from '../types/redux/root';
 import Images from '../constants/Images';
-import { handleSignOut } from '../utility/commonFunction';
+import {handleSignOut} from '../utility/commonFunction';
 // import hotUpdate from 'react-native-ota-hot-update';
-import { fontSizes, gGap } from '../constants/Sizes';
+import {fontSizes, gGap} from '../constants/Sizes';
 import BinIcon from '../assets/Icons/BinIcon';
 import ConfirmationModal from '../components/SharedComponent/ConfirmationModal';
-import { getFromMMKV } from '../utility/mmkvHelpers';
+import {getFromMMKV} from '../utility/mmkvHelpers';
 import DrawerItem from './DrawerItem';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { navigate } from '../navigation/NavigationService';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {navigate} from '../navigation/NavigationService';
 import store from '../store';
-import { toggleDrawer } from '../store/reducer/authReducer';
+import {toggleDrawer} from '../store/reducer/authReducer';
 import RNText from '../components/SharedComponent/RNText';
 
 interface TColors {
@@ -47,37 +47,37 @@ interface TColors {
 const MIcon = MaterialIcons as any;
 const Icon = MaterialCommunityIcons as any;
 
-const renderHomeIconTwo = ({ color, size }: TColors) => (
+const renderHomeIconTwo = ({color, size}: TColors) => (
   <HomeIconTwo color={color} size={size} />
 );
-const renderProfileGreenIcon = ({ color, size }: TColors) => (
+const renderProfileGreenIcon = ({color, size}: TColors) => (
   <ProfileGreenIcon color={color} size={size} />
 );
-const renderMyProgramIcon = ({ color, size }: TColors) => (
+const renderMyProgramIcon = ({color, size}: TColors) => (
   <MyProgramIcon color={color} size={size} />
 );
 // const renderBookIcon = ({color, size}: TColors) => (
 //   <BookIcon color={color} size={size} />
 // );
-const renderDocumentIcon = ({ color, size }: TColors) => (
+const renderDocumentIcon = ({color, size}: TColors) => (
   <DocumentIcon color={color} size={size} />
 );
-const renderPasswordIcon = ({ color, size }: TColors) => (
+const renderPasswordIcon = ({color, size}: TColors) => (
   <PasswordIcon color={color} size={size} />
 );
-const renderDisplaySettingsIcon = ({ color, size }: TColors) => (
+const renderDisplaySettingsIcon = ({color, size}: TColors) => (
   <DisplaySettingsIcon color={color} size={size} />
 );
-const renderSystemUpdateAltIcon = ({ color, size }: TColors) => (
+const renderSystemUpdateAltIcon = ({color, size}: TColors) => (
   <MIcon name="system-update-alt" color={color} size={size} />
 );
-const renderExitToAppIcon = ({ color, size }: TColors) => (
+const renderExitToAppIcon = ({color, size}: TColors) => (
   <Icon name="exit-to-app" color={color} size={size} />
 );
 
 export function DrawerContent(props: any) {
   const [navigationData, setNavigationData] = useState<any[]>([]);
-  const { top } = useSafeAreaInsets();
+  const {top} = useSafeAreaInsets();
 
   useEffect(() => {
     // render time এ না, mount এর পরে একবার পড়ো
@@ -106,9 +106,9 @@ export function DrawerContent(props: any) {
 
   const Colors = useTheme();
   const styles = getStyles(Colors);
-  const { user } = useSelector((state: RootState) => state.auth);
-  const { updateInfo } = useSelector((state: RootState) => state.ota);
-  const { status } = useSelector((state: RootState) => state.userStatus);
+  const {user} = useSelector((state: RootState) => state.auth);
+  const {updateInfo} = useSelector((state: RootState) => state.ota);
+  const {status} = useSelector((state: RootState) => state.userStatus);
   const userStatusData = useUserStatusData(16);
   const [confiramModalVisible, setConfiramModalVisible] = useState(false);
   const navigateToScreen = (stack: string, screen: string) => {
@@ -123,8 +123,7 @@ export function DrawerContent(props: any) {
 
   return (
     <View
-      style={{ flex: 1, backgroundColor: Colors.Foreground, paddingTop: top }}
-    >
+      style={{flex: 1, backgroundColor: Colors.Foreground, paddingTop: top}}>
       <ScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
@@ -133,8 +132,7 @@ export function DrawerContent(props: any) {
               style={{
                 flexDirection: 'row',
                 marginTop: gGap(15),
-              }}
-            >
+              }}>
               <Image
                 source={
                   user.profilePicture
@@ -143,7 +141,7 @@ export function DrawerContent(props: any) {
                       }
                     : Images.DEFAULT_IMAGE
                 }
-                style={{ width: 50, height: 50, borderRadius: 25 }}
+                style={{width: 50, height: 50, borderRadius: 25}}
               />
               <View
                 style={{
@@ -153,13 +151,10 @@ export function DrawerContent(props: any) {
                   backgroundColor: Colors.Foreground,
                   borderRadius: 100,
                   padding: 2,
-                }}
-              >
+                }}>
                 {userStatusData.find(item => item.value === status)?.icon}
               </View>
-              <View
-                style={{ marginLeft: 15, flexDirection: 'column', flex: 1 }}
-              >
+              <View style={{marginLeft: 15, flexDirection: 'column', flex: 1}}>
                 <Text style={styles.title}>{user?.fullName}</Text>
                 <Text style={styles.caption}>{user?.email}</Text>
               </View>
@@ -221,7 +216,9 @@ export function DrawerContent(props: any) {
                   fontFamily: CustomFonts.MEDIUM,
                   color: Colors.Heading,
                 }}
-                onPress={() => navigateToScreen('ProgramStack', 'Presentation')}
+                onPress={() =>
+                  navigateToScreen('ProgramStack', 'DocumentsLabsScreen')
+                }
               />
             )}
 
@@ -269,7 +266,7 @@ export function DrawerContent(props: any) {
             )} */}
             <DrawerItem
               icon={() =>
-                renderSystemUpdateAltIcon({ color: Colors.Heading, size: 20 })
+                renderSystemUpdateAltIcon({color: Colors.Heading, size: 20})
               }
               label="Check for Update"
               labelStyle={{
@@ -282,7 +279,7 @@ export function DrawerContent(props: any) {
                 if (updateInfo?.url) store.dispatch(toggleDrawer());
                 updateInfo?.url
                   ? navigate('OtaScreen')
-                  : showToast({ message: 'No update available' });
+                  : showToast({message: 'No update available'});
               }}
             />
             {
@@ -321,7 +318,7 @@ export function DrawerContent(props: any) {
       </ScrollView>
 
       <DrawerItem
-        icon={() => renderExitToAppIcon({ color: 'red', size: 20 })}
+        icon={() => renderExitToAppIcon({color: 'red', size: 20})}
         label="Sign Out"
         onPress={handleSignOut}
         labelStyle={{
@@ -336,15 +333,14 @@ export function DrawerContent(props: any) {
           paddingBottom: 20,
           color: Colors.Heading,
           fontFamily: CustomFonts.MEDIUM,
-        }}
-      >
+        }}>
         Version: {environment.version} {!environment.production && '(staging)'}
       </RNText>
     </View>
   );
 }
 
-const getStyles = (Colors: { [key: string]: string }) =>
+const getStyles = (Colors: {[key: string]: string}) =>
   StyleSheet.create({
     drawerContent: {
       flex: 1,
