@@ -13,7 +13,6 @@ import ActivitiesDetails from '../screens/DayToDayActivities/ActivitiesDetails';
 import ShowAndTellScreen from '../screens/ShowNTell/ShowAndTellScreen';
 import ShowNTellDetails from '../screens/ShowNTell/ShowNTellDetails';
 import AudioVideoScreen from '../screens/AudioVideo/AudioVideoScreen';
-import MockInterview from '../screens/MockInterview/MockInterview';
 import Header from '../components/SharedComponent/Header';
 import DocumentsLabsDetailsScreen from '../screens/Documents/DocumentsLabsDetailsScreen';
 import AudioVideoDetails from '../screens/AudioVideo/AudioVideoDetails';
@@ -150,14 +149,6 @@ const ProgramStackScreen = () => {
         })}
       />
 
-      <ProgramStack.Screen
-        name="MockInterview"
-        component={MockInterview}
-        options={() => ({
-          // header: () => renderHeader(navigation),
-          headerShown: false,
-        })}
-      />
       <ProgramStack.Screen
         name="InterviewDetails"
         component={MockInterviewDetails}

@@ -250,7 +250,22 @@ const Dashboard: React.FC = () => {
         visible: hasNotes,
         onPress: handleNotesNavigation,
       },
-
+      {
+        id: 'diagram',
+        title: 'White Board',
+        subTitle: 'Draw your diagram',
+        backgroundColor: '#667fff',
+        circleColor: Colors.BodyTextOpacity,
+        icon: (
+          <MaterialCommunityIcon
+            name="pen"
+            size={30}
+            color={Colors.PureWhite}
+          />
+        ),
+        visible: hasProgram,
+        onPress: () => navigation.navigate('ArchitectureDiagram'),
+      },
       {
         id: 'community',
         title: 'Community',

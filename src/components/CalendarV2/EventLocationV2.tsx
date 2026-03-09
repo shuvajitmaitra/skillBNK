@@ -31,7 +31,7 @@ const EventLocationV2 = ({
     zoom: (
       <FontAwesomeIcon name="video-camera" size={30} color={Colors.Primary} />
     ),
-    // call: <FontAwesome5Icon name="phone" size={30} color={Colors.BodyText} />,
+    call: <FontAwesome5Icon name="phone" size={30} color={Colors.BodyText} />,
     custom: (
       <FontAwesome5Icon name="pencil-ruler" size={30} color={Colors.BodyText} />
     ),

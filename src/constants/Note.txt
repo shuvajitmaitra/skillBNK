@@ -12,20 +12,28 @@
 
 spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
-*Work Update – Mar 06, 2026*
+*Work Update – Mar 09, 2026*
 
-*SkillBNK app latest version (3.15.7) released on testflight*
+*SkillBNK app latest version (3.15.9) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
-36. In the calender availability I am not able to see other person specific availability time. Other times are showing correctly.
-38. When finding availability for the suer there should be a modal to select the date and that will show that user available time on that day.
-- Find availability modal close button design issue fixed.
-39. After searching something if I clear the search it shows no data available instead of showing all the users.
-- The AI option should be there in edit community post modal 
-- Documents & Labs screen search and filter section redesigned.
-- Added functionalities and API integration for filter Documents by date.
-- Designed modal to select date and clear date functionalities added.
-- Displayed Program count in the switch program modal.
+
+* In the calendar availability section, I am unable to see the specific availability time for other persons, while other times are displaying correctly.
+* When finding availability for the user, there should be a modal to select the date, which will then show that user’s available time on that day.
+* Fixed the design issue with the close button in the Find Availability modal.
+* After searching, if I clear the search, it shows “No data available” instead of displaying all users.
+* The AI option should be available in the Edit Community Post modal.
+* Redesigned the search and filter section on the Documents & Labs screen.
+* Added functionality and API integration to filter Documents by date.
+* Designed a modal for date selection and added clear date functionality.
+* Displayed the program count in the Switch Program modal.
+* Fixed the major damping issue with the calendar floating button.
+* Added the Architecture Diagram screen and navigation to the dashboard screen.
+
+**skillBNK Portal**
+
+* Modified the design of the Architecture Diagram page and connected the API to the mobile instance.
+* Modified the design of the Diagram Preview page and completed the API integration.
 
 📌 Note: 100% of today’s tasks have been successfully completed.
 

@@ -40,7 +40,8 @@ import {setChatFooterInfo} from '../store/reducer/chatFooterReducer';
 import {setNavigation} from '../store/reducer/authReducer';
 import {usePushNotification} from '../hook/usePushNotification';
 import BottomTabNavigator from './BottomTabNavigator';
-import ProtectedWebView from '../screens/MockInterview/ProtectedWebView';
+import MockInterview from '../screens/MockInterview/MockInterview';
+import ArchitectureDiagramScreen from '../screens/ArchitectureDiagram/ArchitectureDiagramScreen';
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -213,8 +214,18 @@ const RootStackNavigator: React.FC = () => {
         />
         <RootStack.Screen
           name="MockInterview"
-          component={ProtectedWebView}
+          component={MockInterview}
           options={{headerShown: false}}
+        />
+
+        <RootStack.Screen
+          name="ArchitectureDiagram"
+          component={ArchitectureDiagramScreen}
+          options={() => ({
+            headerTitle: '',
+            headerShown: false,
+            animation: 'fade',
+          })}
         />
         <RootStack.Screen
           name="DefaultRoute"

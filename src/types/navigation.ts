@@ -20,6 +20,7 @@ export type RootStackParamList = {
   NoteCreateScreen: undefined;
   MockInterview: undefined;
   MyProfileEdit: undefined;
+  ArchitectureDiagram: undefined;
 };
 
 export type HomeStackParamList = {

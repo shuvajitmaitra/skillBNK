@@ -38,14 +38,14 @@ const FloatingActionButtonV2 = ({
   const toggleMenu = () => {
     if (isOpen) {
       // Close the menu
-      rotation.value = withSpring(0, {damping: 10});
-      button1Y.value = withSpring(0, {damping: 10});
-      button2Y.value = withSpring(0, {damping: 10});
+      rotation.value = withSpring(0, {damping: 80});
+      button1Y.value = withSpring(0, {damping: 80});
+      button2Y.value = withSpring(0, {damping: 80});
     } else {
       // Open the menu
-      rotation.value = withSpring(45, {damping: 10});
-      button1Y.value = withSpring(-45, {damping: 10});
-      button2Y.value = withSpring(-90, {damping: 10});
+      rotation.value = withSpring(45, {damping: 80});
+      button1Y.value = withSpring(-45, {damping: 80});
+      button2Y.value = withSpring(-90, {damping: 80});
     }
     setIsOpen(!isOpen);
   };
