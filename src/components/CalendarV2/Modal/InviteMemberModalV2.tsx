@@ -434,7 +434,7 @@ const getStyles = (Colors: TColors) =>
       marginBottom: responsiveScreenHeight(1),
     },
     textInput: {
-      paddingVertical: responsiveScreenWidth(1.9),
+      height: gGap(40),
       fontSize: responsiveScreenFontSize(1.8),
       fontFamily: CustomFonts.REGULAR,
       color: Colors.Heading,

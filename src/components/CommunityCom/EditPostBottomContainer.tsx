@@ -13,6 +13,9 @@ import LoadingSmall from '../SharedComponent/LoadingSmall';
 import {handleGalleryPress} from './CreatePostButtonContainer';
 import {TColors} from '../../types';
 import {ICreatePost} from '../../types/community/community';
+import AiModal from '../SharedComponent/AiModal/AiModal';
+import {withOpacity} from '../ChatCom/Mention/utils';
+import AiIcon2 from '../../assets/Icons/AiIcon2';
 
 interface EditPostBottomContainerProps {
   post: ICreatePost | null;
@@ -23,9 +26,11 @@ interface EditPostBottomContainerProps {
 const EditPostBottomContainer = ({
   setPost,
   handleEditPost,
+  post,
 }: EditPostBottomContainerProps) => {
   const Colors = useTheme();
   const styles = getStyles(Colors);
+  const [aiModalVisible, setAiModalVisible] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,6 +70,26 @@ const EditPostBottomContainer = ({
             <LoadingSmall color={Colors.SecondaryButtonTextColor} />
           )}
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.holidayButtonContainer,
+            {
+              backgroundColor: withOpacity(Colors.Primary, 0.3),
+              borderWidth: 1,
+              borderColor: withOpacity(Colors.Primary, 0.3),
+            },
+          ]}
+          onPress={() => {
+            setAiModalVisible(!aiModalVisible);
+          }}>
+          <>
+            <AiIcon2 color={Colors.Primary} />
+            <Text style={[styles.holidayButtonText, {color: Colors.Primary}]}>
+              AI
+            </Text>
+          </>
+        </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.holidayButtonContainer,
@@ -81,6 +106,14 @@ const EditPostBottomContainer = ({
             </Text>
           </>
         </TouchableOpacity>
+        <AiModal
+          setState={(txt: string) =>
+            setPost(pre => ({...pre!, description: txt}))
+          }
+          state={post?.description}
+          isVisible={aiModalVisible}
+          onCancelPress={() => setAiModalVisible(prev => !prev)}
+        />
       </View>
     </View>
   );

@@ -8,11 +8,6 @@
 
 - In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
 
-
-
-
-
-
 *Note*: Goal: Achieve 100% completion of today’s worksteam objectives.
 
 spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
@@ -22,7 +17,11 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 *SkillBNK app latest version (3.15.7) released on testflight*
 
 *skillBNK Mobile App following task completed*
-
+36. In the calender availability I am not able to see other person specific availability time. Other times are showing correctly.
+38. When finding availability for the suer there should be a modal to select the date and that will show that user available time on that day.
+- Find availability modal close button design issue fixed.
+39. After searching something if I clear the search it shows no data available instead of showing all the users.
+- The AI option should be there in edit community post modal 
 📌 Note: 100% of today’s tasks have been successfully completed.
 
 
