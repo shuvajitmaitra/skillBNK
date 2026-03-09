@@ -30,7 +30,7 @@ import LinkedInIcon from '../../assets/Icons/LinkedInIcon';
 import {formatDate} from '../../utility/formatDate';
 import {useTheme} from '../../context/ThemeContext';
 import DownloadIconTwo from '../../assets/Icons/DownloadIconTwo';
-import {handleOpenLink} from '../../components/HelperFunction';
+import {extractFileName, handleOpenLink} from '../../components/HelperFunction';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../constants/Images';
 import {RegularFonts} from '../../constants/Fonts';
@@ -46,36 +46,6 @@ import {borderRadius, gGap, gHeight} from '../../constants/Sizes';
 import {theme} from '../../utility/commonFunction';
 import ImageView from 'react-native-image-viewing';
 
-function extractFileName(url: string): string {
-  try {
-    console.log('Input URL:', url);
-
-    const cleanUrl = url.split('#')[0].split('?')[0];
-    console.log('Clean URL:', cleanUrl);
-
-    const lastSlash = cleanUrl.lastIndexOf('/');
-    const rawFileName =
-      lastSlash >= 0 ? cleanUrl.substring(lastSlash + 1) : cleanUrl;
-
-    let fileName = rawFileName;
-    try {
-      fileName = decodeURIComponent(rawFileName);
-    } catch (e) {
-      console.log('decodeURIComponent failed, using raw filename:', e);
-    }
-
-    // ✅ remove leading numbers + optional separators like "-" "_" " "
-    const cleanedFileName = fileName.replace(/^\d+[-_\s]+/, '');
-
-    console.log('Extracted File Name:', fileName);
-    console.log('Cleaned File Name:', cleanedFileName);
-
-    return cleanedFileName;
-  } catch (error) {
-    console.error('Error extracting file name:', error);
-    return '';
-  }
-}
 export default function MyProfile() {
   const Colors = useTheme();
   const styles = getStyles(Colors);

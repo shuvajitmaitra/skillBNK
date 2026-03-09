@@ -1,27 +1,9 @@
-- App must support 16 KB memory page sizes issue fixed and submitted in google play store.(Taken 4-4.5hrs)
-- When I filter the posts for this month, it shows the previous month's posts, not the current month.
-- When I filter my posts and scroll to the bottom, all the posts disappear, and it shows "no data available".
-- Event status filtering is not working in the week view.
-- The comment page shows a dark background as well as the x button is not properly visible issue fixed
-- The link preview is not showing properly in the chat profile link view.
-- Profile image background color issue has been fixed in the chat profile link section.
-- Chat Profile voice section profile image background color issue fixed.
-- Chat footer bottom section buttons bg color visibility issue fixed.
-- After uploading a file the text shows some extra %20 text where space is included. 
-- Creating a chat crowd freezes the app from the chat item screen.
-- Font family issue fix from all over the app.
-- Community section progress added in the progress screen.
-- Notes section Progress added in the progress screen.
-- Community navigation and progress navigation added.
 
-
-
-
-*Workstream – Mar 05, 2026* 
+*Workstream – Mar 06, 2026* 
 
 *skillBNK Mobile App:*
-- Fix bugs as much as possible from mobile app.
-- Work on notes editor and mock interview in portal.
+- Work on remaining of skillBNK.
+- Add architecture diagram in the skillBNK using webview.
 
 
 - In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
@@ -35,7 +17,7 @@
 
 spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
-*Work Update – Mar 05, 2026*
+*Work Update – Mar 06, 2026*
 
 *SkillBNK app latest version (3.15.7) released on testflight*
 

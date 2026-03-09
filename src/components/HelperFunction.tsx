@@ -4,10 +4,7 @@ import Toast from 'react-native-toast-message';
 
 export function extractFileName(url: string): string {
   try {
-    console.log('Input URL:', url);
-
     const cleanUrl = url.split('#')[0].split('?')[0];
-    console.log('Clean URL:', cleanUrl);
 
     const lastSlash = cleanUrl.lastIndexOf('/');
     const rawFileName =
@@ -22,9 +19,6 @@ export function extractFileName(url: string): string {
 
     // ✅ remove leading numbers + optional separators like "-" "_" " "
     const cleanedFileName = fileName.replace(/^\d+[-_\s]+/, '');
-
-    console.log('Extracted File Name:', fileName);
-    console.log('Cleaned File Name:', cleanedFileName);
 
     return cleanedFileName;
   } catch (error) {
