@@ -64,6 +64,9 @@ const InviteMemberModalV2: React.FC<InviteMemberModalProps> = ({
   const [inputText, setInputText] = useState<string>('');
   const [schedule, setSchedule] = useState<ISchedule>();
   const {onlineUsersObj} = useSelector((state: RootState) => state.chat);
+  const [availabilityData, setAvailabilityData] = useState<
+    IAvailability[] | null
+  >(null);
 
   const {event} = useSelector((state: RootState) => state.calendar); // Adjust type if available
   const [findTimeModalVisible, setFindTimeModalVisible] =
@@ -154,6 +157,7 @@ const InviteMemberModalV2: React.FC<InviteMemberModalProps> = ({
         .get(`calendar/schedule/find/${userId}`)
         .then(res => {
           if (res.data.success) {
+            setAvailabilityData(res.data.schedule.availability);
             setSchedule({
               data: res?.data?.schedule?.availability?.find(
                 (item: IAvailability) => item.wday === date.toLowerCase(),
@@ -335,6 +339,7 @@ const InviteMemberModalV2: React.FC<InviteMemberModalProps> = ({
           isModalVisible={findTimeModalVisible}
           schedule={schedule}
           toggleModal={setFindTimeModalVisible}
+          availabilityData={availabilityData}
         />
       </View>
     </ReactNativeModal>
@@ -471,7 +476,6 @@ const getStyles = (Colors: TColors) =>
     userName: {
       fontSize: responsiveScreenFontSize(1.9),
       fontFamily: CustomFonts.MEDIUM,
-      fontWeight: '500',
       color: Colors.BodyText,
       textTransform: 'capitalize',
       flex: 1,

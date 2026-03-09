@@ -2,7 +2,8 @@ export interface IAvailability {
   _id: string;
   type: string;
   intervals: IInterval[];
-  wday: string;
+  wday?: string;
+  date?: string;
 }
 export interface ISpecificHour {
   _id: string;
