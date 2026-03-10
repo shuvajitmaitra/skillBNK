@@ -13,9 +13,9 @@
 
 spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
-*Work Update – Mar 09, 2026*
+*Work Update – Mar 10, 2026*
 
-*SkillBNK app latest version (3.15.9) released on TestFlight*
+*SkillBNK app latest version (3.15.10) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
 
@@ -27,7 +27,8 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - New chat input field created in the chat screen. 
 - New design added for chat input field.
 - Added functionality to send all times at a time (Image, audio, text, Documents)
-- Chat freezing issue improved more then 90%
+- Chat freezing issue fixed. Chat input issue improved more then 90%
+Note: Need more work in the chat input.
 
 *skillBNK Portal*
 - Presentations and slide page created.
@@ -40,7 +41,6 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - completed Api integration and functionality for Presentations/Slide feature. 
 
 
-**skillBNK Portal**
 
 📌 Note: 100% of today’s tasks have been successfully completed.
 
