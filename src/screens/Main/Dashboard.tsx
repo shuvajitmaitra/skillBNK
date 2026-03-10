@@ -31,7 +31,11 @@ import MockInterviewIcon from '../../assets/Icons/MockInterviewIcon';
 import CommunityIcon from '../../assets/Icons/CommunityIcon';
 import MediaIcon from '../../assets/Icons/MediaIcon';
 import MessageIconLive2 from '../../assets/Icons/MessageIconLive2';
-import {IoniconsIcon, MaterialCommunityIcon} from '../../constants/Icons';
+import {
+  FontAwesomeIcon,
+  IoniconsIcon,
+  MaterialCommunityIcon,
+} from '../../constants/Icons';
 
 import ProgramSwitchModal from '../../components/SharedComponent/ProgramSwitchModal';
 import {getActiveProgram, getFromMMKV} from '../../utility/mmkvHelpers';
@@ -71,6 +75,7 @@ const Dashboard: React.FC = () => {
     hasMenu('portal-template') ||
     hasMenu('portal-diagram') ||
     hasMenu('leaderboard');
+  const hasSlide = hasMenu('portal-slide');
 
   const hasChat = hasMenu('portal-my-chats');
   const hasCalendar = hasMenu('portal-calendar');
@@ -129,6 +134,9 @@ const Dashboard: React.FC = () => {
     hasMockInterview
       ? navigation.navigate('MockInterview')
       : handleDefaultRoute();
+  };
+  const handleSlides = (): void => {
+    hasSlide ? navigation.navigate('PresentationSlides') : handleDefaultRoute();
   };
 
   const handleDashboardNavigation = (): void => {
@@ -286,6 +294,22 @@ const Dashboard: React.FC = () => {
         icon: <MockInterviewIcon color={Colors.PureWhite} />,
         visible: hasMockInterview,
         onPress: handleMockInterviewNavigation,
+      },
+      {
+        id: 'presentations_slides',
+        title: 'Slides',
+        subTitle: 'Slides Decks',
+        backgroundColor: '#418941',
+        circleColor: Colors.BodyTextOpacity,
+        icon: (
+          <FontAwesomeIcon
+            name="slideshare"
+            size={25}
+            color={Colors.PureWhite}
+          />
+        ),
+        visible: hasSlide,
+        onPress: handleSlides,
       },
 
       {

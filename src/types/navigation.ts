@@ -21,6 +21,7 @@ export type RootStackParamList = {
   MockInterview: undefined;
   MyProfileEdit: undefined;
   ArchitectureDiagram: undefined;
+  PresentationSlides: undefined;
 };
 
 export type HomeStackParamList = {

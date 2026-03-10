@@ -66,7 +66,6 @@ import {withOpacity} from './Mention/utils';
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\\/%?=~_|!:,.;]*[-A-Z0-9+&@#\\/%=~_|])/gi;
 const WWW_REGEX = /(^|[^\\/])(www\.[\S]+(\b|$))/gim;
-
 const convertLink = (text: string): string => {
   let textWithLinks = text.replace(
     URL_REGEX,

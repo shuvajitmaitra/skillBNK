@@ -38,6 +38,7 @@ import MessageForwardModal from '../../components/ChatCom/Modal/MessageForwardMo
 import AddNewEventModalV2 from '../../components/CalendarV2/AddNewEventModalV2';
 // import ChatFooter3 from '../../components/ChatCom/ChatFooter3';
 import {setChatFooterInfo} from '../../store/reducer/chatFooterReducer';
+import ChatInputContainer from '../../components/ChatCom/ChatInputContainer';
 
 const ListFooterComponent = ({
   isLoading,
@@ -338,18 +339,21 @@ const MessageScreen = ({route}: {route: any}) => {
           </View>
         ) : (
           // <ChatFooter3 />
-          <ChatFooter2
-            chatId={chat?._id}
-            setMessages={(chatId, message) => {
-              const typedMessage: IMessage = message as any;
-              setMessages({
-                ...messages,
-                [chatId]: [...(messages[chatId] || []), typedMessage],
-              });
-            }}
-            messageEditVisible={messageEditVisible}
-            setMessageEditVisible={setMessageEditVisible}
-          />
+          <>
+            {/* <ChatFooter2
+              chatId={chat?._id}
+              setMessages={(chatId, message) => {
+                const typedMessage: IMessage = message as any;
+                setMessages({
+                  ...messages,
+                  [chatId]: [...(messages[chatId] || []), typedMessage],
+                });
+              }}
+              messageEditVisible={messageEditVisible}
+              setMessageEditVisible={setMessageEditVisible}
+            /> */}
+            <ChatInputContainer chatId={chat._id} />
+          </>
         )}
         {/* {openGallery && <ImageGallery />} */}
         <ImageView

@@ -19,22 +19,28 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
 *skillBNK Mobile App following task completed*
 
-* In the calendar availability section, I am unable to see the specific availability time for other persons, while other times are displaying correctly.
-* When finding availability for the user, there should be a modal to select the date, which will then show that user’s available time on that day.
-* Fixed the design issue with the close button in the Find Availability modal.
-* After searching, if I clear the search, it shows “No data available” instead of displaying all users.
-* The AI option should be available in the Edit Community Post modal.
-* Redesigned the search and filter section on the Documents & Labs screen.
-* Added functionality and API integration to filter Documents by date.
-* Designed a modal for date selection and added clear date functionality.
-* Displayed the program count in the Switch Program modal.
-* Fixed the major damping issue with the calendar floating button.
-* Added the Architecture Diagram screen and navigation to the dashboard screen.
+- theme issue and design issue fixed from the Architecture diagram.
+- Added global routes to access and maintain all navigation from single place.
+- Added Presentations/slides navigation from the dashboard screen.
+- Navigation card designed and functionality added.
+- Slide screen added in mobile and connected to webview.
+- New chat input field created in the chat screen. 
+- New design added for chat input field.
+- Added functionality to send all times at a time (Image, audio, text, Documents)
+- Chat freezing issue improved more then 90%
+
+*skillBNK Portal*
+- Presentations and slide page created.
+- Fixed theme issue in the Presentations and slide page.
+- Presentations and slides page header section Redesigned.
+- Slide card redesign has been completed Displayed data in organized manner.
+- Slide details page added.
+- Modified slide details page header according to mobile design.
+- Slide responsive issue fixed and theme issue fixed.
+- completed Api integration and functionality for Presentations/Slide feature. 
+
 
 **skillBNK Portal**
-
-* Modified the design of the Architecture Diagram page and connected the API to the mobile instance.
-* Modified the design of the Diagram Preview page and completed the API integration.
 
 📌 Note: 100% of today’s tasks have been successfully completed.
 

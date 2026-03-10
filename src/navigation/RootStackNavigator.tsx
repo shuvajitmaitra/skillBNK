@@ -42,6 +42,7 @@ import {usePushNotification} from '../hook/usePushNotification';
 import BottomTabNavigator from './BottomTabNavigator';
 import MockInterview from '../screens/MockInterview/MockInterview';
 import ArchitectureDiagramScreen from '../screens/ArchitectureDiagram/ArchitectureDiagramScreen';
+import PresentationSlidesScreen from '../screens/PresentationSlides/PresentationSlidesScreen';
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -255,6 +256,11 @@ const RootStackNavigator: React.FC = () => {
         <RootStack.Screen
           name="MyProfileEdit"
           component={MyProfileEdit}
+          options={{headerShown: false}}
+        />
+        <RootStack.Screen
+          name="PresentationSlides"
+          component={PresentationSlidesScreen}
           options={{headerShown: false}}
         />
       </RootStack.Navigator>

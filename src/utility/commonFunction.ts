@@ -15,6 +15,21 @@ import axiosInstance from './axiosInstance';
 import {loadCommunityPosts} from '../actions/chat-noti';
 import {setComInfo} from '../store/reducer/communityReducer';
 import {OneSignal} from 'react-native-onesignal';
+// Regular expressions and helper function for link conversion.
+const URL_REGEX =
+  /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\\/%?=~_|!:,.;]*[-A-Z0-9+&@#\\/%=~_|])/gi;
+const WWW_REGEX = /(^|[^\\/])(www\.[\S]+(\b|$))/gim;
+
+export const convertLink = (text: string): string => {
+  let textWithLinks = text.replace(
+    URL_REGEX,
+    '<a target="_blank" href="$1">$1</a>',
+  );
+  return textWithLinks.replace(
+    WWW_REGEX,
+    '$1<a target="_blank" href="http://$2">$2</a>',
+  );
+};
 export const randomHexColor = (): `#${string}` => {
   const n = Math.floor(Math.random() * 0xffffff); // 0..16777215
   return `#${n.toString(16).padStart(6, '0')}` as `#${string}`;
