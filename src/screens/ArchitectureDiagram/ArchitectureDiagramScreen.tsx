@@ -1,11 +1,10 @@
-import environment from '../../constants/environment';
+import {routes} from '../../constants/Routes';
 import ProtectedWebView from '../MockInterview/ProtectedWebView';
-const url = `${environment.FRONTEND_URL}/diagram`;
 
 const ArchitectureDiagramScreen = () => {
   return (
     <>
-      <ProtectedWebView url={url} />
+      <ProtectedWebView url={routes.ARCHITECTURE_DIAGRAM} />
     </>
   );
 };

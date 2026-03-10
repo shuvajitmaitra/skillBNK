@@ -1,9 +1,10 @@
 
-*Workstream – Mar 06, 2026* 
+*Workstream – Mar 09, 2026* 
 
 *skillBNK Mobile App:*
-- Work on remaining of skillBNK.
-- Add architecture diagram in the skillBNK using webview.
+- Add Presentations & Slides in app using webview.
+- Fix all color correction and design issue for Architecture diagram.
+- Work on chat input field issue.
 
 
 - In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
