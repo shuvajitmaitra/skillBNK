@@ -27,6 +27,7 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 54. In calender the phone number place should not be hidden.
 98. After pasting a long message the send button disappears issue fixed
 - Displayed AI button conditionally in the chat input.
+- After adding a file in note, the text go out of the box create new notes screen.
 
 *skillBNK Portal*
 - For very small device mockinterview card responsive issue fixed.

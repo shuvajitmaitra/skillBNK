@@ -10,23 +10,23 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../context/ThemeContext';
-import { TColors } from '../../types';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { borderRadius, fontSizes, gGap, gHeight } from '../../constants/Sizes';
+import React, {useEffect, useState} from 'react';
+import {useTheme} from '../../context/ThemeContext';
+import {TColors} from '../../types';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {borderRadius, fontSizes, gGap, gHeight} from '../../constants/Sizes';
 import LexicalEditor from '../../components/SharedComponent/LexicalEditor';
 import {
   AntDesignIcon,
   FeatherIcon,
   MaterialCommunityIcon,
 } from '../../constants/Icons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import EventPurposeV2 from '../../components/CalendarV2/EventPurposeV2';
 import CrossIcon from '../../assets/Icons/CrossIcon';
-import { responsiveScreenHeight } from 'react-native-responsive-dimensions';
-import { extractFileName, showToast } from '../../components/HelperFunction';
-import { pick, types } from '@react-native-documents/picker';
+import {responsiveScreenHeight} from 'react-native-responsive-dimensions';
+import {extractFileName, showToast} from '../../components/HelperFunction';
+import {pick, types} from '@react-native-documents/picker';
 import axiosInstance from '../../utility/axiosInstance';
 import {
   Asset,
@@ -34,11 +34,11 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import CrossCircle from '../../assets/Icons/CrossCircle';
-import { loadMyNotes } from '../../actions/myNoteApiCall';
+import {loadMyNotes} from '../../actions/myNoteApiCall';
 import store from '../../store';
-import { selectNote, setNotes } from '../../store/reducer/notesReducer';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../types/redux/root';
+import {selectNote, setNotes} from '../../store/reducer/notesReducer';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../types/redux/root';
 import RequireFieldStar from '../../constants/RequireFieldStar';
 import {
   convertSize,
@@ -157,13 +157,13 @@ const handleGalleryPress = async ({
 
     if (response.errorCode) {
       console.error('ImagePicker Error: ', response.errorMessage);
-      showToast({ message: `ImagePicker Error: ${response.errorMessage}` });
+      showToast({message: `ImagePicker Error: ${response.errorMessage}`});
       return;
     }
 
     if (!response.assets || response.assets.length === 0) {
       console.log('No images selected');
-      showToast({ message: 'No images selected' });
+      showToast({message: 'No images selected'});
       return;
     }
 
@@ -203,7 +203,7 @@ const handleGalleryPress = async ({
     );
   } catch (error) {
     console.error('Error in handleGalleryPress:', error);
-    showToast({ message: 'An error occurred while uploading images.' });
+    showToast({message: 'An error occurred while uploading images.'});
   } finally {
     setIsLoading?.(false);
   }
@@ -211,10 +211,10 @@ const handleGalleryPress = async ({
 
 const handleCreateNote = async (note: noteProps) => {
   if (!note.title?.trim()) {
-    return showToast({ message: 'Note title is required!', background: 'red' });
+    return showToast({message: 'Note title is required!', background: 'red'});
   }
   const preNotes = [
-    { _id: Math.random.toString(), ...note },
+    {_id: Math.random.toString(), ...note},
     ...store.getState().notes.notes,
   ];
   store.dispatch(setNotes(preNotes));
@@ -239,7 +239,7 @@ const handleCreateNote = async (note: noteProps) => {
       JSON.stringify(response.data.success, null, 2),
     );
     if (response.data.success) {
-      showToast({ message: 'Notes created successfully!' });
+      showToast({message: 'Notes created successfully!'});
       loadMyNotes({
         page: 1,
         limit: 50,
@@ -260,9 +260,9 @@ const handleCreateNote = async (note: noteProps) => {
 
 const handleEditNote = async (note: noteProps) => {
   if (!note.title?.trim()) {
-    return showToast({ message: 'Title is required', background: 'red' });
+    return showToast({message: 'Title is required', background: 'red'});
   }
-  let preNotes = { ...note, ...store.getState().notes.selectedNote };
+  let preNotes = {...note, ...store.getState().notes.selectedNote};
   store.dispatch(selectNote(preNotes));
 
   try {
@@ -290,7 +290,7 @@ const handleEditNote = async (note: noteProps) => {
     );
     if (response.data.success) {
       store.dispatch(selectNote(response.data.note));
-      showToast({ message: 'Notes update successfully!' });
+      showToast({message: 'Notes update successfully!'});
       loadMyNotes({
         page: 1,
         limit: 50,
@@ -312,16 +312,16 @@ const handleEditNote = async (note: noteProps) => {
 const NoteCreateScreen = () => {
   const Colors = useTheme();
   const styles = getStyles(Colors);
-  const { top, bottom } = useSafeAreaInsets();
+  const {top, bottom} = useSafeAreaInsets();
   const [tagText, setTagText] = useState<string>('');
   const [uploading, setUploading] = useState(false);
   const [docUploading, setDocUploading] = useState(false);
-  const { selectedNote } = useSelector((state: RootState) => state.notes);
+  const {selectedNote} = useSelector((state: RootState) => state.notes);
   const navigation = useNavigation();
   const [note, setNote] = useState<noteProps | null>(null);
   useEffect(() => {
     if (selectedNote?._id) {
-      const pre = { ...note };
+      const pre = {...note};
       setNote({
         ...pre,
         _id: selectedNote?._id,
@@ -339,16 +339,16 @@ const NoteCreateScreen = () => {
   }, [selectedNote]);
 
   const [imageDimensions, setImageDimensions] = useState<{
-    [key: string]: { aspectRatio: number };
+    [key: string]: {aspectRatio: number};
   }>({});
   const handleImageLayout = (uri: string, width: number, height: number) => {
     const aspectRatio = width / height;
     setImageDimensions(prev => ({
       ...prev,
-      [uri]: { aspectRatio },
+      [uri]: {aspectRatio},
     }));
   };
-  const { aspectRatio } =
+  const {aspectRatio} =
     (note?.thumbnail && imageDimensions[note.thumbnail]) || {};
 
   const handleKeyPress = () => {
@@ -364,18 +364,15 @@ const NoteCreateScreen = () => {
 
   const handleRemoveTag = (index: number) => {
     const f = note?.tags!.filter((_, i) => i !== index);
-    setNote({ ...note, tags: f });
+    setNote({...note, tags: f});
   };
 
   return (
-    <View
-      style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}
-    >
+    <View style={[styles.container, {paddingTop: top, paddingBottom: bottom}]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardAvoidView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
         <View style={styles.headerContainer}>
           <AntDesignIcon
             onPress={() => navigation.goBack()}
@@ -409,8 +406,7 @@ const NoteCreateScreen = () => {
                   note?.title && handleCreateNote(note);
                 }
                 navigation?.goBack();
-              }}
-            >
+              }}>
               <Text style={styles.saveButtonText}>
                 {selectedNote?._id ? 'Update' : 'Save Note'}
               </Text>
@@ -426,7 +422,7 @@ const NoteCreateScreen = () => {
             <TextInput
               style={styles.input}
               value={note?.title}
-              onChangeText={t => setNote({ ...note, title: t })}
+              onChangeText={t => setNote({...note, title: t})}
               placeholder="Enter note title"
               placeholderTextColor={Colors.BodyText}
             />
@@ -471,14 +467,14 @@ const NoteCreateScreen = () => {
               }}
               onChange={d => {
                 if (d.type === 'NOTE_CHANGE') {
-                  setNote({ ...note, description: d.payload.note });
+                  setNote({...note, description: d.payload.note});
                 }
               }}
               containerStyle={styles.lexicalEditor}
             />
             <EventPurposeV2
               state={note?.purpose as any}
-              setState={i => setNote({ ...note, purpose: i })}
+              setState={i => setNote({...note, purpose: i})}
             />
             <Text style={[styles.label, styles.marginTop10]}>Tags</Text>
             {note?.tags && (
@@ -487,8 +483,7 @@ const NoteCreateScreen = () => {
                   <TouchableOpacity
                     style={styles.tagItem}
                     onPress={() => handleRemoveTag(index)}
-                    key={index}
-                  >
+                    key={index}>
                     <Text style={styles.tagText}>{item}</Text>
                     <CrossIcon color="red" />
                   </TouchableOpacity>
@@ -531,14 +526,14 @@ const NoteCreateScreen = () => {
             {note?.thumbnail ? (
               <View style={styles.thumbnailContainer}>
                 <Image
-                  source={{ uri: note.thumbnail }}
+                  source={{uri: note.thumbnail}}
                   style={[
                     styles.image,
                     aspectRatio
-                      ? { aspectRatio }
-                      : { height: responsiveScreenHeight(20) },
+                      ? {aspectRatio}
+                      : {height: responsiveScreenHeight(20)},
                   ]}
-                  onLoad={({ nativeEvent }) =>
+                  onLoad={({nativeEvent}) =>
                     note?.thumbnail &&
                     handleImageLayout(
                       note?.thumbnail,
@@ -548,9 +543,8 @@ const NoteCreateScreen = () => {
                   }
                 />
                 <TouchableOpacity
-                  onPress={() => setNote({ ...note, thumbnail: '' })}
-                  style={styles.crossButton}
-                >
+                  onPress={() => setNote({...note, thumbnail: ''})}
+                  style={styles.crossButton}>
                   <CrossCircle color="red" />
                 </TouchableOpacity>
               </View>
@@ -559,13 +553,12 @@ const NoteCreateScreen = () => {
                 onPress={() =>
                   handleGalleryPress({
                     setState: (i: any) =>
-                      setNote({ ...note, thumbnail: i[0].url }),
+                      setNote({...note, thumbnail: i[0].url}),
                     setIsLoading: setUploading,
                     selectLimit: 1,
                   })
                 }
-                style={styles.uploadThumbnailContainer}
-              >
+                style={styles.uploadThumbnailContainer}>
                 {uploading ? (
                   <ActivityIndicator size={30} color={Colors.Primary} />
                 ) : (
@@ -588,7 +581,7 @@ const NoteCreateScreen = () => {
               <View style={styles.attachmentsContainer}>
                 {note?.attachments.map((item, i) => (
                   <View style={styles.attachmentItem} key={i}>
-                    <View>
+                    <View style={{flex: 1}}>
                       <Text
                         style={[
                           styles.attachmentText,
@@ -599,8 +592,7 @@ const NoteCreateScreen = () => {
                             textTransform: 'capitalize',
                           },
                         ]}
-                        numberOfLines={1}
-                      >
+                        numberOfLines={1}>
                         {extractFileName(item.name || '')}
                       </Text>
                       <View
@@ -608,31 +600,30 @@ const NoteCreateScreen = () => {
                           flexDirection: 'row',
                           alignItems: 'center',
                           gap: gGap(10),
-                        }}
-                      >
+                        }}>
                         <Text style={styles.attachmentText} numberOfLines={1}>
-                          <Text style={{ fontWeight: 'bold' }}>Size:</Text>{' '}
+                          <Text style={{fontWeight: 'bold'}}>Size:</Text>{' '}
                           {convertSize(item.size)}
                         </Text>
                         <Text style={styles.attachmentText} numberOfLines={1}>
-                          <Text style={{ fontWeight: 'bold' }}>File Type:</Text>{' '}
+                          <Text style={{fontWeight: 'bold'}}>File Type:</Text>{' '}
                           {item.type}
                         </Text>
                       </View>
                       <Text style={styles.attachmentText} numberOfLines={1}>
-                        <Text style={{ fontWeight: 'bold' }}>Uploaded At:</Text>{' '}
+                        <Text style={{fontWeight: 'bold'}}>Uploaded At:</Text>{' '}
                         {moment(item.createdAt).format('LLL')}
                       </Text>
                     </View>
 
                     <TouchableOpacity
+                      // style={{backgroundColor: 'blue'}}
                       onPress={() => {
                         const pre =
                           note.attachments &&
                           note.attachments.filter((_, idx) => idx !== i);
-                        setNote({ ...note, attachments: pre });
-                      }}
-                    >
+                        setNote({...note, attachments: pre});
+                      }}>
                       <CrossCircle color="red" />
                     </TouchableOpacity>
                   </View>
@@ -651,8 +642,7 @@ const NoteCreateScreen = () => {
                     setDocUploading: t => setDocUploading(t),
                   })
                 }
-                style={styles.uploadThumbnailContainer}
-              >
+                style={styles.uploadThumbnailContainer}>
                 {docUploading ? (
                   <ActivityIndicator size={30} color={Colors.Primary} />
                 ) : (
@@ -843,6 +833,6 @@ const getStyles = (Colors: TColors) =>
     },
     attachmentText: {
       color: Colors.BodyText,
-      maxWidth: '90%',
+      flex: 1,
     },
   });

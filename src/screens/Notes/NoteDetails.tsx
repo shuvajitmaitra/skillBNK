@@ -349,6 +349,7 @@ const getStyles = (Colors: TColors) =>
       borderWidth: 1,
       borderColor: Colors.BorderColor,
       borderRadius: borderRadius.small,
+      flex: 1,
     },
     attachmentText: {
       color: Colors.BodyText,
