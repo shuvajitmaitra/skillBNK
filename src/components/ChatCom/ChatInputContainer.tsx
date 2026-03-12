@@ -34,7 +34,9 @@ import {
   setSelectedMessage,
   setThreadMessages,
   updateDraftMessages,
+  updateMessage,
   updateRepliesCount,
+  updateThreadMessage,
 } from '../../store/reducer/chatSlice';
 import {updateLatestMessage} from '../../store/reducer/chatReducer';
 import {showToast} from '../HelperFunction';
@@ -295,14 +297,69 @@ const ChatInputContainer = ({chatId, parentId}: props) => {
     localMessages,
     threadMessages,
   ]);
+  const handleEditMessage = async (): Promise<void> => {
+    if (
+      !chatInfo.text?.trim() &&
+      (!chatInfo.files || chatInfo.files.length === 0)
+    ) {
+      showToast({
+        message: 'Message cannot be empty (text or files required)',
+      });
+      return;
+    }
+    const data = {
+      text: convertLink(chatInfo.text || ''),
+      files: chatInfo.files || [],
+    };
+
+    try {
+      const res = await axiosInstance.patch(
+        `/chat/update/message/${selectedMessage?._id}`,
+        data,
+      );
+      dispatch(
+        updateDraftMessages({
+          chatId: parentId ? parentId : chatId,
+          text: '',
+        }),
+      );
+      const newMessage = {...res.data.message, editedAt: new Date()};
+      if (!selectedMessage?.parentMessage) {
+        dispatch(updateMessage(newMessage));
+        dispatch(
+          updateLatestMessage({
+            chatId: selectedMessage?.chat || '',
+            latestMessage: newMessage,
+            counter: 1,
+          }),
+        );
+      } else {
+        dispatch(updateThreadMessage(newMessage));
+      }
+      dispatch(setSelectedMessage(null));
+      setChatInfo({text: '', files: []});
+    } catch (err: any) {
+      console.error('Error in handleEditMessage:', err.response?.data || err);
+      showToast({
+        message: err.response?.data?.error || 'Failed to edit message',
+      });
+    }
+  };
+
   const handleCancelEdit = () => {
     store.dispatch(setSelectedMessage(null));
     setChatInfo({text: '', files: []});
-
+    dispatch(
+      updateDraftMessages({
+        chatId: parentId ? parentId : chatId,
+        text: '',
+      }),
+    );
     requestAnimationFrame(() => {
       inputRef.current?.focus();
     });
   };
+
   return (
     <>
       <View style={styles.container}>
@@ -349,6 +406,12 @@ const ChatInputContainer = ({chatId, parentId}: props) => {
           ref={inputRef}
           text={chatInfo.text}
           setText={txt => {
+            store.dispatch(
+              updateDraftMessages({
+                chatId: parentId ? parentId : chatId,
+                text: txt,
+              }),
+            );
             setChatInfo({...chatInfo, text: txt});
           }}
           chatId={chatId}
@@ -399,7 +462,7 @@ const ChatInputContainer = ({chatId, parentId}: props) => {
             {(chatInfo.text || chatInfo.files.length > 0) && (
               <TouchableOpacity
                 onPress={() => {
-                  sendMessage();
+                  selectedMessage?._id ? handleEditMessage() : sendMessage();
                 }}
                 style={styles.buttonContainer}>
                 {

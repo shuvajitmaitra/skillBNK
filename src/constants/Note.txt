@@ -20,6 +20,10 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
 *skillBNK Mobile App following task completed*
 - Dashboard drawer blinking issue has been fixed.
+- Thread message screen message preview theme issue fixed.
+- Message edit functionalities added with new input.
+- Edit cancel functionalities added with new input.
+- Added new input field in the  thread message screen.
 
 
 

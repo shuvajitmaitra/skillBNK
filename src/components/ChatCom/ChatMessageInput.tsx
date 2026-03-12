@@ -1,5 +1,5 @@
 // ChatMessageInput.tsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, JSX} from 'react';
 import {
   Image,
   Text,
@@ -80,7 +80,8 @@ const handleSearch = _.debounce(
           );
 
         setUsers(filtered);
-      } catch (error) {
+      } catch (error: any) {
+        console.log('Search Error', JSON.stringify(error, null, 2));
         setUsers([]);
       }
     }

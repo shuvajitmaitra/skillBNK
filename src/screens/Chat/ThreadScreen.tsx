@@ -10,7 +10,6 @@ import {useTheme} from '../../context/ThemeContext';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import {setThreadMessages} from '../../store/reducer/chatSlice';
-import ChatFooter2 from '../../components/ChatCom/ChatFooter2';
 import ScreenHeader from '../../components/SharedComponent/ScreenHeader';
 import ThreadMessageItem from '../../components/ChatCom/ThreadMessageItem';
 import MessageOptionModal from '../../components/ChatCom/Modal/MessageOptionModal';
@@ -23,6 +22,7 @@ import {IMessage} from '../../types/chat/messageTypes';
 import Message from '../../components/ChatCom/Message';
 import NoDataAvailable from '../../components/SharedComponent/NoDataAvailable';
 import AddNewEventModalV2 from '../../components/CalendarV2/AddNewEventModalV2';
+import ChatInputContainer from '../../components/ChatCom/ChatInputContainer';
 
 const ThreadScreen = ({
   route,
@@ -43,7 +43,6 @@ const ThreadScreen = ({
   const {top} = useSafeAreaInsets();
   const scrollViewRef = useRef<FlatList>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [messageEditVisible, setMessageEditVisible] = useState(false);
 
   useEffect(() => {
     getReplies({setIsLoading, page: 1, chat, parentMessage});
@@ -116,7 +115,6 @@ const ThreadScreen = ({
         {messageOptionData?._id && (
           <MessageOptionModal
             handlePin={() => {}}
-            setMessageEditVisible={setMessageEditVisible}
             messageOptionData={messageOptionData}
             isThread={parentMessage}
           />
@@ -172,13 +170,14 @@ const ThreadScreen = ({
             </Text>
           </View>
         ) : (
-          <ChatFooter2
-            parentId={parentMessage}
-            chatId={chat}
-            messageEditVisible={messageEditVisible}
-            setMessageEditVisible={setMessageEditVisible}
-            // onNewMessageSent={getReplies}
-          />
+          <ChatInputContainer chatId={chat || ''} parentId={parentMessage} />
+          // <ChatFooter2
+          //   parentId={parentMessage}
+          //   chatId={chat}
+          //   messageEditVisible={messageEditVisible}
+          //   setMessageEditVisible={setMessageEditVisible}
+          //   // onNewMessageSent={getReplies}
+          // />
         )}
 
         {newEventData?.isModalVisible && <AddNewEventModalV2 />}

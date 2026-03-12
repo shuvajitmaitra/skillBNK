@@ -138,7 +138,7 @@ export default function ThreadMessageItem({
           style={{
             // paddingHorizontal: responsiveScreenWidth(2),
             marginTop: responsiveScreenHeight(1),
-            backgroundColor: Colors?.PureWhite,
+            backgroundColor: Colors?.Foreground,
             borderRadius: 10,
             overflow: 'hidden',
           }}>
