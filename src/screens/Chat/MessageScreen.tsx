@@ -14,7 +14,6 @@ import axiosInstance from '../../utility/axiosInstance';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme} from '../../context/ThemeContext';
 import {responsiveScreenHeight} from 'react-native-responsive-dimensions';
-import ChatFooter2 from '../../components/ChatCom/ChatFooter2';
 import MessageTopPart from '../../components/ChatCom/MessageTopPart';
 import {useMMKVObject} from 'react-native-mmkv';
 import {
@@ -73,7 +72,6 @@ const MessageScreen = ({route}: {route: any}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const {singleChat: chat} = useSelector((state: RootState) => state.chat);
-  // console.log('singleChat', JSON.stringify(chat, null, 2));
   const {newEventData} = useSelector((state: RootState) => state.calendarV2);
 
   const {messageOptionData} = useSelector((state: RootState) => state.modal);
@@ -98,8 +96,7 @@ const MessageScreen = ({route}: {route: any}) => {
   }>('crowdMembers');
 
   const [pinnedScreenVisible, setPinnedScreenVisible] = useState(false);
-  const [messageEditVisible, setMessageEditVisible] =
-    useState<MessageProps | null>(null);
+
   const [viewInitialMessage, setViewInitialMessage] = useState(false);
   const LIMIT = 15;
 
@@ -292,7 +289,6 @@ const MessageScreen = ({route}: {route: any}) => {
         {!messageOptionData?.parentMessage && messageOptionData?._id && (
           <MessageOptionModal
             handlePin={handlePin}
-            setMessageEditVisible={setMessageEditVisible}
             messageOptionData={{...messageOptionData, pinnedScreenVisible}}
           />
         )}
@@ -355,7 +351,6 @@ const MessageScreen = ({route}: {route: any}) => {
             <ChatInputContainer chatId={chat._id} />
           </>
         )}
-        {/* {openGallery && <ImageGallery />} */}
         <ImageView
           images={viewImage}
           imageIndex={viewImage[0]?.index}

@@ -4,19 +4,14 @@ import {
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
-import ReactNativeModal from 'react-native-modal';
-import {useSelector} from 'react-redux';
-
 import DrawerIcon from '../../assets/Icons/DrawerIcon';
 import SwapIcon from '../../assets/Icons/SwapIcon';
 import MessageNotificationContainer from '../MessageNotificationContainer';
-import {DrawerContent} from '../../screens/DrawerContent';
 import Images from '../../constants/Images';
 import {useTheme} from '../../context/ThemeContext';
 import {TColors} from '../../types';
 import store from '../../store';
 import {toggleDrawer} from '../../store/reducer/authReducer';
-import {RootState} from '../../types/redux/root';
 import {theme} from '../../utility/commonFunction';
 
 type DashboardTopPartProps = {
@@ -27,23 +22,17 @@ type DashboardTopPartProps = {
 };
 
 export default function DashboardTopPart({
-  statusSectionVisible,
-  setStatusSectionVisible,
+  // statusSectionVisible,
+  // setStatusSectionVisible,
   switchAvailable,
   setProSwitch,
 }: DashboardTopPartProps) {
   const Colors = useTheme();
   const styles = useMemo(() => getStyles(Colors), [Colors]);
 
-  const {drawer} = useSelector((state: RootState) => state.auth);
-
   const handleDrawer = useCallback(() => {
     store.dispatch(toggleDrawer());
-
-    if (statusSectionVisible) {
-      setStatusSectionVisible(prev => !prev);
-    }
-  }, [statusSectionVisible, setStatusSectionVisible]);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -72,19 +61,6 @@ export default function DashboardTopPart({
 
         <MessageNotificationContainer />
       </View>
-
-      <ReactNativeModal
-        animationIn="slideInLeft"
-        animationOut="slideOutLeft"
-        isVisible={drawer}
-        onBackdropPress={() => store.dispatch(toggleDrawer())}
-        style={{
-          margin: 0,
-          backgroundColor: Colors.Background_color,
-          width: '75%',
-        }}>
-        <DrawerContent />
-      </ReactNativeModal>
     </View>
   );
 }

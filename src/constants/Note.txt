@@ -1,10 +1,11 @@
 
-*Workstream – Mar 09, 2026* 
+*Workstream – Mar 12, 2026* 
 
 *skillBNK Mobile App:*
-- Add Presentations & Slides in app using webview.
-- Fix all color correction and design issue for Architecture diagram.
-- Work on chat input field issue.
+- Complete chat input implementation. 
+- Fix issue from skillBNK as much as possible
+- Update app store and play store screenshot
+- Submit app in google play and app store.
 
 
 - In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
@@ -18,27 +19,8 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 *SkillBNK app latest version (3.15.10) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
+- Dashboard drawer blinking issue has been fixed.
 
-- theme issue and design issue fixed from the Architecture diagram.
-- Added global routes to access and maintain all navigation from single place.
-- Added Presentations/slides navigation from the dashboard screen.
-- Navigation card designed and functionality added.
-- Slide screen added in mobile and connected to webview.
-- New chat input field created in the chat screen. 
-- New design added for chat input field.
-- Added functionality to send all times at a time (Image, audio, text, Documents)
-- Chat freezing issue fixed. Chat input issue improved more then 90%
-Note: Need more work in the chat input.
-
-*skillBNK Portal*
-- Presentations and slide page created.
-- Fixed theme issue in the Presentations and slide page.
-- Presentations and slides page header section Redesigned.
-- Slide card redesign has been completed Displayed data in organized manner.
-- Slide details page added.
-- Modified slide details page header according to mobile design.
-- Slide responsive issue fixed and theme issue fixed.
-- completed Api integration and functionality for Presentations/Slide feature. 
 
 
 

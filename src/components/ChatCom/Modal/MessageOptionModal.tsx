@@ -26,13 +26,11 @@ import {RootState} from '../../../types/redux/root';
 
 type MessageOptionModalProps = {
   handlePin: (id: string) => void;
-  setMessageEditVisible: (message: any | null) => void;
   messageOptionData: any;
   isThread?: string;
 };
 const MessageOptionModal = ({
   handlePin,
-  setMessageEditVisible,
   messageOptionData = {},
   isThread = '',
 }: MessageOptionModalProps) => {
@@ -94,8 +92,9 @@ const MessageOptionModal = ({
       icon: <EditIconTwo />,
       function: () => {
         dispatch(setSelectedMessage(messageOptionData));
-        setMessageEditVisible(messageOptionData);
-        dispatch(setMessageOptionData(null));
+        setTimeout(() => {
+          dispatch(setMessageOptionData(null));
+        }, 0);
       },
     },
     {

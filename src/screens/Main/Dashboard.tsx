@@ -44,6 +44,8 @@ import HomeHeaderSection from '../../components/HomeCom/HomeHeaderSection';
 import NavigationItem from '../../components/HomeCom/NavigationItem';
 import {TChat} from '../../types/chat/chatTypes';
 
+import Drawer from '../../components/Drawer';
+
 // -------------------- Types --------------------
 export type NavItem = {
   id: string;
@@ -61,7 +63,6 @@ export type NavItem = {
 const Dashboard: React.FC = () => {
   const {myEnrollments} = useSelector((state: RootState) => state.auth);
   const {chats} = useSelector((state: RootState) => state.chat);
-
   const hasMenu = (menuId: string) => {
     const navigationData = getFromMMKV('navigationData');
     if (!Array.isArray(navigationData)) return false;
@@ -366,6 +367,7 @@ const Dashboard: React.FC = () => {
         />
       )}
 
+      <Drawer />
       <StatusBar
         translucent
         backgroundColor={Colors.Background_color}

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, forwardRef} from 'react';
 import {
   Text,
   TextInput,
@@ -32,10 +32,7 @@ type User = {
 const triggersConfig: TriggersConfig<MentionType> = {
   mention: {
     trigger: '@',
-
-    // custom stored format: @[Name](id)
     pattern: /(@\[[^[\]]+\]\([^)]+\))/g,
-
     getTriggerData: (match: string) => {
       const result = match.match(/@\[([^[\]]+)\]\(([^)]+)\)/);
 
@@ -46,16 +43,11 @@ const triggersConfig: TriggersConfig<MentionType> = {
         id: result?.[2] ?? '',
       };
     },
-
-    getTriggerValue: ({name, id}) => {
-      return `@[${name}](${id})`;
-    },
-
+    getTriggerValue: ({name, id}) => `@[${name}](${id})`,
     textStyle: {
       fontWeight: 'bold',
       color: 'blue',
     },
-
     getPlainString: ({name}) => `@${name}`,
   },
 };
@@ -67,10 +59,11 @@ type SuggestionsProps = SuggestionsProvidedProps & {
 const Suggestions: FC<SuggestionsProps> = ({keyword, onSelect, data}) => {
   const Colors = useTheme();
   const styles = getStyles(Colors);
+
   if (keyword == null) {
     return null;
   }
-  console.log('data', JSON.stringify(data, null, 2));
+
   const filteredUsers = data.filter(user =>
     user.name.toLowerCase().includes(keyword.toLowerCase()),
   );
@@ -114,40 +107,40 @@ const Suggestions: FC<SuggestionsProps> = ({keyword, onSelect, data}) => {
   );
 };
 
-const ChatInput = ({
-  text,
-  setText,
-  chatId,
-}: {
+type ChatInputProps = {
   text: string;
   setText: (text: string) => void;
   chatId: string;
-}) => {
-  const Colors = useTheme();
-  const styles = getStyles(Colors);
-  const crowdMembers = getArrayFromLocalStorage('crowdMembers')[chatId];
-  console.log('crowdMembers', JSON.stringify(crowdMembers, null, 2));
-
-  const {textInputProps, triggers} = useMentions<MentionType>({
-    value: text,
-    onChange: setText,
-    triggersConfig,
-  });
-
-  return (
-    <View style={styles.container}>
-      <Suggestions {...triggers.mention} data={crowdMembers || []} />
-      <TextInput
-        {...textInputProps}
-        placeholder="Type a message..."
-        multiline
-        style={styles.input}
-        placeholderTextColor={Colors.BodyText}
-        keyboardAppearance={theme()}
-      />
-    </View>
-  );
 };
+
+const ChatInput = forwardRef<TextInput, ChatInputProps>(
+  ({text, setText, chatId}, ref) => {
+    const Colors = useTheme();
+    const styles = getStyles(Colors);
+    const crowdMembers = getArrayFromLocalStorage('crowdMembers')[chatId];
+
+    const {textInputProps, triggers} = useMentions<MentionType>({
+      value: text,
+      onChange: setText,
+      triggersConfig,
+    });
+
+    return (
+      <View style={styles.container}>
+        <Suggestions {...triggers.mention} data={crowdMembers || []} />
+        <TextInput
+          ref={ref}
+          {...textInputProps}
+          placeholder="Type a message..."
+          multiline
+          style={[styles.input, {maxHeight: text.length < 10 ? 50 : 200}]}
+          placeholderTextColor={Colors.BodyText}
+          keyboardAppearance={theme()}
+        />
+      </View>
+    );
+  },
+);
 
 export default ChatInput;
 
@@ -156,9 +149,8 @@ const getStyles = (Colors: TColors) =>
     container: {},
     input: {
       paddingVertical: 10,
-      maxHeight: 200,
+
       fontSize: 16,
-      // backgroundColor: 'red',
       color: Colors.BodyText,
       fontFamily: CustomFonts.REGULAR,
     },

@@ -45,13 +45,13 @@ export interface Sender {
 
 export interface TFile {
   uri?: string;
-  text: string;
-  _id: string;
+  text?: string;
+  _id?: string;
   name: string;
   size: number;
   type: string;
   url: string;
-  createdAt: string;
+  createdAt?: string;
   sender?: {
     profilePicture: string;
     lastName: string;

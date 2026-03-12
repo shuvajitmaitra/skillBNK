@@ -4,8 +4,9 @@ import {
   TouchableOpacity,
   Keyboard,
   Alert,
+  TextInput,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import ChatInput from './ChatInput';
 import {TColors} from '../../types';
 import {useTheme} from '../../context/ThemeContext';
@@ -27,18 +28,24 @@ import AudioUploadModal from './ChatFooter/AudioUploadModal';
 import ChatDocPreview from './ChatDocPreview';
 import {convertLink} from '../../utility/commonFunction';
 import {RootState} from '../../types/redux/root';
-import {IMessage, Sender} from '../../types/chat/messageTypes';
+import {IMessage, Sender, TFile} from '../../types/chat/messageTypes';
 import {
   setLocalMessages,
+  setSelectedMessage,
   setThreadMessages,
   updateDraftMessages,
   updateRepliesCount,
 } from '../../store/reducer/chatSlice';
 import {updateLatestMessage} from '../../store/reducer/chatReducer';
 import {showToast} from '../HelperFunction';
+import RNText from '../SharedComponent/RNText';
+import CustomFonts from '../../constants/CustomFonts';
+import {PressableScale} from '../SharedComponent/PressableScale';
+import CrossCircle from '../../assets/Icons/CrossCircle';
+import store from '../../store';
 export type chatInfoProps = {
   text: string;
-  files: {name: string; size: number; type: string; url: string}[];
+  files: TFile[];
 };
 type props = {
   chatId: string;
@@ -47,16 +54,30 @@ type props = {
 const ChatInputContainer = ({chatId, parentId}: props) => {
   const dispatch = useDispatch();
   const {user} = useSelector((state: RootState) => state.auth);
-  const {localMessages, threadMessages} = useSelector(
+  const {localMessages, threadMessages, selectedMessage} = useSelector(
     (state: RootState) => state.chatSlice,
   );
+
+  const inputRef = useRef<TextInput>(null);
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const [chatInfo, setChatInfo] = useState<chatInfoProps>({
     text: '',
     files: [],
   });
-  // Handle image selection
+  useEffect(() => {
+    if (selectedMessage) {
+      setChatInfo({
+        ...chatInfo,
+        text: selectedMessage.text || '',
+        files: selectedMessage.files || [],
+      });
+    }
+
+    return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMessage]);
+
   const selectImage = () => {
     Keyboard.dismiss();
     const options: ImageLibraryOptions = {
@@ -274,79 +295,126 @@ const ChatInputContainer = ({chatId, parentId}: props) => {
     localMessages,
     threadMessages,
   ]);
+  const handleCancelEdit = () => {
+    store.dispatch(setSelectedMessage(null));
+    setChatInfo({text: '', files: []});
+
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+  };
   return (
-    <View style={styles.container}>
-      {chatInfo.files.length > 0 && (
-        <ChatDocPreview
-          chatInfo={chatInfo}
-          onRemove={idx => {
-            const files = chatInfo.files.filter((_, i) => i !== idx);
-            setChatInfo({...chatInfo, files});
+    <>
+      <View style={styles.container}>
+        {selectedMessage && (
+          <View
+            style={{
+              padding: 10,
+              alignItems: 'center',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              gap: 10,
+              backgroundColor: Colors.Foreground,
+              borderRadius: 25,
+              borderWidth: 1,
+              borderColor: Colors.BorderColor,
+            }}>
+            <RNText
+              style={{
+                fontFamily: CustomFonts.MEDIUM,
+                color: Colors.Heading,
+                flex: 1,
+              }}
+              numberOfLines={1}>
+              Edit Message: {selectedMessage?.text}
+            </RNText>
+            <PressableScale
+              onPress={() => {
+                handleCancelEdit();
+              }}>
+              <CrossCircle />
+            </PressableScale>
+          </View>
+        )}
+        {chatInfo.files.length > 0 && (
+          <ChatDocPreview
+            chatInfo={chatInfo}
+            onRemove={idx => {
+              const files = chatInfo.files.filter((_, i) => i !== idx);
+              setChatInfo({...chatInfo, files});
+            }}
+          />
+        )}
+        <ChatInput
+          ref={inputRef}
+          text={chatInfo.text}
+          setText={txt => {
+            setChatInfo({...chatInfo, text: txt});
           }}
+          chatId={chatId}
         />
-      )}
-      <ChatInput
-        text={chatInfo.text}
-        setText={txt => {
-          setChatInfo({...chatInfo, text: txt});
-        }}
-        chatId={chatId}
-      />
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: 8,
-          }}>
-          {
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 8,
+            }}>
+            {
+              <TouchableOpacity
+                onPress={() => {
+                  handleDocumentSelection();
+                }}
+                style={styles.buttonContainer}>
+                <AttachmentIcon />
+              </TouchableOpacity>
+            }
+            {
+              <TouchableOpacity
+                onPress={selectImage}
+                style={styles.buttonContainer}>
+                <GalleryIcon />
+              </TouchableOpacity>
+            }
             <TouchableOpacity
               onPress={() => {
-                handleDocumentSelection();
+                dispatch(
+                  setNewEventData({isModalVisible: true, eventType: 'event'}),
+                );
               }}
               style={styles.buttonContainer}>
-              <AttachmentIcon />
+              <CalendarIconSmall color={Colors.BodyText} />
             </TouchableOpacity>
-          }
-          {
-            <TouchableOpacity
-              onPress={selectImage}
-              style={styles.buttonContainer}>
-              <GalleryIcon />
-            </TouchableOpacity>
-          }
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(
-                setNewEventData({isModalVisible: true, eventType: 'event'}),
-              );
-            }}
-            style={styles.buttonContainer}>
-            <CalendarIconSmall color={Colors.BodyText} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(
-                setNewEventData({isModalVisible: true, eventType: 'task'}),
-              );
-            }}
-            style={styles.buttonContainer}>
-            <MaterialIcon name="task-alt" size={22} color={Colors.BodyText} />
-          </TouchableOpacity>
-        </View>
-        <View style={{flexDirection: 'row', gap: 10}}>
-          <AudioUploadModal setChatInfo={setChatInfo} chatInfo={chatInfo} />
-          {(chatInfo.text || chatInfo.files.length > 0) && (
             <TouchableOpacity
               onPress={() => {
-                sendMessage();
+                dispatch(
+                  setNewEventData({isModalVisible: true, eventType: 'task'}),
+                );
               }}
               style={styles.buttonContainer}>
-              {<MaterialIcon name={'send'} size={22} color={Colors.BodyText} />}
+              <MaterialIcon name="task-alt" size={22} color={Colors.BodyText} />
             </TouchableOpacity>
-          )}
+          </View>
+          <View style={{flexDirection: 'row', gap: 10}}>
+            <AudioUploadModal setChatInfo={setChatInfo} chatInfo={chatInfo} />
+            {(chatInfo.text || chatInfo.files.length > 0) && (
+              <TouchableOpacity
+                onPress={() => {
+                  sendMessage();
+                }}
+                style={styles.buttonContainer}>
+                {
+                  <MaterialIcon
+                    name={'send'}
+                    size={22}
+                    color={Colors.BodyText}
+                  />
+                }
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 

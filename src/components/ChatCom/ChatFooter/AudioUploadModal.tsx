@@ -1,9 +1,15 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, TouchableOpacity, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Pressable,
+  ActivityIndicator,
+  Modal,
+} from 'react-native';
 import AudioWaveform from './AudioWaveform';
 import CrossCircle from '../../../assets/Icons/CrossCircle';
 import CheckIconTwo from '../../../assets/Icons/CheckIconTwo';
-import AudioMessage from '../AudioMessage';
 
 import {useTheme} from '../../../context/ThemeContext';
 import axiosInstance from '../../../utility/axiosInstance';
@@ -11,7 +17,6 @@ import axiosInstance from '../../../utility/axiosInstance';
 import {TColors} from '../../../types';
 import {showToast} from '../../HelperFunction';
 import Sound from 'react-native-nitro-sound';
-import ReactNativeModal from 'react-native-modal';
 import {chatInfoProps} from '../ChatInputContainer';
 import {withOpacity} from '../Mention/utils';
 import {MaterialIcon} from '../../../constants/Icons';
@@ -23,8 +28,8 @@ type AudioUploadModalProps = {
 
 const AudioUploadModal = ({chatInfo, setChatInfo}: AudioUploadModalProps) => {
   const [recording, setRecording] = useState(false);
-  const [recordedAudioPath, setRecordedAudioPath] = useState('');
   const [recordModalVisible, setRecordModalVisible] = useState<boolean>(false);
+  const [uploading, setUploading] = useState(false);
 
   const startAudioRecording = async () => {
     try {
@@ -45,9 +50,9 @@ const AudioUploadModal = ({chatInfo, setChatInfo}: AudioUploadModalProps) => {
     try {
       const result = await Sound.stopRecorder();
       setRecording(false);
-      setRecordedAudioPath(result);
       Sound.removeRecordBackListener();
       console.log('Recording stopped, file saved at:', result);
+      setUploading(true);
       const formData = new FormData();
       formData.append('file', {
         uri: result,
@@ -80,13 +85,14 @@ const AudioUploadModal = ({chatInfo, setChatInfo}: AudioUploadModalProps) => {
       setRecordModalVisible(!recordModalVisible);
     } catch (error) {
       console.error('Failed to stop recording:', error);
+    } finally {
+      setUploading(false);
     }
   };
   const cancelRecording = async () => {
     try {
       await Sound.stopRecorder();
       setRecording(false);
-      setRecordedAudioPath('');
       Sound.removeRecordBackListener();
       console.log('Recording canceled');
       setRecordModalVisible(!recordModalVisible);
@@ -108,42 +114,45 @@ const AudioUploadModal = ({chatInfo, setChatInfo}: AudioUploadModalProps) => {
         style={styles.buttonContainer}>
         <MaterialIcon name={'mic'} size={22} color={Colors.BodyText} />
       </TouchableOpacity>
-      <ReactNativeModal
-        onBackdropPress={() => {
+      <Modal
+        onRequestClose={() => {
           setRecordModalVisible(!recordModalVisible);
         }}
-        isVisible={recordModalVisible}
-        style={{margin: 0, justifyContent: 'flex-end'}}>
+        visible={recordModalVisible}
+        animationType="slide"
+        transparent>
         <View style={styles.container}>
-          {recording && (
-            <View style={styles.containerTwo}>
-              <Pressable onPress={cancelRecording}>
-                <CrossCircle color={Colors.Red} size={30} />
-              </Pressable>
-              <AudioWaveform />
-              <Pressable onPress={stopRecording}>
-                <CheckIconTwo />
-              </Pressable>
+          {uploading && (
+            <View
+              style={{
+                height: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: Colors.Background_color,
+                padding: 25,
+              }}>
+              <ActivityIndicator />
             </View>
           )}
-          {recordedAudioPath && (
-            <View style={styles.containerTwo}>
-              <AudioMessage
-                audioUrl={recordedAudioPath}
-                color={Colors.BodyText}
-                background={'transparent'}
-              />
-              <Pressable
-                onPress={() => {
-                  setRecordedAudioPath('');
-                  setRecordModalVisible(false);
-                }}>
-                <CrossCircle />
-              </Pressable>
+          {recording && (
+            <View
+              style={{
+                backgroundColor: Colors.Background_color,
+                padding: 25,
+              }}>
+              <View style={styles.containerTwo}>
+                <Pressable onPress={cancelRecording}>
+                  <CrossCircle color={Colors.Red} size={30} />
+                </Pressable>
+                <AudioWaveform />
+                <Pressable onPress={stopRecording}>
+                  <CheckIconTwo />
+                </Pressable>
+              </View>
             </View>
           )}
         </View>
-      </ReactNativeModal>
+      </Modal>
     </>
   );
 };
@@ -182,16 +191,11 @@ const getStyles = (Colors: TColors) =>
       borderRadius: 40,
     },
     container: {
-      // flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: Colors.Red,
-      // borderRadius: 25,
-      // minHeight: 60,
-      // gap: 20,
-      // paddingHorizontal: 10,
-      marginHorizontal: 10,
-      padding: 20,
+      flex: 1,
+      marginHorizontal: 0,
+      padding: 0,
+      justifyContent: 'flex-end',
+      backgroundColor: withOpacity(Colors.BackDropColor, 0.5),
     },
     title: {
       fontSize: 24,
