@@ -1,14 +1,17 @@
 export default {
   local: false,
   production: true,
-  version: '3.15.10',
-  FRONTEND_URL: true
+  version: '3.16.0',
+  FRONTEND_URL: false
     ? 'http://192.168.68.114:4001/mobile'
     : 'https://portal.skillbnk.com/mobile',
   OPEN_AI_API_KEY:
     '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',
 };
 /*
+
+ts4u.bootcamp.enrollment@gmail.com
+qoxNer-1kukfi-pykpif
 
 freeaccess@ts4u.us
 FreeAccess@@##1

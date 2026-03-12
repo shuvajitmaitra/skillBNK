@@ -77,7 +77,7 @@ export default function UserDashboard() {
               height={30}
               fontSize={responsiveScreenFontSize(1.6)}
             />
-            {navigationData.myProgram && (
+            {navigationData?.myProgram && (
               <ChartSection
                 onPress={handleNavigation('Program', 'ProgramStack')}
                 Colors={Colors}
@@ -115,7 +115,7 @@ export default function UserDashboard() {
               height={30}
               fontSize={responsiveScreenFontSize(1.6)}
             />
-            {navigationData.technicalTest && (
+            {navigationData?.technicalTest && (
               <ChartSection
                 onPress={handleNavigation(
                   'TechnicalTestScreen',
@@ -129,7 +129,7 @@ export default function UserDashboard() {
                 fontSize={responsiveScreenFontSize(1.6)}
               />
             )}
-            {navigationData.showTell && (
+            {navigationData?.showTell && (
               <ChartSection
                 onPress={handleNavigation('ShowAndTellScreen', 'ProgramStack')}
                 Colors={Colors}
@@ -151,7 +151,7 @@ export default function UserDashboard() {
                 fontSize={responsiveScreenFontSize(1.6)}
               />
             )} */}
-            {navigationData.myMockInterview && (
+            {navigationData?.myMockInterview && (
               <ChartSection
                 onPress={handleNavigation('MockInterview', 'ProgramStack')}
                 Colors={Colors}
@@ -171,7 +171,7 @@ export default function UserDashboard() {
               height={30}
               fontSize={responsiveScreenFontSize(1.6)}
             />
-            {navigationData.myDayToDayActivity && (
+            {navigationData?.myDayToDayActivity && (
               <ChartSection
                 onPress={handleNavigation('DayToDayActivities', 'ProgramStack')}
                 Colors={Colors}
