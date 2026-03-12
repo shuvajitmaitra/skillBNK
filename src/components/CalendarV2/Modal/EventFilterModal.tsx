@@ -1,5 +1,5 @@
 import {Text, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useRef, memo, useMemo} from 'react';
+import React, {useCallback, memo, useMemo} from 'react';
 import {useTheme} from '../../../context/ThemeContext';
 import {
   borderRadius,
@@ -24,18 +24,20 @@ interface EventFilterModalProps {
   visible: {x: number; y: number};
   onCancel: () => void;
 }
-// interface StatusObject {
-//   [key: string]: any[];
-//   priorities: string[];
-//   statuses: string[];
-//   roles: string[];
-//   states: string[];
-// }
+
+const ensureArray = (value: unknown): string[] => {
+  return Array.isArray(value) ? value.filter(v => typeof v === 'string') : [];
+};
 
 const hasNonEmptyArrays = (obj: ICalendarQuery | null): boolean => {
   if (!obj) return false;
-  return Object.values(obj).some(arr => arr.length > 0);
+
+  return ['priorities', 'statuses', 'roles', 'states'].some(key => {
+    const value = (obj as any)[key];
+    return Array.isArray(value) && value.length > 0;
+  });
 };
+
 const EventFilterModal: React.FC<EventFilterModalProps> = ({
   visible,
   onCancel,
@@ -44,7 +46,11 @@ const EventFilterModal: React.FC<EventFilterModalProps> = ({
   const dispatch = useDispatch();
   const {filterParameter} = useSelector((state: RootState) => state.calendarV2);
 
-  // Define checklist items with useMemo to prevent recreating on every render
+  const priorities = ensureArray(filterParameter?.priorities);
+  const statuses = ensureArray(filterParameter?.statuses);
+  const roles = ensureArray(filterParameter?.roles);
+  const states = ensureArray(filterParameter?.states);
+
   const priorityItems = useMemo(
     () => [
       {
@@ -147,17 +153,6 @@ const EventFilterModal: React.FC<EventFilterModalProps> = ({
         id: 'organizer',
         label: 'Organizer',
       },
-      {
-        icon: (
-          <IoniconsIcon
-            name="people-outline"
-            size={fontSizes.subHeading}
-            color={Colors.BodyText}
-          />
-        ),
-        id: 'attendee',
-        label: 'Attendee',
-      },
     ],
     [Colors.BodyText],
   );
@@ -223,18 +218,8 @@ const EventFilterModal: React.FC<EventFilterModalProps> = ({
     [Colors.BodyText],
   );
 
-  // Ref to track if dispatches have been triggered
-  const dispatchTriggeredRef = useRef({
-    priorities: false,
-    statuses: false,
-    roles: false,
-    states: false,
-  });
-
-  // Memoized handlers for selection changes
   const handlePrioritiesChange = useCallback(
     (items: string[]) => {
-      dispatchTriggeredRef.current.priorities = true;
       dispatch(setFilterParameter({priorities: items}));
     },
     [dispatch],
@@ -242,29 +227,43 @@ const EventFilterModal: React.FC<EventFilterModalProps> = ({
 
   const handleStatusesChange = useCallback(
     (items: string[]) => {
-      dispatchTriggeredRef.current.statuses = true;
-      dispatch(setFilterParameter({statuses: items}));
+      const nextStatuses = ensureArray(items);
+
+      if (nextStatuses.length > 0) {
+        dispatch(
+          setFilterParameter({
+            statuses: nextStatuses,
+            roles: ['attendee'],
+          }),
+        );
+      } else {
+        const filteredRoles = roles.filter(role => role !== 'attendee');
+
+        dispatch(
+          setFilterParameter({
+            statuses: [],
+            roles: filteredRoles,
+          }),
+        );
+      }
     },
-    [dispatch],
+    [dispatch, roles],
   );
 
   const handleRolesChange = useCallback(
     (items: string[]) => {
-      dispatchTriggeredRef.current.roles = true;
-      dispatch(setFilterParameter({roles: items}));
+      dispatch(setFilterParameter({roles: ensureArray(items)}));
     },
     [dispatch],
   );
 
   const handleStatesChange = useCallback(
     (items: string[]) => {
-      dispatchTriggeredRef.current.states = true;
-      dispatch(setFilterParameter({states: items}));
+      dispatch(setFilterParameter({states: ensureArray(items)}));
     },
     [dispatch],
   );
 
-  // Memoize icon components
   const flagIcon = useMemo(
     () => (
       <IoniconsIcon
@@ -309,7 +308,6 @@ const EventFilterModal: React.FC<EventFilterModalProps> = ({
     [Colors.BodyText],
   );
 
-  // Ensure the popover is rendered only when visible is provided
   if (!visible) return null;
 
   return (
@@ -322,25 +320,24 @@ const EventFilterModal: React.FC<EventFilterModalProps> = ({
           borderRadius: 10,
         }}>
         <TouchableOpacity
-          style={[
-            {
-              width: gGap(30),
-              height: gGap(30),
-              borderRadius: borderRadius.circle,
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginLeft: gGap(10),
-              borderWidth: 1,
-              borderColor: Colors.BorderColor,
-              backgroundColor: '#F97066',
-              position: 'absolute',
-              right: -gMargin(15),
-              top: -gMargin(15),
-            },
-          ]}
+          style={{
+            width: gGap(30),
+            height: gGap(30),
+            borderRadius: borderRadius.circle,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginLeft: gGap(10),
+            borderWidth: 1,
+            borderColor: Colors.BorderColor,
+            backgroundColor: '#F97066',
+            position: 'absolute',
+            right: -gMargin(15),
+            top: -gMargin(15),
+          }}
           onPress={onCancel}>
           <CloseIcon color="#fff" />
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => {
             dispatch(clearFilterParameters());
@@ -363,33 +360,37 @@ const EventFilterModal: React.FC<EventFilterModalProps> = ({
             Clear filter
           </Text>
         </TouchableOpacity>
+
         <GlobalCollapsibleChecklist
           title="Priority"
           items={priorityItems}
           icon={flagIcon}
           onSelectionChange={handlePrioritiesChange}
-          initialSelectedItems={filterParameter?.priorities}
+          initialSelectedItems={priorities}
         />
+
         <GlobalCollapsibleChecklist
-          title="Event Status"
+          title="Event Status (as attendee)"
           items={statusItems}
           icon={checkmarkIcon}
           onSelectionChange={handleStatusesChange}
-          initialSelectedItems={filterParameter?.statuses}
+          initialSelectedItems={statuses}
         />
+
         <GlobalCollapsibleChecklist
-          title="Based on Role"
+          title="Based on Role (as organizer)"
           items={roleItems}
           icon={personIcon}
           onSelectionChange={handleRolesChange}
-          initialSelectedItems={filterParameter?.roles}
+          initialSelectedItems={roles.filter(role => role !== 'attendee')}
         />
+
         <GlobalCollapsibleChecklist
           title="Event/Task State"
           items={stateItems}
           icon={listIcon}
           onSelectionChange={handleStatesChange}
-          initialSelectedItems={filterParameter?.states}
+          initialSelectedItems={states}
         />
       </View>
     </ReactNativeModal>

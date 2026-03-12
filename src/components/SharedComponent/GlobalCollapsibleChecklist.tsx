@@ -11,7 +11,6 @@ import {fontSizes, gGap, gPadding} from '../../constants/Sizes';
 import {TColors} from '../../types';
 import {FeatherIcon, MaterialIcon} from '../../constants/Icons';
 
-// Define interfaces
 interface ChecklistItem {
   id: string;
   label: string;
@@ -24,76 +23,85 @@ interface CollapsibleChecklistProps {
   icon?: React.ReactNode;
   outerContainerStyle?: ViewStyle;
   onSelectionChange: (item: string[]) => void;
-  initialSelectedItems?: string[]; // New prop for preselected items
+  initialSelectedItems?: string[] | null;
 }
+
+const normalizeStringArray = (value: any): string[] => {
+  if (!Array.isArray(value)) return [];
+  return value.filter(item => typeof item === 'string');
+};
+
+const areArraysEqual = (a: any, b: any): boolean => {
+  const arrA = normalizeStringArray(a);
+  const arrB = normalizeStringArray(b);
+
+  if (arrA.length !== arrB.length) return false;
+  return arrA.every((item, index) => item === arrB[index]);
+};
 
 const GlobalCollapsibleChecklist: React.FC<CollapsibleChecklistProps> = ({
   title,
-  items,
+  items = [],
   outerContainerStyle,
   onSelectionChange,
   initialSelectedItems = [],
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<string[]>(
-    initialSelectedItems || [],
+    normalizeStringArray(initialSelectedItems),
   );
 
-  // Track if the update is from internal or external changes
   const isInternalChangeRef = useRef(false);
 
-  // Fix the useEffect to avoid the infinite loop
   useEffect(() => {
-    // Only update if not from an internal change and the arrays are different
+    const normalizedInitial = normalizeStringArray(initialSelectedItems);
+
     if (
       !isInternalChangeRef.current &&
-      !areArraysEqual(selectedItems, initialSelectedItems || [])
+      !areArraysEqual(selectedItems, normalizedInitial)
     ) {
-      setSelectedItems(initialSelectedItems || []);
+      setSelectedItems(normalizedInitial);
     }
-    isInternalChangeRef.current = false;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialSelectedItems]);
 
-  // Helper function to compare arrays
-  const areArraysEqual = (a: string[], b: string[]): boolean => {
-    if (a.length !== b.length) return false;
-    return a.every((item, index) => item === b[index]);
-  };
+    isInternalChangeRef.current = false;
+  }, [initialSelectedItems, selectedItems]);
 
   const Colors = useTheme();
   const styles = getStyles(Colors);
 
   const toggleCollapse = (): void => {
-    setIsCollapsed(!isCollapsed);
+    setIsCollapsed(prev => !prev);
   };
 
   const toggleSelectAll = (): void => {
     isInternalChangeRef.current = true;
+
     if (selectedItems.length === items.length) {
-      setSelectedItems([]); // Deselect all
+      setSelectedItems([]);
       onSelectionChange([]);
     } else {
       const allItemIds = items.map(item => item.id);
-      setSelectedItems(allItemIds); // Select all
+      setSelectedItems(allItemIds);
       onSelectionChange(allItemIds);
     }
   };
 
   const handleItemSelect = (itemId: string): void => {
     isInternalChangeRef.current = true;
+
     setSelectedItems(prev => {
-      const updatedSelection = prev.includes(itemId)
+      const exists = prev.indexOf(itemId) !== -1;
+      const updatedSelection = exists
         ? prev.filter(id => id !== itemId)
         : [...prev, itemId];
+
       onSelectionChange(updatedSelection);
       return updatedSelection;
     });
   };
 
   return (
-    <View style={{...styles.container, ...outerContainerStyle}}>
-      {/* Header */}
+    <View style={[styles.container, outerContainerStyle]}>
       <TouchableOpacity style={styles.header} onPress={toggleCollapse}>
         <View style={styles.titleContainer}>
           <FeatherIcon
@@ -102,9 +110,9 @@ const GlobalCollapsibleChecklist: React.FC<CollapsibleChecklistProps> = ({
             color={Colors.Heading}
             style={styles.chevronIcon}
           />
-          {/* {icon && <View style={styles.iconContainer}>{icon}</View>} */}
           <Text style={styles.title}>{title}</Text>
         </View>
+
         <MaterialIcon
           onPress={toggleSelectAll}
           name={
@@ -121,7 +129,6 @@ const GlobalCollapsibleChecklist: React.FC<CollapsibleChecklistProps> = ({
         />
       </TouchableOpacity>
 
-      {/* Content */}
       {!isCollapsed && (
         <View style={styles.content}>
           {items.map((item: ChecklistItem) => (
@@ -135,14 +142,15 @@ const GlobalCollapsibleChecklist: React.FC<CollapsibleChecklistProps> = ({
                 )}
                 <Text style={styles.itemText}>{item.label}</Text>
               </View>
+
               <MaterialIcon
                 name={
-                  selectedItems.includes(item.id)
+                  selectedItems.indexOf(item.id) !== -1
                     ? 'check-box'
                     : 'check-box-outline-blank'
                 }
                 color={
-                  selectedItems.includes(item.id)
+                  selectedItems.indexOf(item.id) !== -1
                     ? Colors.Primary
                     : Colors.BodyText
                 }
@@ -180,37 +188,16 @@ const getStyles = (Colors: TColors) =>
       fontWeight: '600',
       color: Colors.Heading,
     },
-    selectAllCheckbox: {
-      width: 24,
-      height: 24,
-      borderWidth: 2,
-      borderColor: '#ccc',
-      borderRadius: 4,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    content: {
-      // backgroundColor: 'red',
-    },
+    content: {},
     item: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      // paddingVertical: gPadding(5),
       marginLeft: gGap(30),
     },
     itemText: {
       fontSize: fontSizes.body,
       color: Colors.BodyText,
-    },
-    checkbox: {
-      width: 24,
-      height: 24,
-      borderWidth: 2,
-      borderColor: '#ccc',
-      borderRadius: 4,
-      justifyContent: 'center',
-      alignItems: 'center',
     },
   });
 

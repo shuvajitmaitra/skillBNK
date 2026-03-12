@@ -90,6 +90,7 @@ export const getCalendarEvents = async ({
     // );
 
     // Dispatch the correct action based on view type
+    console.log('view', JSON.stringify(view, null, 2));
     if (view === 'month') {
       const groupedData = response.data.events.reduce(
         (acc: {[key: string]: IEventV2[]}, item: IEventV2) => {

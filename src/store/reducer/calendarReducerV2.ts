@@ -171,11 +171,11 @@ const calendarSliceV2 = createSlice({
     },
 
     setWeekEventsObj: (state, action: PayloadAction<TransformedEvents>) => {
-      if (state.weekEventsObj === null) {
-        state.weekEventsObj = action.payload;
-      } else {
-        state.weekEventsObj = {...state.weekEventsObj, ...action.payload};
-      }
+      state.weekEventsObj = action.payload;
+      // if (state.weekEventsObj === null) {
+      // } else {
+      //   state.weekEventsObj = {...state.weekEventsObj, ...action.payload};
+      // }
     },
 
     setSelectedEventV2: (state, action: PayloadAction<IEventV2 | null>) => {
