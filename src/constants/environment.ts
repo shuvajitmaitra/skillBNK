@@ -2,7 +2,7 @@ export default {
   local: false,
   production: true,
   version: '3.15.10',
-  FRONTEND_URL: false
+  FRONTEND_URL: true
     ? 'http://192.168.68.114:4001/mobile'
     : 'https://portal.skillbnk.com/mobile',
   OPEN_AI_API_KEY:

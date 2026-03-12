@@ -45,6 +45,8 @@ import CustomFonts from '../../constants/CustomFonts';
 import {PressableScale} from '../SharedComponent/PressableScale';
 import CrossCircle from '../../assets/Icons/CrossCircle';
 import store from '../../store';
+import AiIcon2 from '../../assets/Icons/AiIcon2';
+import AiModal from '../SharedComponent/AiModal/AiModal';
 export type chatInfoProps = {
   text: string;
   files: TFile[];
@@ -59,7 +61,7 @@ const ChatInputContainer = ({chatId, parentId}: props) => {
   const {localMessages, threadMessages, selectedMessage} = useSelector(
     (state: RootState) => state.chatSlice,
   );
-
+  const [aiModalVisible, setAiModalVisible] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const Colors = useTheme();
   const styles = getStyles(Colors);
@@ -363,6 +365,14 @@ const ChatInputContainer = ({chatId, parentId}: props) => {
   return (
     <>
       <View style={styles.container}>
+        {aiModalVisible && (
+          <AiModal
+            setState={(txt: string) => setChatInfo({...chatInfo, text: txt})}
+            state={chatInfo.text}
+            isVisible={aiModalVisible}
+            onCancelPress={() => setAiModalVisible(prev => !prev)}
+          />
+        )}
         {selectedMessage && (
           <View
             style={{
@@ -456,6 +466,15 @@ const ChatInputContainer = ({chatId, parentId}: props) => {
               style={styles.buttonContainer}>
               <MaterialIcon name="task-alt" size={22} color={Colors.BodyText} />
             </TouchableOpacity>
+            {chatInfo.text && (
+              <TouchableOpacity
+                onPress={() => {
+                  setAiModalVisible(!aiModalVisible);
+                }}
+                style={styles.buttonContainer}>
+                <AiIcon2 size={22} color={Colors.BodyText} />
+              </TouchableOpacity>
+            )}
           </View>
           <View style={{flexDirection: 'row', gap: 10}}>
             <AudioUploadModal setChatInfo={setChatInfo} chatInfo={chatInfo} />

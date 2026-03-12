@@ -24,8 +24,14 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - Message edit functionalities added with new input.
 - Edit cancel functionalities added with new input.
 - Added new input field in the  thread message screen.
+54. In calender the phone number place should not be hidden.
+98. After pasting a long message the send button disappears issue fixed
+- Displayed AI button conditionally in the chat input.
 
-
+*skillBNK Portal*
+- For very small device mockinterview card responsive issue fixed.
+- For low word see more and see less button showing issue fixed.
+- Displayed "No Feedback found" text in a single row.
 
 
 📌 Note: 100% of today’s tasks have been successfully completed.

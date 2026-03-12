@@ -94,10 +94,10 @@ const EventLocationV2 = ({
         onChangeText={handleLinkChange}
         placeholder={getPlaceholder()}
         value={link}
-        editable={!!selected} // Disable input when no type is selected
+        editable={!!selected}
         keyboardType={selected === 'call' ? 'decimal-pad' : 'url'}
-        // keyboardType={selected === 'call' ? 'phone-pad' : 'url'}
         placeholderTextColor={Colors.BodyText}
+        secureTextEntry={false}
       />
     </View>
   );
