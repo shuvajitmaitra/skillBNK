@@ -16,7 +16,7 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
 *Work Update – Mar 10, 2026*
 
-*SkillBNK app latest version (3.16.0) released on TestFlight*
+*SkillBNK app latest version (3.16.1) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
 - Dashboard drawer blinking issue has been fixed.

@@ -1,7 +1,7 @@
 export default {
   local: false,
   production: true,
-  version: '3.16.0',
+  version: '3.16.1',
   FRONTEND_URL: false
     ? 'http://192.168.68.114:4001/mobile'
     : 'https://portal.skillbnk.com/mobile',

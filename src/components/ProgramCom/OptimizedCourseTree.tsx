@@ -539,15 +539,18 @@ const OptimizedCourseTree: React.FC<OptimizedCourseTreeProps> = ({data}) => {
           if (item._id !== id) return item;
 
           const updated = {...item, isCompleted: !item.isCompleted};
+
           programService.handleProgramItemAction(
             updated.myCourse.course,
-            updated.isCompleted ? 'incomplete' : 'complete',
+            updated.isCompleted ? 'complete' : 'incomplete',
             updated._id,
           );
+
           programService.loadProgramModules(
             programs.program.slug,
             item.category,
           );
+
           return updated;
         }),
       );

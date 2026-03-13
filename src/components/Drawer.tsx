@@ -61,7 +61,9 @@ const Drawer = () => {
       ]).start();
     }
   }, [drawer, slideAnim, backdropAnim]);
-
+  if (!drawer) {
+    return;
+  }
   const closeDrawer = () => {
     store.dispatch(toggleDrawer());
   };
