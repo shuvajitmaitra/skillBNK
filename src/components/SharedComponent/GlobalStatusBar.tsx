@@ -1,25 +1,32 @@
-import {StatusBar} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
+import {StatusBar, StatusBarStyle} from 'react-native';
 import {useTheme} from '../../context/ThemeContext';
-import {StatusBarStyle} from 'react-native';
+import {storage} from '../../utility/mmkvInstance';
 
-const GlobalStatusBar = ({color}: {color?: string}) => {
-  const STYLES = ['default', 'dark-content', 'light-content'] as const;
-  const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>(
-    STYLES[0],
-  );
+type GlobalStatusBarProps = {
+  backgroundColor?: string;
+  translucent?: boolean;
+  barStyle?: StatusBarStyle;
+};
+
+const GlobalStatusBar = ({
+  backgroundColor,
+  translucent = true,
+  barStyle,
+}: GlobalStatusBarProps) => {
   const Colors = useTheme();
-  useEffect(() => {
-    setStatusBarStyle('light-content');
-  }, []);
+  const theme = storage?.getString('displayMode');
+
+  const resolvedBarStyle: StatusBarStyle =
+    barStyle || (theme === 'light' ? 'dark-content' : 'light-content');
 
   return (
     <StatusBar
-      translucent={true}
-      backgroundColor={color || Colors.Background_color}
-      barStyle={statusBarStyle}
+      translucent={translucent}
+      backgroundColor={backgroundColor || Colors.Background_color}
+      barStyle={resolvedBarStyle}
     />
   );
 };
 
-export default GlobalStatusBar;
+export default React.memo(GlobalStatusBar);

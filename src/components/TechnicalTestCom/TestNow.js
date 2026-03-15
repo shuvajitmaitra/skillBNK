@@ -38,6 +38,7 @@ import RequireFieldStar from '../../constants/RequireFieldStar';
 import CommentField from '../CommentCom/CommentField';
 import TextRender from '../SharedComponent/TextRender';
 import SaveConfirmationModal from '../SharedComponent/SaveConfirmationModal';
+import GlobalStatusBar from '../SharedComponent/GlobalStatusBar';
 
 export const getFileTypeFromUri = (uri = '') => {
   const extension = uri ? uri?.split('.')?.pop()?.toLowerCase() : '';
@@ -317,11 +318,8 @@ export default function TestNow(routes) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{flex: 1}}>
       <View>
-        <StatusBar
-          translucent={true}
-          backgroundColor={Colors.Foreground}
-          barStyle={theme() === 'light' ? 'dark-content' : 'light-content'}
-        />
+        <GlobalStatusBar />
+
         <View style={styles.contain}>
           <ScrollView>
             <SaveConfirmationModal

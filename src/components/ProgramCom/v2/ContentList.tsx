@@ -1,13 +1,6 @@
 // ContentList.tsx
 import React, {useEffect, useState} from 'react';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  View,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import {ScrollView, StyleSheet, View, ViewStyle, TextStyle} from 'react-native';
 import axiosInstance from '../../../utility/axiosInstance';
 import ProgramFiles from './ProgramFiles';
 import Loading from '../../SharedComponent/Loading';
@@ -27,7 +20,7 @@ import {
   TLesson,
   TProgram,
 } from '../../../types/program/programModuleType';
-import {theme} from '../../../utility/commonFunction';
+import GlobalStatusBar from '../../SharedComponent/GlobalStatusBar';
 
 // Create a ModuleContext to share values with child components.
 // For improved type safety, you can create an interface for the context value.
@@ -183,11 +176,7 @@ const ContentList: React.FC<ContentListProps> = ({category, course}) => {
           flex: 1,
           backgroundColor: Colors.Background_color,
         }}>
-        <StatusBar
-          translucent={true}
-          backgroundColor={Colors.Background_color}
-          barStyle={theme() === 'light' ? 'dark-content' : 'light-content'}
-        />
+        <GlobalStatusBar />
         <View style={styles.searchFilterContainer}>
           <SearchAndFilter
             handleSearch={handleSearch}

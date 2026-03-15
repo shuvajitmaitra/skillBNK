@@ -3,7 +3,6 @@ import {
   FlatList,
   View,
   Text,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
   ListRenderItemInfo,
@@ -32,8 +31,8 @@ import {RegularFonts} from '../constants/Fonts';
 import {RootState} from '../types/redux/root';
 import {fontSizes} from '../constants/Sizes';
 import {setSelectedEventV2} from '../store/reducer/calendarReducerV2';
-import {theme} from '../utility/commonFunction';
 import {Image} from 'react-native';
+import GlobalStatusBar from '../components/SharedComponent/GlobalStatusBar';
 
 // Define a TypeScript interface for notifications based on the properties used.
 export interface TNotification {
@@ -266,11 +265,8 @@ const NotificationScreen: React.FC = () => {
   };
   return (
     <View style={styles.container}>
-      <StatusBar
-        translucent={true}
-        backgroundColor={Colors.Background_color}
-        barStyle={theme() === 'light' ? 'dark-content' : 'light-content'}
-      />
+      <GlobalStatusBar />
+
       <View style={styles.headingContainer}>
         <Text style={styles.Heading}>Notifications</Text>
         {notificationCount.totalUnread > 0 && (

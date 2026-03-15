@@ -1,12 +1,10 @@
 
-*Workstream – Mar 12, 2026* 
+*Workstream – Mar 15, 2026* 
 
 *skillBNK Mobile App:*
-- Complete chat input implementation. 
-- Fix issue from skillBNK as much as possible
-- Update app store and play store screenshot
-- Submit app in google play and app store.
-
+- Fixed presentation and slides theme issues.
+- Fixed the issue where presentation and slides full screen was not working.
+- Worked on bringing My Documents to the mobile app.
 
 - In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
 
@@ -19,24 +17,10 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 *SkillBNK app latest version (3.16.1) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
-- Dashboard drawer blinking issue has been fixed.
-- Thread message screen message preview theme issue fixed.
-- Message edit functionalities added with new input.
-- Edit cancel functionalities added with new input.
-- Added new input field in the  thread message screen.
-54. In calender the phone number place should not be hidden.
-98. After pasting a long message the send button disappears issue fixed
-- Displayed AI button conditionally in the chat input.
-- After adding a file in note, the text go out of the box create new notes screen.
+- Progress Ring Re-rendering issue has been fixed.
 
-*skillBNK Portal*
-- For very small device mockinterview card responsive issue fixed.
-- For low word see more and see less button showing issue fixed.
-- Displayed "No Feedback found" text in a single row.
 
 
 📌 Note: 100% of today’s tasks have been successfully completed.
-
-
 
 

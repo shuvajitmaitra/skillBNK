@@ -10,6 +10,7 @@ import CustomFonts from '../../constants/CustomFonts';
 import GlobalHeaderBackButton from '../SharedComponent/GlobalHeaderBackButton';
 import {theme} from '../../utility/commonFunction';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import GlobalStatusBar from '../SharedComponent/GlobalStatusBar';
 
 export default function ViewStatus(route) {
   const totalAssignment = route?.route?.params?.assignments?.length;
@@ -41,11 +42,8 @@ export default function ViewStatus(route) {
   return (
     <SafeAreaView style={styles.container}>
       <GlobalHeaderBackButton HText="Overall Status" />
-      <StatusBar
-        translucent={true}
-        backgroundColor={Colors.Foreground}
-        barStyle={theme() === 'light' ? 'dark-content' : 'light-content'}
-      />
+      <GlobalStatusBar />
+
       <ScrollView style={styles.statusContainer}>
         <View style={styles.assessmentContainer}>
           <Text style={styles.heading}>Total Assessments</Text>

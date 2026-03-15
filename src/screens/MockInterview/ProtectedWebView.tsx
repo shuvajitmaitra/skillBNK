@@ -21,6 +21,7 @@ const ProtectedWebView = ({url}: {url: string}) => {
 
   const org = storage?.getString('organization');
   const theme = storage?.getString('displayMode');
+  console.log('theme', JSON.stringify(theme, null, 2));
 
   let authData = {
     accessToken: '',

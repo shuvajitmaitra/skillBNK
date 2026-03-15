@@ -6,6 +6,7 @@ import {
   Text,
   Pressable,
   ScrollView,
+  ImageBackground,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -133,16 +134,32 @@ export function DrawerContent(props: any) {
                 flexDirection: 'row',
                 marginTop: gGap(15),
               }}>
-              <Image
-                source={
-                  user.profilePicture
-                    ? {
-                        uri: user?.profilePicture,
-                      }
-                    : Images.DEFAULT_IMAGE
-                }
-                style={{width: 50, height: 50, borderRadius: 25}}
-              />
+              <ImageBackground
+                source={Images.DEFAULT_IMAGE}
+                style={{
+                  width: 50,
+                  height: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 1,
+                  borderColor: Colors.BorderColor,
+                  borderRadius: 100,
+                  overflow: 'hidden',
+                }}
+                imageStyle={{
+                  borderRadius: 25,
+                }}>
+                <Image
+                  source={
+                    user.profilePicture
+                      ? {
+                          uri: user?.profilePicture,
+                        }
+                      : Images.DEFAULT_IMAGE
+                  }
+                  style={{width: 50, height: 50, borderRadius: 25}}
+                />
+              </ImageBackground>
               <View
                 style={{
                   position: 'absolute',

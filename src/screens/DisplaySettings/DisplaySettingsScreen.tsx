@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, useColorScheme, StatusBar} from 'react-native';
+import {View, Text, StyleSheet, StatusBar} from 'react-native';
 import {
   responsiveScreenFontSize,
   responsiveScreenHeight,
@@ -14,55 +14,61 @@ import {RegularFonts} from '../../constants/Fonts';
 import {TColors} from '../../types';
 import {storage} from '../../utility/mmkvInstance';
 import {theme} from '../../utility/commonFunction';
-type DisplayMode = 'dark' | 'default' | 'light';
+
+type DisplayMode = 'dark' | 'light';
 
 const DisplaySettingsScreen = () => {
   const Colors = useTheme();
   const styles = getStyles(Colors);
-  const colorScheme = useColorScheme();
-  const [checked, setChecked] = useState<string | number>(
-    storage?.getString('displayMode') || 'default',
-  );
+
+  const [checked, setChecked] = useState<DisplayMode>('light');
+
   const options = [
-    {value: 'default', label: 'Default'},
+    {value: 'light', label: 'Light'},
     {value: 'dark', label: 'Dark'},
   ];
+
   useEffect(() => {
-    if (storage?.getString('displayMode')) {
-      setChecked(storage.getString('displayMode') as DisplayMode);
+    const savedMode = storage?.getString('displayMode') as
+      | DisplayMode
+      | undefined;
+
+    if (savedMode === 'dark' || savedMode === 'light') {
+      setChecked(savedMode);
+    } else {
+      setChecked('light');
+      storage?.set('displayMode', 'light');
     }
   }, []);
-  const storeDisplayMode = async (mode: string) => {
+
+  const storeDisplayMode = (mode: DisplayMode) => {
     storage?.set('displayMode', mode);
   };
 
   const handleRadioChecked = (sts: string | number) => {
-    setChecked(sts);
-    if (sts === 'default') {
+    if (sts === 'dark' || sts === 'light') {
+      setChecked(sts);
       storeDisplayMode(sts);
-    } else if (sts === 'dark') {
-      storeDisplayMode(sts);
-    } else if (colorScheme === 'dark') {
-      storeDisplayMode('dark');
-    } else if (colorScheme === 'light') {
-      storeDisplayMode('default');
     }
   };
+
   const {top} = useSafeAreaInsets();
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <StatusBar
-        translucent={true}
+        translucent
         backgroundColor={Colors.Foreground}
         barStyle={theme() === 'light' ? 'dark-content' : 'light-content'}
       />
       <ScreenHeader />
       <Text style={styles.headingText}>Display settings</Text>
       <Text style={styles.description}>Choose your display color</Text>
+
       <View style={styles.themeContainer}>
         <GlobalRadioGroup
           options={options}
-          onSelect={(status: string | number) => handleRadioChecked(status)}
+          onSelect={handleRadioChecked}
           selectedValue={checked}
           customStyle={styles.customStyle}
         />
@@ -103,7 +109,6 @@ const getStyles = (Colors: TColors) =>
     },
     description: {
       color: Colors.BodyText,
-      // paddingTop: responsiveScreenHeight(0.5),
       fontFamily: CustomFonts.REGULAR,
     },
     headingText: {
@@ -114,8 +119,6 @@ const getStyles = (Colors: TColors) =>
     },
     container: {
       flex: 1,
-      // justifyContent: "center",
-      // alignItems: "center",
       paddingVertical: responsiveScreenHeight(2),
       paddingHorizontal: responsiveScreenWidth(3),
       backgroundColor: Colors.Foreground,
