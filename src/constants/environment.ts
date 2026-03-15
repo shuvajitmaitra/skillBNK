@@ -1,5 +1,5 @@
 const localUrl = 'http://10.220.181.110:4001';
-const isLocal = true;
+const isLocal = false;
 
 export default {
   production: true,

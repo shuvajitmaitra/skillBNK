@@ -20,6 +20,8 @@ import GlobalBackButton from '../components/SharedComponent/GlobalBackButton';
 import {ProgramStackParamList} from '../types/navigation';
 import MockInterviewDetails from '../screens/MockInterview/MockInterviewDetails';
 import DocumentsLabsScreen from '../screens/Documents/DocumentsLabsScreen';
+import MyDocumentsScreen from '../screens/Documents/MyDocumentsScreen';
+import MyDocumentsDetailsScreen from '../screens/Documents/MyDocumentsDetailsScreen';
 
 const ProgramStack = createStackNavigator<ProgramStackParamList>();
 const renderHeader = (navigation: any) => <Header navigation={navigation} />;
@@ -171,6 +173,22 @@ const ProgramStackScreen = () => {
           headerTitle: '',
           animation: 'fade',
           headerLeft: () => renderGlobalBackButton(),
+        })}
+      />
+      <ProgramStack.Screen
+        name="MyDocumentsDetailsScreen"
+        component={MyDocumentsDetailsScreen}
+        options={() => ({
+          headerTitle: '',
+          animation: 'fade',
+          headerLeft: () => renderGlobalBackButton(),
+        })}
+      />
+      <ProgramStack.Screen
+        name="MyDocumentsScreen"
+        component={MyDocumentsScreen}
+        options={({navigation}) => ({
+          header: () => renderHeader(navigation),
         })}
       />
     </ProgramStack.Navigator>

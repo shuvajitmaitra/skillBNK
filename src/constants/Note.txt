@@ -17,8 +17,25 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 *SkillBNK app latest version (3.16.1) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
-- Progress Ring Re-rendering issue has been fixed.
+- Designed full screen of my Documents in mobile app.
+- Added search functionalities with debounce.
+- Added filter functionalities based on date.
+- Added navigation to navigation bootcamps.
+- added infinity scrolling in the my Documents screen.
+- My Documents details screen following section completed:
+    - Header section Designed
+    - Title section Designed
+    - Created by section designed.
+    - Description section designed.
+    - category, users, comments, and updated info section designed.
+    - Attachment section designed.
+    - Attachment download functionalities added.
 
+*skillBNK Portal*
+- Fixed presentation and slides theme issues.
+- Fixed the issue where presentation and slides full screen was not working.
+- Designed full screen for full screen presentations & slides
+- Implement functionalities for minimize and expand slides.
 
 
 📌 Note: 100% of today’s tasks have been successfully completed.

@@ -60,6 +60,8 @@ export type ProgramStackParamList = {
   DocumentsLabsScreen: undefined;
   DocumentsLabsDetailsScreen: undefined;
   InterviewDetails: undefined;
+  MyDocumentsScreen: undefined;
+  MyDocumentsDetailsScreen: undefined;
 };
 export type CalendarStackParamList = {
   CalendarScreenV2: undefined;

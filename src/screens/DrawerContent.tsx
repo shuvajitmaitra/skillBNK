@@ -19,7 +19,6 @@ import useUserStatusData from '../constants/UserStatusData';
 import HomeIconTwo from '../assets/Icons/HomeIcon2';
 import ProfileGreenIcon from '../assets/Icons/ProfileGreenIcon';
 import MyProgramIcon from '../assets/Icons/MyProgramIcon';
-// import BookIcon from '../assets/Icons/BookIcon';
 import DocumentIcon from '../assets/Icons/DocumentIcon';
 import PasswordIcon from '../assets/Icons/PasswordIcon';
 import DisplaySettingsIcon from '../assets/Icons/DisplaySettingsIcon';
@@ -28,7 +27,6 @@ import {showToast} from '../components/HelperFunction';
 import {RootState} from '../types/redux/root';
 import Images from '../constants/Images';
 import {handleSignOut} from '../utility/commonFunction';
-// import hotUpdate from 'react-native-ota-hot-update';
 import {fontSizes, gGap} from '../constants/Sizes';
 import BinIcon from '../assets/Icons/BinIcon';
 import ConfirmationModal from '../components/SharedComponent/ConfirmationModal';
@@ -229,6 +227,19 @@ export function DrawerContent(props: any) {
               <DrawerItem
                 icon={renderDocumentIcon}
                 label="My Documents"
+                labelStyle={{
+                  fontFamily: CustomFonts.MEDIUM,
+                  color: Colors.Heading,
+                }}
+                onPress={() =>
+                  navigateToScreen('ProgramStack', 'MyDocumentsScreen')
+                }
+              />
+            )}
+            {hasDocuments && (
+              <DrawerItem
+                icon={renderDocumentIcon}
+                label="Documents and Labs"
                 labelStyle={{
                   fontFamily: CustomFonts.MEDIUM,
                   color: Colors.Heading,
