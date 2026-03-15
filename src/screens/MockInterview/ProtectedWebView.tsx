@@ -101,6 +101,7 @@ const ProtectedWebView = ({url}: {url: string}) => {
             goBack();
           }
         }}
+        allowsFullscreenVideo={true}
       />
     </View>
   );
