@@ -1,9 +1,9 @@
-const localUrl = 'http://10.220.181.110:4001';
+const localUrl = 'http://192.168.0.105:4001';
 const isLocal = false;
 
 export default {
   production: true,
-  version: '3.16.2',
+  version: '3.16.3',
   FRONTEND_URL: isLocal
     ? `${localUrl}/mobile`
     : 'https://portal.skillbnk.com/mobile',

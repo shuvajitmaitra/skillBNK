@@ -192,6 +192,7 @@ const ProgramStackScreen = () => {
         options={() => ({
           headerTitle: '',
           animation: 'fade',
+          headerShown: false,
           headerLeft: () => renderGlobalBackButton(),
         })}
       />

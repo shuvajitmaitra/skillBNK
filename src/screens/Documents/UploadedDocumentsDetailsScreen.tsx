@@ -25,6 +25,10 @@ import {gGap} from '../../constants/Sizes';
 import TextRender from '../../components/SharedComponent/TextRender';
 import CommentField from '../../components/CommentCom/CommentField';
 import RelatedDocumentsSection from '../../components/Documents/MyDocuments/RelatedDocumentsSection';
+import {PressableScale} from '../../components/SharedComponent/PressableScale';
+import {goBack, navigate} from '../../navigation/NavigationService';
+import {AntDesignIcon} from '../../constants/Icons';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type Priority = 'low' | 'medium' | 'high' | string;
 
@@ -164,6 +168,7 @@ const InfoCard = ({label, value}: {label: string; value: string | number}) => {
 const UploadedDocumentsDetailsScreen = () => {
   const Colors = useTheme();
   const styles = useMemo(() => getStyles(Colors), [Colors]);
+  const {top} = useSafeAreaInsets();
 
   const route =
     useRoute<RouteProp<RootStackParamList, 'UploadedDocumentsDetailsScreen'>>();
@@ -209,9 +214,77 @@ const UploadedDocumentsDetailsScreen = () => {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, {paddingTop: top}]}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 10,
+        }}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: Colors.Foreground,
+            borderWidth: 1,
+            borderColor: Colors.BorderColor,
+            padding: 5,
+            borderRadius: 100,
+            // top: 5,
+          }}>
+          <AntDesignIcon
+            onPress={() => {
+              goBack();
+            }}
+            name={'arrowleft'}
+            size={27}
+            color={Colors.BodyText}
+          />
+        </TouchableOpacity>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+          <PressableScale
+            style={{
+              backgroundColor: Colors.Primary,
+              height: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              borderRadius: 10,
+            }}
+            onPress={() => {
+              navigate('AddNewDocumentsScreen', item);
+            }}>
+            <Text
+              style={{
+                color: Colors.PureWhite,
+                fontFamily: CustomFonts.SEMI_BOLD,
+              }}>
+              Update
+            </Text>
+          </PressableScale>
+          <PressableScale
+            style={{
+              backgroundColor: Colors.Red,
+              height: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              borderRadius: 10,
+            }}
+            onPress={() => {
+              navigate('AddNewDocumentsScreen', item);
+            }}>
+            <Text
+              style={{
+                color: Colors.PureWhite,
+                fontFamily: CustomFonts.SEMI_BOLD,
+              }}>
+              Delete
+            </Text>
+          </PressableScale>
+        </View>
+      </View>
       <View style={styles.heroCard}>
         <Image source={{uri: thumbnail}} style={styles.heroImage} />
 
@@ -356,7 +429,7 @@ const getStyles = (Colors: TColors) =>
       backgroundColor: Colors.Background_color,
     },
     contentContainer: {
-      padding: responsiveScreenWidth(4),
+      paddingHorizontal: responsiveScreenWidth(4),
       paddingBottom: 10,
     },
     emptyContainer: {

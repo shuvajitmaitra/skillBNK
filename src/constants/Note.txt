@@ -11,18 +11,25 @@
 
 spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
-*Work Update – Mar 10, 2026*
+*Work Update – Mar 16, 2026*
 
-*SkillBNK app latest version (3.16.2) released on TestFlight*
+*SkillBNK app latest version (3.16.3) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
-- Displayed the comment section in my documents details screen.
-- Fix comments not showing issue below the comment field, Previously comments only showing in the comments screen.
-
+- Added comments section in my documents details page.
+- Added related my documents section in my documents screen.
+- Uploaded full screen design completed.
+- API integration completed for Uploaded documents screen.
+- Added infinity scrolling in the Uploaded documents screen.
+- Search functionalities added in the Uploaded documents screen.
+- Uploaded documents details screen design completed.
+- Api integration for uploaded documents screen.
+- Notes and uploaded documents details screen editor not working issue fixed.
+- Added comments section and related documents section in the uploaded documents screen.
+- Add new documents screen design completed.
 
 *skillBNK Portal*
-
-
+- Editor theme issue and cannot getting data from mobile app. (Issue fixed.)
 
 📌 Note: 100% of today’s tasks have been successfully completed.
 

@@ -21,8 +21,7 @@ import {
   FeatherIcon,
   MaterialCommunityIcon,
 } from '../../constants/Icons';
-import {useNavigation} from '@react-navigation/native';
-import EventPurposeV2 from '../../components/CalendarV2/EventPurposeV2';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import CrossIcon from '../../assets/Icons/CrossIcon';
 import {responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import {extractFileName, showToast} from '../../components/HelperFunction';
@@ -37,8 +36,6 @@ import CrossCircle from '../../assets/Icons/CrossCircle';
 import {loadMyNotes} from '../../actions/myNoteApiCall';
 import store from '../../store';
 import {selectNote, setNotes} from '../../store/reducer/notesReducer';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../types/redux/root';
 import RequireFieldStar from '../../constants/RequireFieldStar';
 import {
   convertSize,
@@ -47,9 +44,31 @@ import {
 } from '../../utility/commonFunction';
 import moment from 'moment';
 
-type noteProps = {
+interface DocumentAttachment {
   _id?: string;
-  title?: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  createdAt?: string;
+}
+
+type DocumentForm = {
+  _id?: string;
+  title: string;
+  description: string;
+  purpose?: {
+    category?: string;
+    resourceId?: string;
+  };
+  tags: string[];
+  thumbnail: string;
+  attachments: DocumentAttachment[];
+};
+
+interface SelectedDocument {
+  _id?: string;
+  name?: string;
   description?: string;
   purpose?: {
     category?: string;
@@ -57,13 +76,11 @@ type noteProps = {
   };
   tags?: string[];
   thumbnail?: string;
-  attachments?: {
-    name: string;
-    size: number;
-    type: string;
-    url: string;
-    createdAt: string;
-  }[];
+  attachments?: DocumentAttachment[];
+}
+
+type RootStackParamList = {
+  AddNewDocumentsScreen: SelectedDocument | undefined;
 };
 
 interface UploadedFile {
@@ -73,13 +90,56 @@ interface UploadedFile {
   size: number;
 }
 
+const EMPTY_DOCUMENT: DocumentForm = {
+  title: '',
+  description: '',
+  purpose: {
+    category: '',
+    resourceId: '',
+  },
+  tags: [],
+  thumbnail: '',
+  attachments: [],
+};
+
+const EMPTY_EDITOR_STATE = JSON.stringify({
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: ' ',
+            type: 'text',
+            version: 1,
+          },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+        textFormat: 0,
+        textStyle: '',
+      },
+    ],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+});
+
 const handleDocumentUpload = async ({
   setState,
   setDocUploading,
 }: {
-  setState: (arg0: any) => void;
+  setState: React.Dispatch<React.SetStateAction<DocumentForm>>;
   setDocUploading?: (arg0: boolean) => void;
-  selectLimit?: number;
 }) => {
   setDocUploading?.(true);
   try {
@@ -97,35 +157,36 @@ const handleDocumentUpload = async ({
           type: item.type || 'application/pdf',
         } as any);
 
-        const config = {
+        const res = await axiosInstance.post('/chat/file', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-        };
+        });
 
-        const res = await axiosInstance.post('/chat/file', formData, config);
         return res.data.file;
       }),
     );
-    setDocUploading?.(false);
-    const files = uploadedFiles.map((file: any) => ({
+
+    const files: DocumentAttachment[] = uploadedFiles.map((file: any) => ({
       name: file.name || 'uploaded_file',
       size: file.size,
-      type: file.type,
+      type: file.type || 'application/octet-stream',
       url: file.location,
+      createdAt: file.createdAt,
     }));
-    setState(files);
+
+    setState(prev => ({
+      ...prev,
+      attachments: [...prev.attachments, ...files],
+    }));
   } catch (err: any) {
-    if (err) {
-      console.log('User canceled the picker');
-      setDocUploading?.(false);
-    } else {
-      console.error(err);
-      showToast({
-        message: 'Failed to pick attachment',
-        background: 'red',
-      });
-    }
+    console.log('Document picker error:', err);
+    showToast({
+      message: 'Failed to pick attachment',
+      background: 'red',
+    });
+  } finally {
+    setDocUploading?.(false);
   }
 };
 
@@ -133,10 +194,12 @@ const handleGalleryPress = async ({
   setState,
   setIsLoading,
   selectLimit,
+  mode,
 }: {
-  setState: (arg0: any) => void;
+  setState: React.Dispatch<React.SetStateAction<DocumentForm>>;
   setIsLoading?: (arg0: boolean) => void;
   selectLimit?: number;
+  mode: 'thumbnail' | 'attachment';
 }): Promise<void> => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
@@ -151,18 +214,15 @@ const handleGalleryPress = async ({
     const response = await launchImageLibrary(options);
 
     if (response.didCancel) {
-      console.log('User cancelled image picker');
       return;
     }
 
     if (response.errorCode) {
-      console.error('ImagePicker Error: ', response.errorMessage);
       showToast({message: `ImagePicker Error: ${response.errorMessage}`});
       return;
     }
 
     if (!response.assets || response.assets.length === 0) {
-      console.log('No images selected');
       showToast({message: 'No images selected'});
       return;
     }
@@ -178,29 +238,32 @@ const handleGalleryPress = async ({
           type: item.type || 'image/jpeg',
         } as any);
 
-        const config = {
+        const res = await axiosInstance.post('/chat/file', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-        };
+        });
 
-        try {
-          const res = await axiosInstance.post('/chat/file', formData, config);
-          return res.data.file;
-        } catch (uploadError) {
-          console.error('Upload Error:', uploadError);
-          throw uploadError;
-        }
+        return res.data.file;
       }),
     );
-    setState(
-      uploadedFiles.map(file => ({
-        url: file.location,
-        name: file.name,
-        type: file.type || 'image/jpeg',
-        size: file.size,
-      })),
-    );
+
+    const files: DocumentAttachment[] = uploadedFiles.map(file => ({
+      url: file.location,
+      name: file.name,
+      type: file.type || 'image/jpeg',
+      size: file.size,
+    }));
+
+    setState(prev => ({
+      ...prev,
+      thumbnail:
+        mode === 'thumbnail' ? files[0]?.url || prev.thumbnail : prev.thumbnail,
+      attachments:
+        mode === 'attachment'
+          ? [...prev.attachments, ...files]
+          : prev.attachments,
+    }));
   } catch (error) {
     console.error('Error in handleGalleryPress:', error);
     showToast({message: 'An error occurred while uploading images.'});
@@ -209,37 +272,35 @@ const handleGalleryPress = async ({
   }
 };
 
-const handleCreateNote = async (note: noteProps) => {
-  if (!note.title?.trim()) {
-    return showToast({message: 'Note title is required!', background: 'red'});
+const handleCreateDocument = async (document: DocumentForm) => {
+  if (!document.title.trim()) {
+    return showToast({
+      message: 'Document title is required!',
+      background: 'red',
+    });
   }
-  const preNotes = [
-    {_id: Math.random.toString(), ...note},
+
+  const preDocuments = [
+    {_id: String(Math.random()), ...document},
     ...store.getState().notes.notes,
   ];
-  store.dispatch(setNotes(preNotes));
+  store.dispatch(setNotes(preDocuments));
+
   try {
     const response = await axiosInstance.post('/content/note/create', {
-      description:
-        note.description ||
-        // eslint-disable-next-line quotes, no-useless-escape
-        `{\"root\":{\"children\":[{\"children\":[],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"paragraph\",\"version\":1,\"textFormat\":0,\"textStyle\":\"\"}],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"root\",\"version\":1}}`,
-      title: note.title || 'Failed',
-      tags: note.tags || [],
-      thumbnail: note.thumbnail || '',
-      attachments: note?.attachments || [],
-      purpose: note.purpose || {
+      description: document.description || EMPTY_EDITOR_STATE,
+      title: document.title,
+      tags: document.tags,
+      thumbnail: document.thumbnail,
+      attachments: document.attachments,
+      purpose: document.purpose || {
         category: '',
         resourceId: '',
       },
     });
 
-    console.log(
-      'response.data',
-      JSON.stringify(response.data.success, null, 2),
-    );
     if (response.data.success) {
-      showToast({message: 'Notes created successfully!'});
+      showToast({message: 'Document created successfully!'});
       loadMyNotes({
         page: 1,
         limit: 50,
@@ -248,49 +309,40 @@ const handleCreateNote = async (note: noteProps) => {
       });
     }
   } catch (error: any) {
-    console.log(
-      'error to create note',
-      JSON.stringify(error.response.data.error, null, 2),
-    );
     showToast({
-      message: error.response.data.error || 'Failed to create note',
+      message: error?.response?.data?.error || 'Failed to create document',
+      background: 'red',
     });
   }
 };
 
-const handleEditNote = async (note: noteProps) => {
-  if (!note.title?.trim()) {
+const handleEditDocument = async (document: DocumentForm) => {
+  if (!document.title.trim()) {
     return showToast({message: 'Title is required', background: 'red'});
   }
-  let preNotes = {...note, ...store.getState().notes.selectedNote};
-  store.dispatch(selectNote(preNotes));
+
+  const preDocument = {...store.getState().notes.selectedNote, ...document};
+  store.dispatch(selectNote(preDocument));
 
   try {
     const response = await axiosInstance.patch(
-      `/content/note/edit/${note?._id}`,
+      `/content/note/edit/${document._id}`,
       {
-        description:
-          note.description ||
-          // eslint-disable-next-line quotes, no-useless-escape
-          `{\"root\":{\"children\":[{\"children\":[],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"paragraph\",\"version\":1,\"textFormat\":0,\"textStyle\":\"\"}],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"root\",\"version\":1}}`,
-        title: note.title || 'Failed',
-        tags: note.tags || [],
-        thumbnail: note.thumbnail || '',
-        attachments: note?.attachments || [],
-        purpose: note.purpose || {
+        description: document.description || EMPTY_EDITOR_STATE,
+        title: document.title,
+        tags: document.tags,
+        thumbnail: document.thumbnail,
+        attachments: document.attachments,
+        purpose: document.purpose || {
           category: '',
           resourceId: '',
         },
       },
     );
 
-    console.log(
-      'response.data',
-      JSON.stringify(response.data.success, null, 2),
-    );
     if (response.data.success) {
       store.dispatch(selectNote(response.data.note));
-      showToast({message: 'Notes update successfully!'});
+      showToast({message: 'Document updated successfully!'});
       loadMyNotes({
         page: 1,
         limit: 50,
@@ -299,12 +351,9 @@ const handleEditNote = async (note: noteProps) => {
       });
     }
   } catch (error: any) {
-    console.log(
-      'error to update note',
-      JSON.stringify(error.response.data, null, 2),
-    );
     showToast({
-      message: error.response.data.error || 'Failed to update note',
+      message: error?.response?.data?.error || 'Failed to update document',
+      background: 'red',
     });
   }
 };
@@ -313,34 +362,38 @@ const AddNewDocumentsScreen = () => {
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const {top, bottom} = useSafeAreaInsets();
-  const [tagText, setTagText] = useState<string>('');
+  const navigation = useNavigation();
+  const route =
+    useRoute<RouteProp<RootStackParamList, 'AddNewDocumentsScreen'>>();
+
+  const selectedDocument = route.params;
+
+  const [tagText, setTagText] = useState('');
   const [uploading, setUploading] = useState(false);
   const [docUploading, setDocUploading] = useState(false);
-  const {selectedNote} = useSelector((state: RootState) => state.notes);
-  const navigation = useNavigation();
-  const [note, setNote] = useState<noteProps | null>(null);
+  const [document, setDocument] = useState<DocumentForm>(EMPTY_DOCUMENT);
+
   useEffect(() => {
-    if (selectedNote?._id) {
-      const pre = {...note};
-      setNote({
-        ...pre,
-        _id: selectedNote?._id,
-        title: selectedNote?.title,
-        description: selectedNote?.description,
-        tags: selectedNote?.tags,
-        thumbnail: selectedNote?.thumbnail,
-        attachments: selectedNote?.attachments,
-        purpose: selectedNote?.purpose,
+    if (selectedDocument?._id) {
+      setDocument({
+        _id: selectedDocument._id,
+        title: selectedDocument.name || '',
+        description: selectedDocument.description || '',
+        tags: selectedDocument.tags || [],
+        thumbnail: selectedDocument.thumbnail || '',
+        attachments: selectedDocument.attachments || [],
+        purpose: selectedDocument.purpose || {
+          category: '',
+          resourceId: '',
+        },
       });
     }
-
-    return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNote]);
+  }, [selectedDocument]);
 
   const [imageDimensions, setImageDimensions] = useState<{
     [key: string]: {aspectRatio: number};
   }>({});
+
   const handleImageLayout = (uri: string, width: number, height: number) => {
     const aspectRatio = width / height;
     setImageDimensions(prev => ({
@@ -348,31 +401,33 @@ const AddNewDocumentsScreen = () => {
       [uri]: {aspectRatio},
     }));
   };
-  const {aspectRatio} =
-    (note?.thumbnail && imageDimensions[note.thumbnail]) || {};
 
-  const handleKeyPress = () => {
-    if (!tagText) return;
-    const preT = note?.tags ? [...note?.tags] : [];
-    const currT = [...preT, tagText];
-    setNote({
-      ...note,
-      tags: currT,
-    });
+  const {aspectRatio} =
+    (document.thumbnail && imageDimensions[document.thumbnail]) || {};
+
+  const handleAddTag = () => {
+    const value = tagText.trim();
+    if (!value || document.tags.length >= 5) return;
+
+    setDocument(prev => ({
+      ...prev,
+      tags: [...prev.tags, value],
+    }));
     setTagText('');
   };
 
   const handleRemoveTag = (index: number) => {
-    const f = note?.tags!.filter((_, i) => i !== index);
-    setNote({...note, tags: f});
+    setDocument(prev => ({
+      ...prev,
+      tags: prev.tags.filter((_, i) => i !== index),
+    }));
   };
 
   return (
     <View style={[styles.container, {paddingTop: top, paddingBottom: bottom}]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.keyboardAvoidView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
+        style={styles.keyboardAvoidView}>
         <View style={styles.headerContainer}>
           <AntDesignIcon
             onPress={() => navigation.goBack()}
@@ -381,38 +436,44 @@ const AddNewDocumentsScreen = () => {
             size={25}
             color={Colors.BodyText}
           />
+
           <View style={styles.headerContent}>
             <View>
               <Text style={styles.headerTitle}>
-                {selectedNote?._id ? 'Update note' : 'Add note'}
+                {selectedDocument?._id ? 'Update Document' : 'Add Document'}
               </Text>
               <Text style={styles.headerDescription}>
-                {selectedNote?._id
-                  ? 'Fill out the form, to update the note'
-                  : 'Fill out the form, to add new note'}
+                {selectedDocument?._id
+                  ? 'Fill out the form to update the document'
+                  : 'Fill out the form to add a new document'}
               </Text>
             </View>
+
             <TouchableOpacity
               style={styles.saveButton}
               onPress={() => {
-                if (!note?.title?.trim())
+                if (!document.title.trim()) {
                   return showToast({
                     message: 'Title is required',
                     background: 'red',
                   });
-                if (note._id) {
-                  handleEditNote(note);
-                } else if (note.title) {
-                  note?.title && handleCreateNote(note);
                 }
-                navigation?.goBack();
+
+                if (document._id) {
+                  handleEditDocument(document);
+                } else {
+                  handleCreateDocument(document);
+                }
+
+                navigation.goBack();
               }}>
               <Text style={styles.saveButtonText}>
-                {selectedNote?._id ? 'Update' : 'Save Note'}
+                {selectedDocument?._id ? 'Update' : 'Save'}
               </Text>
             </TouchableOpacity>
           </View>
         </View>
+
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.contentContainer}>
             <Text style={styles.label}>
@@ -421,97 +482,65 @@ const AddNewDocumentsScreen = () => {
             </Text>
             <TextInput
               style={styles.input}
-              value={note?.title}
-              onChangeText={t => setNote({...note, title: t})}
-              placeholder="Enter note title"
+              value={document.title}
+              onChangeText={t =>
+                setDocument(prev => ({
+                  ...prev,
+                  title: t,
+                }))
+              }
+              placeholder="Enter document title"
               placeholderTextColor={Colors.BodyText}
             />
+
             <Text style={styles.label}>Description</Text>
             <LexicalEditor
               theme={theme()}
               data={{
                 theme: 'dark',
-                note: selectedNote?.description
-                  ? selectedNote.description
-                  : JSON.stringify({
-                      root: {
-                        children: [
-                          {
-                            children: [
-                              {
-                                detail: 0,
-                                format: 0,
-                                mode: 'normal',
-                                style: '',
-                                text: ' ',
-                                type: 'text',
-                                version: 1,
-                              },
-                            ],
-                            direction: 'ltr',
-                            format: '',
-                            indent: 0,
-                            type: 'paragraph',
-                            version: 1,
-                            textFormat: 0,
-                            textStyle: '',
-                          },
-                        ],
-                        direction: 'ltr',
-                        format: '',
-                        indent: 0,
-                        type: 'root',
-                        version: 1,
-                      },
-                    }),
+                note: document.description || EMPTY_EDITOR_STATE,
               }}
               onChange={d => {
                 if (d.type === 'NOTE_CHANGE') {
-                  setNote({...note, description: d.payload.note});
+                  setDocument(prev => ({
+                    ...prev,
+                    description: d.payload.note,
+                  }));
                 }
               }}
               containerStyle={styles.lexicalEditor}
             />
-            <EventPurposeV2
-              state={note?.purpose as any}
-              setState={i => setNote({...note, purpose: i})}
-            />
+
             <Text style={[styles.label, styles.marginTop10]}>Tags</Text>
-            {note?.tags && (
+
+            {!!document.tags.length && (
               <View style={styles.tagsContainer}>
-                {note?.tags?.map((item, index) => (
+                {document.tags.map((item, index) => (
                   <TouchableOpacity
                     style={styles.tagItem}
                     onPress={() => handleRemoveTag(index)}
-                    key={index}>
+                    key={`${item}-${index}`}>
                     <Text style={styles.tagText}>{item}</Text>
                     <CrossIcon color="red" />
                   </TouchableOpacity>
                 ))}
               </View>
             )}
-            {(!note?.tags || note?.tags?.length! < 5) && (
+
+            {document.tags.length < 5 && (
               <View style={styles.tagInputContainer}>
                 <TextInput
                   style={[styles.input, styles.noMarginBottom]}
-                  value={tagText ? tagText : undefined}
-                  onChangeText={t => setTagText(t)}
+                  value={tagText}
+                  onChangeText={setTagText}
                   placeholder="Enter tags (max 5)"
-                  onSubmitEditing={handleKeyPress}
-                  editable={note?.tags?.length! >= 5 ? false : true}
+                  onSubmitEditing={handleAddTag}
+                  editable={document.tags.length < 5}
                   placeholderTextColor={Colors.BodyText}
                 />
-                {tagText && (
+                {!!tagText && (
                   <AntDesignIcon
-                    onPress={() => {
-                      const preT = note?.tags ? [...note?.tags] : [];
-                      const currT = [...preT, tagText];
-                      setNote({
-                        ...note,
-                        tags: currT,
-                      });
-                      setTagText('');
-                    }}
+                    onPress={handleAddTag}
                     style={styles.checkIcon}
                     name="check"
                     size={25}
@@ -520,13 +549,15 @@ const AddNewDocumentsScreen = () => {
                 )}
               </View>
             )}
+
             <Text style={[styles.label, styles.marginTop10]}>
               Upload Thumbnail
             </Text>
-            {note?.thumbnail ? (
+
+            {document.thumbnail ? (
               <View style={styles.thumbnailContainer}>
                 <Image
-                  source={{uri: note.thumbnail}}
+                  source={{uri: document.thumbnail}}
                   style={[
                     styles.image,
                     aspectRatio
@@ -534,16 +565,21 @@ const AddNewDocumentsScreen = () => {
                       : {height: responsiveScreenHeight(20)},
                   ]}
                   onLoad={({nativeEvent}) =>
-                    note?.thumbnail &&
+                    document.thumbnail &&
                     handleImageLayout(
-                      note?.thumbnail,
+                      document.thumbnail,
                       nativeEvent.source.width,
                       nativeEvent.source.height,
                     )
                   }
                 />
                 <TouchableOpacity
-                  onPress={() => setNote({...note, thumbnail: ''})}
+                  onPress={() =>
+                    setDocument(prev => ({
+                      ...prev,
+                      thumbnail: '',
+                    }))
+                  }
                   style={styles.crossButton}>
                   <CrossCircle color="red" />
                 </TouchableOpacity>
@@ -552,10 +588,10 @@ const AddNewDocumentsScreen = () => {
               <TouchableOpacity
                 onPress={() =>
                   handleGalleryPress({
-                    setState: (i: any) =>
-                      setNote({...note, thumbnail: i[0].url}),
+                    setState: setDocument,
                     setIsLoading: setUploading,
                     selectLimit: 1,
+                    mode: 'thumbnail',
                   })
                 }
                 style={styles.uploadThumbnailContainer}>
@@ -569,18 +605,20 @@ const AddNewDocumentsScreen = () => {
                       color={Colors.Primary}
                     />
                     <Text style={styles.uploadText}>Click to upload image</Text>
-                    <Text style={styles.uploadSubText}>JPG,PNG | Max 5MB</Text>
+                    <Text style={styles.uploadSubText}>JPG, PNG | Max 5MB</Text>
                   </>
                 )}
               </TouchableOpacity>
             )}
+
             <Text style={[styles.label, styles.marginTop10]}>
-              Upload attachments
+              Upload Attachments
             </Text>
-            {note?.attachments && note?.attachments?.length > 0 && (
+
+            {!!document.attachments.length && (
               <View style={styles.attachmentsContainer}>
-                {note?.attachments.map((item, i) => (
-                  <View style={styles.attachmentItem} key={i}>
+                {document.attachments.map((item, i) => (
+                  <View style={styles.attachmentItem} key={`${item.url}-${i}`}>
                     <View style={{flex: 1}}>
                       <Text
                         style={[
@@ -595,6 +633,7 @@ const AddNewDocumentsScreen = () => {
                         numberOfLines={1}>
                         {extractFileName(item.name || '')}
                       </Text>
+
                       <View
                         style={{
                           flexDirection: 'row',
@@ -610,19 +649,23 @@ const AddNewDocumentsScreen = () => {
                           {item.type}
                         </Text>
                       </View>
+
                       <Text style={styles.attachmentText} numberOfLines={1}>
                         <Text style={{fontWeight: 'bold'}}>Uploaded At:</Text>{' '}
-                        {moment(item.createdAt).format('LLL')}
+                        {item.createdAt
+                          ? moment(item.createdAt).format('LLL')
+                          : 'N/A'}
                       </Text>
                     </View>
 
                     <TouchableOpacity
-                      // style={{backgroundColor: 'blue'}}
                       onPress={() => {
-                        const pre =
-                          note.attachments &&
-                          note.attachments.filter((_, idx) => idx !== i);
-                        setNote({...note, attachments: pre});
+                        setDocument(prev => ({
+                          ...prev,
+                          attachments: prev.attachments.filter(
+                            (_, idx) => idx !== i,
+                          ),
+                        }));
                       }}>
                       <CrossCircle color="red" />
                     </TouchableOpacity>
@@ -630,16 +673,13 @@ const AddNewDocumentsScreen = () => {
                 ))}
               </View>
             )}
-            {(!note?.attachments || note?.attachments?.length! <= 10) && (
+
+            {document.attachments.length <= 10 && (
               <TouchableOpacity
                 onPress={() =>
                   handleDocumentUpload({
-                    setState: (i: any) =>
-                      setNote({
-                        ...note,
-                        attachments: [...(note?.attachments || []), ...i],
-                      }),
-                    setDocUploading: t => setDocUploading(t),
+                    setState: setDocument,
+                    setDocUploading,
                   })
                 }
                 style={styles.uploadThumbnailContainer}>
