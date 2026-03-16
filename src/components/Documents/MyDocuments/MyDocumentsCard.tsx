@@ -1,28 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {TColors} from '../../../types';
+import {DocumentItem, TColors} from '../../../types';
 import {useTheme} from '../../../context/ThemeContext';
-
-type Priority = 'low' | 'medium' | 'high' | string;
-
-interface CreatedBy {
-  _id: string;
-  profilePicture?: string;
-  lastName?: string;
-  firstName?: string;
-  fullName?: string;
-}
-
-export interface DocumentItem {
-  _id: string;
-  name: string;
-  description: string;
-  thumbnail?: string;
-  category?: string;
-  priority?: Priority;
-  createdAt: string;
-  createdBy?: CreatedBy;
-}
 
 interface DocumentCardProps {
   item: DocumentItem;

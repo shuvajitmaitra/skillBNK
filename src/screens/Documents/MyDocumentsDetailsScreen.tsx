@@ -24,6 +24,7 @@ import CustomFonts from '../../constants/CustomFonts';
 import {gGap} from '../../constants/Sizes';
 import TextRender from '../../components/SharedComponent/TextRender';
 import CommentField from '../../components/CommentCom/CommentField';
+import RelatedDocumentsSection from '../../components/Documents/MyDocuments/RelatedDocumentsSection';
 
 type Priority = 'low' | 'medium' | 'high' | string;
 
@@ -129,6 +130,8 @@ const MyDocumentsDetailsScreen = () => {
       </View>
     );
   }
+
+  console.log('item', JSON.stringify(item, null, 2));
 
   return (
     <ScrollView
@@ -246,6 +249,7 @@ const MyDocumentsDetailsScreen = () => {
         )}
       </View>
       <CommentField postId={item?._id} />
+      <RelatedDocumentsSection />
     </ScrollView>
   );
 };
@@ -260,7 +264,7 @@ const getStyles = (Colors: TColors) =>
     },
     contentContainer: {
       padding: responsiveScreenWidth(4),
-      paddingBottom: responsiveScreenHeight(4),
+      paddingBottom: 0,
     },
     emptyContainer: {
       flex: 1,
@@ -322,6 +326,7 @@ const getStyles = (Colors: TColors) =>
       backgroundColor: Colors.Foreground,
       borderRadius: 24,
       padding: responsiveScreenWidth(4),
+      marginBottom: responsiveScreenWidth(2),
     },
     metaRow: {
       flexDirection: 'row',

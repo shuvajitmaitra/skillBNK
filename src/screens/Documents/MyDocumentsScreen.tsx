@@ -23,42 +23,19 @@ import {theme} from '../../utility/commonFunction';
 import {withOpacity} from '../../components/ChatCom/Mention/utils';
 import NoDataAvailable from '../../components/SharedComponent/NoDataAvailable';
 import FilterByDateModal from '../../components/Documents/FilterByDateModal';
-import {TColors} from '../../types';
+import {
+  DEFAULT_PAGINATION,
+  DocumentItem,
+  DocumentsResponse,
+  FilterModalInfo,
+  PaginationState,
+  TColors,
+} from '../../types';
 import CustomFonts from '../../constants/CustomFonts';
 import {RegularFonts} from '../../constants/Fonts';
 import {gGap} from '../../constants/Sizes';
-import DocumentCard, {
-  DocumentItem,
-} from '../../components/Documents/MyDocuments/MyDocumentsCard';
+import DocumentCard from '../../components/Documents/MyDocuments/MyDocumentsCard';
 import {navigate} from '../../navigation/NavigationService';
-
-interface FilterModalInfo {
-  isVisible: boolean;
-  selectedDate: string;
-}
-
-interface PaginationState {
-  total: number;
-  currentPage: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-  limit: number;
-}
-
-interface DocumentsResponse {
-  documents?: DocumentItem[];
-  pagination?: Partial<PaginationState>;
-}
-
-const DEFAULT_PAGINATION: PaginationState = {
-  total: 0,
-  currentPage: 1,
-  totalPages: 1,
-  hasNext: false,
-  hasPrev: false,
-  limit: 10,
-};
 
 export default function MyDocumentsScreen() {
   const Colors = useTheme();
@@ -101,7 +78,7 @@ export default function MyDocumentsScreen() {
   }, []);
 
   const handleProgramNavigation = useCallback(() => {
-    console.log('Go to Bootcamp');
+    navigate('ProgramStack', {screen: 'Program'});
   }, []);
 
   const fetchPage = useCallback(
