@@ -15,7 +15,12 @@ import {
 import CustomFonts from '../../constants/CustomFonts';
 import {useTheme} from '../../context/ThemeContext';
 import moment from 'moment';
-import {nameTrim, showAlertModal, theme} from '../../utility/commonFunction';
+import {
+  nameTrim,
+  randomHexColor,
+  showAlertModal,
+  theme,
+} from '../../utility/commonFunction';
 import {useDispatch, useSelector} from 'react-redux';
 import axiosInstance from '../../utility/axiosInstance';
 import {handleError} from '../../actions/chat-noti';
@@ -337,6 +342,9 @@ const getStyles = (Colors: TColors, comment: TComment) =>
       borderRadius: 100,
       marginTop: comment.parentId ? responsiveScreenHeight(2) : null,
       marginRight: responsiveScreenWidth(2),
+      borderWidth: 1,
+      borderColor: randomHexColor(0.2),
+      backgroundColor: randomHexColor(0.2),
     },
     commentText: {
       fontFamily: CustomFonts.REGULAR,

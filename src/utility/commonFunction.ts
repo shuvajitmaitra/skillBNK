@@ -30,9 +30,26 @@ export const convertLink = (text: string): string => {
     '$1<a target="_blank" href="http://$2">$2</a>',
   );
 };
-export const randomHexColor = (): `#${string}` => {
-  const n = Math.floor(Math.random() * 0xffffff); // 0..16777215
-  return `#${n.toString(16).padStart(6, '0')}` as `#${string}`;
+/**
+ * Generates a random hex color.
+ * @param opacity - Optional value between 0 (transparent) and 1 (opaque).
+ */
+export const randomHexColor = (opacity?: number): `#${string}` => {
+  // Generate random 24-bit color
+  const n = Math.floor(Math.random() * 0xffffff);
+  const color = n.toString(16).padStart(6, '0');
+
+  // Handle Alpha Channel
+  let alpha = '';
+  if (opacity !== undefined) {
+    // Clamp to [0, 1], scale to 255, and convert to hex
+    const clampedOpacity = Math.max(0, Math.min(1, opacity));
+    alpha = Math.round(clampedOpacity * 255)
+      .toString(16)
+      .padStart(2, '0');
+  }
+
+  return `#${color}${alpha}` as `#${string}`;
 };
 export function replaceSpaceWithDash(value: string): string {
   const result = value.replace(/\s+/g, '-');

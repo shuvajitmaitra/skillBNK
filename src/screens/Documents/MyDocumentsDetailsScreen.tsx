@@ -23,6 +23,7 @@ import {TColors} from '../../types';
 import CustomFonts from '../../constants/CustomFonts';
 import {gGap} from '../../constants/Sizes';
 import TextRender from '../../components/SharedComponent/TextRender';
+import CommentField from '../../components/CommentCom/CommentField';
 
 type Priority = 'low' | 'medium' | 'high' | string;
 
@@ -244,6 +245,7 @@ const MyDocumentsDetailsScreen = () => {
           </View>
         )}
       </View>
+      <CommentField postId={item?._id} />
     </ScrollView>
   );
 };

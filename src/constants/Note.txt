@@ -1,11 +1,10 @@
 
-*Workstream – Mar 15, 2026* 
+*Workstream – Mar 16, 2026* 
 
 *skillBNK Mobile App:*
-- Fixed presentation and slides theme issues.
-- Fixed the issue where presentation and slides full screen was not working.
-- Worked on bringing My Documents to the mobile app.
-
+- Add Comments and Related documents section in my documents page.
+- Work on bringing Uploaded documents to the mobile app.
+- The Markdown editor is not showing properly in the mobile app, and bold text sticks together with the previous word.
 - In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
 
 *Note*: Goal: Achieve 100% completion of today’s worksteam objectives.
@@ -17,25 +16,12 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 *SkillBNK app latest version (3.16.2) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
-- Designed full screen of my Documents in mobile app.
-- Added search functionalities with debounce.
-- Added filter functionalities based on date.
-- Added navigation to navigation bootcamps.
-- added infinity scrolling in the my Documents screen.
-- My Documents details screen following section completed:
-    - Header section Designed
-    - Title section Designed
-    - Created by section designed.
-    - Description section designed.
-    - category, users, comments, and updated info section designed.
-    - Attachment section designed.
-    - Attachment download functionalities added.
+- Displayed the comment section in my documents details screen.
+- Fix comments not showing issue below the comment field, Previously comments only showing in the comments screen.
+
 
 *skillBNK Portal*
-- Fixed presentation and slides theme issues.
-- Fixed the issue where presentation and slides full screen was not working.
-- Designed full screen for full screen presentations & slides
-- Implement functionalities for minimize and expand slides.
+
 
 
 📌 Note: 100% of today’s tasks have been successfully completed.
