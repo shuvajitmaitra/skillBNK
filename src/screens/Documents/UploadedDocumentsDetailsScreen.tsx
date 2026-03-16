@@ -28,12 +28,21 @@ import RelatedDocumentsSection from '../../components/Documents/MyDocuments/Rela
 
 type Priority = 'low' | 'medium' | 'high' | string;
 
-interface CreatedBy {
+interface UserInfo {
   _id: string;
   profilePicture?: string;
   lastName?: string;
   firstName?: string;
   fullName?: string;
+}
+
+interface AttachmentItem {
+  _id?: string;
+  name?: string;
+  type?: string;
+  size?: number;
+  url?: string;
+  createdAt?: string;
 }
 
 export interface DocumentItem {
@@ -45,17 +54,20 @@ export interface DocumentItem {
   priority?: Priority;
   createdAt: string;
   updatedAt?: string;
-  createdBy?: CreatedBy;
+  createdBy?: UserInfo;
+  user?: UserInfo;
   attachment?: string[];
-  attachments?: string[];
-  user?: string[];
+  attachments?: AttachmentItem[];
   comments?: unknown[];
   program?: string | null;
   session?: string | null;
+  tags?: string[];
+  branch?: string;
+  enrollment?: string;
 }
 
 type RootStackParamList = {
-  MyDocumentsDetailsScreen: {
+  UploadedDocumentsDetailsScreen: {
     item: DocumentItem;
   };
 };
@@ -71,8 +83,47 @@ const getPriorityColor = (priority?: string) => {
   return PRIORITY_COLORS[priority.toLowerCase()] || '#8E8E93';
 };
 
+const extractPlainTextFromDescription = (description = '') => {
+  if (!description) return '';
+
+  try {
+    const parsed = JSON.parse(description);
+    const texts: string[] = [];
+
+    const walk = (node: any) => {
+      if (!node) return;
+
+      if (Array.isArray(node)) {
+        node.forEach(walk);
+        return;
+      }
+
+      if (typeof node === 'object') {
+        if (node.type === 'text' && typeof node.text === 'string') {
+          texts.push(node.text);
+        }
+
+        if (node.type === 'linebreak') {
+          texts.push(' ');
+        }
+
+        if (node.children) {
+          walk(node.children);
+        }
+      }
+    };
+
+    walk(parsed?.root?.children || parsed);
+    return texts.join(' ').replace(/\s+/g, ' ').trim();
+  } catch (error) {
+    console.log('error', JSON.stringify(error, null, 2));
+    return description;
+  }
+};
+
 const getReadTime = (text = '') => {
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const plainText = extractPlainTextFromDescription(text);
+  const words = plainText.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 200));
   return `${minutes} min read`;
 };
@@ -80,6 +131,22 @@ const getReadTime = (text = '') => {
 const formatDate = (date?: string) => {
   if (!date) return 'N/A';
   return moment(date).format('MMM DD, YYYY • hh:mm A');
+};
+
+const formatFileSize = (size?: number) => {
+  if (!size) return 'Unknown size';
+
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const getFileTypeLabel = (type?: string) => {
+  if (!type) return 'File';
+  if (type.startsWith('image/')) return 'Image';
+  if (type.includes('pdf')) return 'PDF';
+  return 'File';
 };
 
 const InfoCard = ({label, value}: {label: string; value: string | number}) => {
@@ -94,34 +161,14 @@ const InfoCard = ({label, value}: {label: string; value: string | number}) => {
   );
 };
 
-const MyDocumentsDetailsScreen = () => {
+const UploadedDocumentsDetailsScreen = () => {
   const Colors = useTheme();
   const styles = useMemo(() => getStyles(Colors), [Colors]);
 
   const route =
-    useRoute<RouteProp<RootStackParamList, 'MyDocumentsDetailsScreen'>>();
+    useRoute<RouteProp<RootStackParamList, 'UploadedDocumentsDetailsScreen'>>();
 
   const item = route.params?.item;
-
-  const allAttachments = [
-    ...(item?.attachment ?? []),
-    ...(item?.attachments ?? []),
-  ];
-
-  const thumbnail =
-    item?.thumbnail?.trim() ||
-    'https://via.placeholder.com/1200x700.png?text=Document+Preview';
-
-  const openAttachment = async (url: string) => {
-    try {
-      const supported = await Linking.canOpenURL(url);
-      if (supported) {
-        await Linking.openURL(url);
-      }
-    } catch (error) {
-      console.log('openAttachment error:', error);
-    }
-  };
 
   if (!item) {
     return (
@@ -131,7 +178,34 @@ const MyDocumentsDetailsScreen = () => {
     );
   }
 
-  console.log('item', JSON.stringify(item, null, 2));
+  const creator = item.createdBy || item.user;
+
+  const allAttachments: AttachmentItem[] = [
+    ...((item?.attachment ?? []).map(url => ({
+      url,
+      name: 'Attachment',
+      type: 'file',
+    })) as AttachmentItem[]),
+    ...(item?.attachments ?? []),
+  ];
+
+  const thumbnail =
+    item?.thumbnail?.trim() ||
+    allAttachments.find(file => file?.type?.startsWith('image/'))?.url ||
+    'https://via.placeholder.com/1200x700.png?text=Document+Preview';
+
+  const openAttachment = async (url?: string) => {
+    if (!url) return;
+
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      }
+    } catch (error) {
+      console.log('openAttachment error:', error);
+    }
+  };
 
   return (
     <ScrollView
@@ -170,14 +244,14 @@ const MyDocumentsDetailsScreen = () => {
 
         <View style={styles.authorRow}>
           <View style={styles.authorAvatar}>
-            {item.createdBy?.profilePicture ? (
+            {creator?.profilePicture ? (
               <Image
-                source={{uri: item.createdBy.profilePicture}}
+                source={{uri: creator.profilePicture}}
                 style={styles.authorImage}
               />
             ) : (
               <Text style={styles.authorInitial}>
-                {item.createdBy?.fullName?.charAt(0) || 'U'}
+                {creator?.fullName?.trim()?.charAt(0) || 'U'}
               </Text>
             )}
           </View>
@@ -185,23 +259,33 @@ const MyDocumentsDetailsScreen = () => {
           <View style={styles.authorInfo}>
             <Text style={styles.authorLabel}>Created by</Text>
             <Text style={styles.authorName}>
-              {item.createdBy?.fullName || 'Unknown Author'}
+              {creator?.fullName?.trim() || 'Unknown Author'}
             </Text>
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Description</Text>
         <TextRender text={item.description || 'No description available.'} />
-        {/* <Text style={styles.description}>
-          {item.description || 'No description available.'}
-        </Text> */}
 
         <View style={styles.infoGrid}>
           <InfoCard label="Category" value={item.category || 'Document'} />
-          <InfoCard label="Users" value={item.user?.length || 0} />
+          <InfoCard label="Tags" value={item.tags?.length || 0} />
           <InfoCard label="Comments" value={item.comments?.length || 0} />
           <InfoCard label="Updated" value={formatDate(item.updatedAt)} />
         </View>
+
+        {!!item.tags?.length && (
+          <>
+            <Text style={styles.sectionTitle}>Tags</Text>
+            <View style={styles.tagsContainer}>
+              {item.tags.map((tag, index) => (
+                <View key={`${tag}-${index}`} style={styles.tagChip}>
+                  <Text style={styles.tagText}>{tag}</Text>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
 
         <Text style={styles.sectionTitle}>Attachments</Text>
 
@@ -209,14 +293,18 @@ const MyDocumentsDetailsScreen = () => {
           <View style={styles.attachmentList}>
             {allAttachments.map((file, index) => (
               <TouchableOpacity
-                key={`${file}-${index}`}
+                key={`${file._id || file.url || file.name}-${index}`}
                 activeOpacity={0.85}
                 style={styles.attachmentCard}
-                onPress={() => openAttachment(file)}>
+                onPress={() => openAttachment(file.url)}>
                 <View style={styles.attachmentLeft}>
                   <View style={styles.fileIconWrap}>
                     <MaterialIcons
-                      name="insert-drive-file"
+                      name={
+                        file.type?.startsWith('image/')
+                          ? 'image'
+                          : 'insert-drive-file'
+                      }
                       size={22}
                       color={Colors.Primary}
                     />
@@ -224,10 +312,14 @@ const MyDocumentsDetailsScreen = () => {
 
                   <View style={styles.attachmentTextWrap}>
                     <Text style={styles.attachmentTitle} numberOfLines={1}>
-                      Attachment {index + 1}
+                      {file.name || `Attachment ${index + 1}`}
+                    </Text>
+                    <Text style={styles.attachmentMeta} numberOfLines={1}>
+                      {getFileTypeLabel(file.type)} •{' '}
+                      {formatFileSize(file.size)}
                     </Text>
                     <Text style={styles.attachmentUrl} numberOfLines={1}>
-                      {file}
+                      {file.url || 'No URL available'}
                     </Text>
                   </View>
                 </View>
@@ -248,13 +340,14 @@ const MyDocumentsDetailsScreen = () => {
           </View>
         )}
       </View>
-      <CommentField postId={item?._id} />
-      <RelatedDocumentsSection api="/document/mydocuments" />
+
+      <CommentField postId={item._id} />
+      <RelatedDocumentsSection api={'/document/userdocument/get'} />
     </ScrollView>
   );
 };
 
-export default MyDocumentsDetailsScreen;
+export default UploadedDocumentsDetailsScreen;
 
 const getStyles = (Colors: TColors) =>
   StyleSheet.create({
@@ -411,12 +504,6 @@ const getStyles = (Colors: TColors) =>
       marginTop: gGap(18),
       marginBottom: gGap(10),
     },
-    description: {
-      color: Colors.BodyText,
-      fontFamily: CustomFonts.REGULAR,
-      fontSize: responsiveScreenFontSize(1.7),
-      lineHeight: responsiveScreenFontSize(2.7),
-    },
     infoGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -441,6 +528,24 @@ const getStyles = (Colors: TColors) =>
       color: Colors.Heading,
       fontFamily: CustomFonts.MEDIUM,
       fontSize: responsiveScreenFontSize(1.7),
+    },
+    tagsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: gGap(8),
+    },
+    tagChip: {
+      backgroundColor: `${Colors.Primary}50`,
+      borderWidth: 1,
+      borderColor: `${Colors.Primary}`,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 999,
+    },
+    tagText: {
+      color: Colors.PureWhite,
+      fontFamily: CustomFonts.MEDIUM,
+      fontSize: responsiveScreenFontSize(1.5),
     },
     attachmentList: {
       gap: gGap(10),
@@ -477,6 +582,12 @@ const getStyles = (Colors: TColors) =>
       color: Colors.Heading,
       fontFamily: CustomFonts.MEDIUM,
       fontSize: responsiveScreenFontSize(1.7),
+    },
+    attachmentMeta: {
+      color: Colors.BodyText,
+      fontFamily: CustomFonts.REGULAR,
+      fontSize: responsiveScreenFontSize(1.35),
+      marginTop: 2,
     },
     attachmentUrl: {
       color: Colors.BodyText,

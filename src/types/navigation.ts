@@ -22,6 +22,7 @@ export type RootStackParamList = {
   MyProfileEdit: undefined;
   ArchitectureDiagram: undefined;
   PresentationSlides: undefined;
+  AddNewDocumentsScreen: undefined;
 };
 
 export type HomeStackParamList = {
@@ -62,6 +63,9 @@ export type ProgramStackParamList = {
   InterviewDetails: undefined;
   MyDocumentsScreen: undefined;
   MyDocumentsDetailsScreen: undefined;
+  UploadedDocumentsScreen: undefined;
+  AddNewDocumentsScreen: undefined;
+  UploadedDocumentsDetailsScreen: undefined;
 };
 export type CalendarStackParamList = {
   CalendarScreenV2: undefined;

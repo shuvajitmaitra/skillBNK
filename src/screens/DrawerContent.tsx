@@ -33,7 +33,7 @@ import ConfirmationModal from '../components/SharedComponent/ConfirmationModal';
 import {getFromMMKV} from '../utility/mmkvHelpers';
 import DrawerItem from './DrawerItem';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {navigate} from '../navigation/NavigationService';
+import {navigate, replace} from '../navigation/NavigationService';
 import store from '../store';
 import {toggleDrawer} from '../store/reducer/authReducer';
 import RNText from '../components/SharedComponent/RNText';
@@ -112,7 +112,7 @@ export function DrawerContent(props: any) {
   const [confiramModalVisible, setConfiramModalVisible] = useState(false);
   const navigateToScreen = (stack: string, screen: string) => {
     store.dispatch(toggleDrawer());
-    navigate('BottomTabNavigator', {
+    replace('BottomTabNavigator', {
       screen: stack,
       params: {
         screen: screen,
@@ -233,6 +233,19 @@ export function DrawerContent(props: any) {
                 }}
                 onPress={() =>
                   navigateToScreen('ProgramStack', 'MyDocumentsScreen')
+                }
+              />
+            )}
+            {hasDocuments && (
+              <DrawerItem
+                icon={renderDocumentIcon}
+                label="Uploaded Documents"
+                labelStyle={{
+                  fontFamily: CustomFonts.MEDIUM,
+                  color: Colors.Heading,
+                }}
+                onPress={() =>
+                  navigateToScreen('ProgramStack', 'UploadedDocumentsScreen')
                 }
               />
             )}

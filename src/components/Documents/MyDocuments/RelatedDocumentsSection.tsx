@@ -12,16 +12,14 @@ import DocumentCard from './MyDocumentsCard';
 import CustomFonts from '../../../constants/CustomFonts';
 import {useTheme} from '../../../context/ThemeContext';
 
-const RelatedDocumentsSection = () => {
+const RelatedDocumentsSection = ({api}: {api: string}) => {
   const [documents, setDocuments] = useState<DocumentItem[]>();
   const Colors = useTheme();
   const styles = getStyles(Colors);
   const [loading, setLoading] = useState(true);
   const fetchPage = useCallback(async () => {
     try {
-      const res = await axiosInstance.get<DocumentsResponse>(
-        '/document/mydocuments',
-      );
+      const res = await axiosInstance.get<DocumentsResponse>(api);
 
       if (res.data.success) {
         setDocuments(res.data.documents);
@@ -31,7 +29,7 @@ const RelatedDocumentsSection = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     fetchPage();

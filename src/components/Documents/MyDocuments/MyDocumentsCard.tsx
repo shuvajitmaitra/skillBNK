@@ -99,7 +99,6 @@ const getStyles = (Colors: TColors) =>
       borderRadius: 24,
       overflow: 'hidden',
       backgroundColor: '#1E2228',
-      marginBottom: 18,
       shadowColor: '#000',
       shadowOpacity: 0.18,
       shadowRadius: 10,

@@ -37,7 +37,7 @@ import {gGap} from '../../constants/Sizes';
 import DocumentCard from '../../components/Documents/MyDocuments/MyDocumentsCard';
 import {navigate} from '../../navigation/NavigationService';
 
-export default function MyDocumentsScreen() {
+export default function UploadedDocumentsScreen() {
   const Colors = useTheme();
   const styles = useMemo(() => getStyles(Colors), [Colors]);
 
@@ -72,13 +72,13 @@ export default function MyDocumentsScreen() {
 
   const handleNavigation = useCallback((item: DocumentItem) => {
     navigate('ProgramStack', {
-      screen: 'MyDocumentsDetailsScreen',
+      screen: 'UploadedDocumentsDetailsScreen',
       params: {item},
     });
   }, []);
 
   const handleProgramNavigation = useCallback(() => {
-    navigate('ProgramStack', {screen: 'Program'});
+    navigate('AddNewDocumentsScreen');
   }, []);
 
   const fetchPage = useCallback(
@@ -99,7 +99,7 @@ export default function MyDocumentsScreen() {
         };
 
         const res = await axiosInstance.get<DocumentsResponse>(
-          '/document/mydocuments',
+          '/document/userdocument/get',
           {params},
         );
 
@@ -206,9 +206,9 @@ export default function MyDocumentsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Documents</Text>
+      <Text style={styles.title}>Uploaded Documents</Text>
       <Text style={styles.subHeading}>
-        Easy Access to your course documents
+        Easy Access to your uploaded documents
       </Text>
 
       <View>
@@ -245,7 +245,7 @@ export default function MyDocumentsScreen() {
             activeOpacity={0.8}
             onPress={handleProgramNavigation}
             style={styles.searchFilter}>
-            <Text style={styles.buttonText}>Go to Bootcamp</Text>
+            <Text style={styles.buttonText}>Create Document</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -355,7 +355,7 @@ const getStyles = (Colors: TColors) =>
     },
     listContent: {
       paddingBottom: responsiveScreenHeight(2),
-      gap: 10,
+      gap: gGap(10),
     },
     footerLoading: {
       paddingVertical: responsiveScreenHeight(2),

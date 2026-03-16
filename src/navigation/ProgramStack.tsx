@@ -22,6 +22,8 @@ import MockInterviewDetails from '../screens/MockInterview/MockInterviewDetails'
 import DocumentsLabsScreen from '../screens/Documents/DocumentsLabsScreen';
 import MyDocumentsScreen from '../screens/Documents/MyDocumentsScreen';
 import MyDocumentsDetailsScreen from '../screens/Documents/MyDocumentsDetailsScreen';
+import UploadedDocumentsScreens from '../screens/Documents/UploadedDocumentsScreens';
+import UploadedDocumentsDetailsScreen from '../screens/Documents/UploadedDocumentsDetailsScreen';
 
 const ProgramStack = createStackNavigator<ProgramStackParamList>();
 const renderHeader = (navigation: any) => <Header navigation={navigation} />;
@@ -185,8 +187,24 @@ const ProgramStackScreen = () => {
         })}
       />
       <ProgramStack.Screen
+        name="UploadedDocumentsDetailsScreen"
+        component={UploadedDocumentsDetailsScreen}
+        options={() => ({
+          headerTitle: '',
+          animation: 'fade',
+          headerLeft: () => renderGlobalBackButton(),
+        })}
+      />
+      <ProgramStack.Screen
         name="MyDocumentsScreen"
         component={MyDocumentsScreen}
+        options={({navigation}) => ({
+          header: () => renderHeader(navigation),
+        })}
+      />
+      <ProgramStack.Screen
+        name="UploadedDocumentsScreen"
+        component={UploadedDocumentsScreens}
         options={({navigation}) => ({
           header: () => renderHeader(navigation),
         })}
