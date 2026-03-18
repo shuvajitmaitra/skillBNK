@@ -37,6 +37,7 @@ import {navigate, replace} from '../navigation/NavigationService';
 import store from '../store';
 import {toggleDrawer} from '../store/reducer/authReducer';
 import RNText from '../components/SharedComponent/RNText';
+import {EntypoIcon, IoniconsIcon, OcticonsIcon} from '../constants/Icons';
 
 interface TColors {
   color: string;
@@ -61,6 +62,15 @@ const renderMyProgramIcon = ({color, size}: TColors) => (
 const renderDocumentIcon = ({color, size}: TColors) => (
   <DocumentIcon color={color} size={size} />
 );
+const renderUploadedDocumentIcon = ({color, size}: TColors) => (
+  <IoniconsIcon name="document-attach-outline" color={color} size={size} />
+);
+const renderDocumentLabsIcon = ({color, size}: TColors) => (
+  <EntypoIcon name="documents" color={color} size={size} />
+);
+const renderTemplateIcon = ({color, size}: TColors) => (
+  <OcticonsIcon name="repo-template" color={color} size={size} />
+);
 const renderPasswordIcon = ({color, size}: TColors) => (
   <PasswordIcon color={color} size={size} />
 );
@@ -79,7 +89,6 @@ export function DrawerContent(props: any) {
   const {top} = useSafeAreaInsets();
 
   useEffect(() => {
-    // render time এ না, mount এর পরে একবার পড়ো
     const data = getFromMMKV('navigationData');
     setNavigationData(Array.isArray(data) ? data : []);
   }, []);
@@ -238,7 +247,7 @@ export function DrawerContent(props: any) {
             )}
             {hasDocuments && (
               <DrawerItem
-                icon={renderDocumentIcon}
+                icon={renderUploadedDocumentIcon}
                 label="Uploaded Documents"
                 labelStyle={{
                   fontFamily: CustomFonts.MEDIUM,
@@ -251,7 +260,7 @@ export function DrawerContent(props: any) {
             )}
             {hasDocuments && (
               <DrawerItem
-                icon={renderDocumentIcon}
+                icon={renderDocumentLabsIcon}
                 label="Documents and Labs"
                 labelStyle={{
                   fontFamily: CustomFonts.MEDIUM,
@@ -264,7 +273,7 @@ export function DrawerContent(props: any) {
             )}
             {hasDocuments && (
               <DrawerItem
-                icon={renderDocumentIcon}
+                icon={renderTemplateIcon}
                 label="Templates"
                 labelStyle={{
                   fontFamily: CustomFonts.MEDIUM,

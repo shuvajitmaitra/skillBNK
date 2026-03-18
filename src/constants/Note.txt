@@ -20,6 +20,13 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - Create new documents functionalities and API integration completed.
 - Added functionalities and APi integration to update uploaded documents(will work after fixing backend issue)
 - Delete functionalities and API integration completed for uploaded documents.
+- Fix text renderer code formatting issue  in global text render er.
+- Template screen design completed.
+- Designed template card to display template data.
+- API integration for display data in template screen.
+- Template details screen all section design completed.
+- APi integration for to get template details.
+- Added comments section in the template details screen.
 
 *skillBNK Portal*
 - Editor theme issue and cannot getting data from mobile app. (Issue fixed.)
