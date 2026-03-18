@@ -1,11 +1,10 @@
 
-*Workstream – Mar 16, 2026* 
+*Workstream – Mar 18, 2026* 
 
 *skillBNK Mobile App:*
-- Add Comments and Related documents section in my documents page.
-- Work on bringing Uploaded documents to the mobile app.
-- The Markdown editor is not showing properly in the mobile app, and bold text sticks together with the previous word.
-- In the dashboard, some of the section is not showing as per the portal dashboard such as Documents, Bootcamps, Others.
+- Complete all remaining functionalities of uploaded documents.
+- Add all templates pages and functionalities with API integration.
+
 
 *Note*: Goal: Achieve 100% completion of today’s worksteam objectives.
 
@@ -16,21 +15,13 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 *SkillBNK app latest version (3.16.3) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
-- Added comments section in my documents details page.
-- Added related my documents section in my documents screen.
-- Uploaded full screen design completed.
-- API integration completed for Uploaded documents screen.
-- Added infinity scrolling in the Uploaded documents screen.
-- Search functionalities added in the Uploaded documents screen.
-- Uploaded documents details screen design completed.
-- Api integration for uploaded documents screen.
-- Notes and uploaded documents details screen editor not working issue fixed.
-- Added comments section and related documents section in the uploaded documents screen.
-- Add new documents screen design completed.
+- Added functionalities to upload attachments.
+- Added functionalities to upload thumbnail in uploaded documents.
+- Create new documents functionalities and API integration completed.
+- 
 
 *skillBNK Portal*
 - Editor theme issue and cannot getting data from mobile app. (Issue fixed.)
 
 📌 Note: 100% of today’s tasks have been successfully completed.
-
 

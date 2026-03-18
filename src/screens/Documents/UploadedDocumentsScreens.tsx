@@ -36,6 +36,7 @@ import {RegularFonts} from '../../constants/Fonts';
 import {gGap} from '../../constants/Sizes';
 import DocumentCard from '../../components/Documents/MyDocuments/MyDocumentsCard';
 import {navigate} from '../../navigation/NavigationService';
+import {useFocusEffect} from '@react-navigation/native';
 
 export default function UploadedDocumentsScreen() {
   const Colors = useTheme();
@@ -75,10 +76,6 @@ export default function UploadedDocumentsScreen() {
       screen: 'UploadedDocumentsDetailsScreen',
       params: {item},
     });
-  }, []);
-
-  const handleProgramNavigation = useCallback(() => {
-    navigate('AddNewDocumentsScreen');
   }, []);
 
   const fetchPage = useCallback(
@@ -127,9 +124,11 @@ export default function UploadedDocumentsScreen() {
     [selectedDate],
   );
 
-  useEffect(() => {
-    fetchPage(1, false);
-  }, [fetchPage]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchPage(1, false);
+    }, [fetchPage]),
+  );
 
   useEffect(() => {
     setContents(filterDocuments(records, search));
@@ -156,7 +155,9 @@ export default function UploadedDocumentsScreen() {
     },
     [debouncedSetSearch],
   );
-
+  const handleProgramNavigation = useCallback(() => {
+    navigate('AddNewDocumentsScreen');
+  }, []);
   const onEndReached = useCallback(() => {
     if (search.trim()) return;
     if (loadingMore || initialLoading) return;

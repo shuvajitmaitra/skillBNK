@@ -287,26 +287,16 @@ const handleCreateDocument = async (document: DocumentForm) => {
   store.dispatch(setNotes(preDocuments));
 
   try {
-    const response = await axiosInstance.post('/content/note/create', {
+    const response = await axiosInstance.post('/document/userdocument/add', {
       description: document.description || EMPTY_EDITOR_STATE,
-      title: document.title,
+      name: document.title,
       tags: document.tags,
       thumbnail: document.thumbnail,
       attachments: document.attachments,
-      purpose: document.purpose || {
-        category: '',
-        resourceId: '',
-      },
     });
 
     if (response.data.success) {
       showToast({message: 'Document created successfully!'});
-      loadMyNotes({
-        page: 1,
-        limit: 50,
-        sort: 'newest',
-        query: '',
-      });
     }
   } catch (error: any) {
     showToast({
@@ -365,6 +355,7 @@ const AddNewDocumentsScreen = () => {
   const navigation = useNavigation();
   const route =
     useRoute<RouteProp<RootStackParamList, 'AddNewDocumentsScreen'>>();
+  console.log('route', JSON.stringify(route, null, 2));
 
   const selectedDocument = route.params;
 
@@ -442,11 +433,11 @@ const AddNewDocumentsScreen = () => {
               <Text style={styles.headerTitle}>
                 {selectedDocument?._id ? 'Update Document' : 'Add Document'}
               </Text>
-              <Text style={styles.headerDescription}>
+              {/* <Text style={styles.headerDescription}>
                 {selectedDocument?._id
                   ? 'Fill out the form to update the document'
                   : 'Fill out the form to add a new document'}
-              </Text>
+              </Text> */}
             </View>
 
             <TouchableOpacity
