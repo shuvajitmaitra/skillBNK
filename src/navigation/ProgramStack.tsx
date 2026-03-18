@@ -24,6 +24,8 @@ import MyDocumentsScreen from '../screens/Documents/MyDocumentsScreen';
 import MyDocumentsDetailsScreen from '../screens/Documents/MyDocumentsDetailsScreen';
 import UploadedDocumentsScreens from '../screens/Documents/UploadedDocumentsScreens';
 import UploadedDocumentsDetailsScreen from '../screens/Documents/UploadedDocumentsDetailsScreen';
+import TemplatesScreen from '../screens/Documents/TemplatesScreen';
+import TemplateDetailsScreen from '../screens/Documents/TemplatesDetailsScreen';
 
 const ProgramStack = createStackNavigator<ProgramStackParamList>();
 const renderHeader = (navigation: any) => <Header navigation={navigation} />;
@@ -187,6 +189,15 @@ const ProgramStackScreen = () => {
         })}
       />
       <ProgramStack.Screen
+        name="TemplateDetailsScreen"
+        component={TemplateDetailsScreen}
+        options={() => ({
+          headerTitle: '',
+          animation: 'fade',
+          headerLeft: () => renderGlobalBackButton(),
+        })}
+      />
+      <ProgramStack.Screen
         name="UploadedDocumentsDetailsScreen"
         component={UploadedDocumentsDetailsScreen}
         options={() => ({
@@ -199,6 +210,13 @@ const ProgramStackScreen = () => {
       <ProgramStack.Screen
         name="MyDocumentsScreen"
         component={MyDocumentsScreen}
+        options={({navigation}) => ({
+          header: () => renderHeader(navigation),
+        })}
+      />
+      <ProgramStack.Screen
+        name="TemplatesScreen"
+        component={TemplatesScreen}
         options={({navigation}) => ({
           header: () => renderHeader(navigation),
         })}

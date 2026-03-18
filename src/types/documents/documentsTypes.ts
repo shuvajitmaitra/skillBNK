@@ -36,6 +36,11 @@ export interface DocumentsResponse {
   pagination?: Partial<PaginationState>;
   success: boolean;
 }
+export interface TemplateResponse {
+  templates?: DocumentItem[];
+  pagination?: Partial<PaginationState>;
+  success: boolean;
+}
 
 export const DEFAULT_PAGINATION: PaginationState = {
   total: 0,

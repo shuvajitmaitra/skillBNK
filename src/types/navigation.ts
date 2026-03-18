@@ -1,3 +1,5 @@
+import {TemplateItem} from './documents/templateTypes';
+
 export type RootStackParamList = {
   HomeStack: {screen: keyof HomeStackParamList; params?: any};
   ProgramStack: {screen: keyof ProgramStackParamList; params?: any};
@@ -66,6 +68,8 @@ export type ProgramStackParamList = {
   UploadedDocumentsScreen: undefined;
   AddNewDocumentsScreen: undefined;
   UploadedDocumentsDetailsScreen: undefined;
+  TemplatesScreen: undefined;
+  TemplateDetailsScreen: {item: TemplateItem};
 };
 export type CalendarStackParamList = {
   CalendarScreenV2: undefined;

@@ -262,6 +262,19 @@ export function DrawerContent(props: any) {
                 }
               />
             )}
+            {hasDocuments && (
+              <DrawerItem
+                icon={renderDocumentIcon}
+                label="Templates"
+                labelStyle={{
+                  fontFamily: CustomFonts.MEDIUM,
+                  color: Colors.Heading,
+                }}
+                onPress={() =>
+                  navigateToScreen('ProgramStack', 'TemplatesScreen')
+                }
+              />
+            )}
 
             {hasChangePassword && (
               <DrawerItem
