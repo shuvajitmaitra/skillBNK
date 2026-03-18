@@ -32,6 +32,7 @@ import CommunityIcon from '../../assets/Icons/CommunityIcon';
 import MediaIcon from '../../assets/Icons/MediaIcon';
 import MessageIconLive2 from '../../assets/Icons/MessageIconLive2';
 import {
+  EntypoIcon,
   FontAwesomeIcon,
   IoniconsIcon,
   MaterialCommunityIcon,
@@ -45,6 +46,7 @@ import NavigationItem from '../../components/HomeCom/NavigationItem';
 import {TChat} from '../../types/chat/chatTypes';
 
 import Drawer from '../../components/Drawer';
+import {replace} from '../../navigation/NavigationService';
 
 // -------------------- Types --------------------
 export type NavItem = {
@@ -81,11 +83,20 @@ const Dashboard: React.FC = () => {
   const hasChat = hasMenu('portal-my-chats');
   const hasCalendar = hasMenu('portal-calendar');
   const hasNotes = hasMenu('portal-my-notes');
+  const hasAssessment = hasMenu('portal-assignments"');
   const hasCommunity = hasMenu('portal-community');
   const hasMockInterview =
     hasMenu('portal-mock-interviews') || hasMenu('mock-interviews');
   const hasAudioVideo = hasMenu('portal-audio-video-sending');
 
+  const navigateToScreen = (stack: string, screen: string) => {
+    replace('BottomTabNavigator', {
+      screen: stack,
+      params: {
+        screen: screen,
+      },
+    });
+  };
   const Colors: TColors = useTheme();
   const styles = getStyles(Colors);
   const navigation = useNavigation<NavigationProp<any>>();
@@ -160,6 +171,10 @@ const Dashboard: React.FC = () => {
   const handleNotesNavigation = (): void => {
     if (!hasNotes) return;
     navigation.navigate('HomeStack', {screen: 'NotesScreen'});
+  };
+  const handleTechnicalTest = (): void => {
+    navigateToScreen('ProgramStack', 'TechnicalTestScreen');
+    if (!hasAssessment) return;
   };
 
   const navItems: NavItem[] = useMemo(() => {
@@ -324,6 +339,21 @@ const Dashboard: React.FC = () => {
         onPress: () => {
           if (myEnrollments.length === 0) return handleDefaultRoute();
           handleAudioVideoNavigation();
+        },
+      },
+      {
+        id: 'technical_test',
+        title: 'Assessments',
+        subTitle: 'Assess Technical Skills',
+        backgroundColor: '#8047cb',
+        circleColor: Colors.BodyTextOpacity,
+        icon: (
+          <EntypoIcon name="documents" color={Colors.PureWhite} size={25} />
+        ),
+        visible: hasAudioVideo,
+        onPress: () => {
+          if (myEnrollments.length === 0) return handleDefaultRoute();
+          handleTechnicalTest();
         },
       },
     ];

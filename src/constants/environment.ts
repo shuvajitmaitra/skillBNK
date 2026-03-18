@@ -3,7 +3,7 @@ const isLocal = false;
 
 export default {
   production: true,
-  version: '3.16.3',
+  version: '3.16.4',
   FRONTEND_URL: isLocal
     ? `${localUrl}/mobile`
     : 'https://portal.skillbnk.com/mobile',

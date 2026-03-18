@@ -12,13 +12,13 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
 *Work Update – Mar 16, 2026*
 
-*SkillBNK app latest version (3.16.3) released on TestFlight*
+*SkillBNK app latest version (3.16.4) released on TestFlight*
 
 *skillBNK Mobile App following task completed*
 - Added functionalities to upload attachments.
 - Added functionalities to upload thumbnail in uploaded documents.
 - Create new documents functionalities and API integration completed.
-- Added functionalities and APi integration to update uploaded documents(will work after fixing backend issue)
+- Added functionalities and APi integration to update uploaded documents
 - Delete functionalities and API integration completed for uploaded documents.
 - Fix text renderer code formatting issue  in global text render er.
 - Template screen design completed.
@@ -27,9 +27,7 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - Template details screen all section design completed.
 - APi integration for to get template details.
 - Added comments section in the template details screen.
-
-*skillBNK Portal*
-- Editor theme issue and cannot getting data from mobile app. (Issue fixed.)
+- Added assessments screen and render it dynamically.
 
 📌 Note: 100% of today’s tasks have been successfully completed.
 
