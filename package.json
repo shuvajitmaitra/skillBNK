@@ -9,7 +9,7 @@
     "start": "react-native start",
     "test": "jest",
     "studio": "open -a 'Android Studio.app'",
-    "build": "cd android && ./gradlew assembleRelease && cd ..",
+    "apk": "cd android && ./gradlew assembleRelease && cd ..",
     "pod": " cd ios && pod install && cd ..",
     "xcode": "xed -b ios",
     "abb": "cd android && ./gradlew bundleRelease && cd ..",

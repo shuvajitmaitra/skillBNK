@@ -30,6 +30,8 @@ import {goBack, navigate} from '../../navigation/NavigationService';
 import {AntDesignIcon} from '../../constants/Icons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import axiosInstance from '../../utility/axiosInstance';
+import ConfirmationModal from '../../components/SharedComponent/ConfirmationModal';
+import {showToast} from '../../components/HelperFunction';
 
 type Priority = 'low' | 'medium' | 'high' | string;
 
@@ -171,6 +173,7 @@ const UploadedDocumentsDetailsScreen = () => {
   const styles = useMemo(() => getStyles(Colors), [Colors]);
   const {top} = useSafeAreaInsets();
   const [item, setItem] = useState<DocumentItem | null>(null);
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
 
   const route =
     useRoute<RouteProp<RootStackParamList, 'UploadedDocumentsDetailsScreen'>>();
@@ -191,7 +194,19 @@ const UploadedDocumentsDetailsScreen = () => {
       getDetailsPageData();
     }, [route.params.item]),
   );
-
+  const handleDeleteDocument = async () => {
+    try {
+      const response = await axiosInstance.delete(
+        `/document/userdocument/delete/${item?._id}`,
+      );
+      if (response.data.success) {
+        showToast({message: 'Document Deleted Successfully!'});
+        goBack();
+      }
+    } catch (error) {
+      console.log('error', JSON.stringify(error, null, 2));
+    }
+  };
   if (!item) {
     return (
       <View style={styles.emptyContainer}>
@@ -241,6 +256,17 @@ const UploadedDocumentsDetailsScreen = () => {
           justifyContent: 'space-between',
           marginBottom: 10,
         }}>
+        <ConfirmationModal
+          title="Delete"
+          description="Do you want to delete this document?"
+          isVisible={deleteConfirmVisible}
+          okPress={() => {
+            handleDeleteDocument();
+          }}
+          cancelPress={() => {
+            setDeleteConfirmVisible(!deleteConfirmVisible);
+          }}
+        />
         <TouchableOpacity
           style={{
             backgroundColor: Colors.Foreground,
@@ -290,7 +316,7 @@ const UploadedDocumentsDetailsScreen = () => {
               borderRadius: 10,
             }}
             onPress={() => {
-              navigate('AddNewDocumentsScreen', item);
+              setDeleteConfirmVisible(!deleteConfirmVisible);
             }}>
             <Text
               style={{
