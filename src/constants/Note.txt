@@ -18,7 +18,7 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - Added functionalities to upload attachments.
 - Added functionalities to upload thumbnail in uploaded documents.
 - Create new documents functionalities and API integration completed.
-- 
+- Added functionalities and APi integration to update uploaded documents(will work after fixing backend issue)
 
 *skillBNK Portal*
 - Editor theme issue and cannot getting data from mobile app. (Issue fixed.)

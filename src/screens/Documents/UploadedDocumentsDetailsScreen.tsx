@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   Image,
   Linking,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -29,6 +29,7 @@ import {PressableScale} from '../../components/SharedComponent/PressableScale';
 import {goBack, navigate} from '../../navigation/NavigationService';
 import {AntDesignIcon} from '../../constants/Icons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import axiosInstance from '../../utility/axiosInstance';
 
 type Priority = 'low' | 'medium' | 'high' | string;
 
@@ -169,11 +170,27 @@ const UploadedDocumentsDetailsScreen = () => {
   const Colors = useTheme();
   const styles = useMemo(() => getStyles(Colors), [Colors]);
   const {top} = useSafeAreaInsets();
+  const [item, setItem] = useState<DocumentItem | null>(null);
 
   const route =
     useRoute<RouteProp<RootStackParamList, 'UploadedDocumentsDetailsScreen'>>();
 
-  const item = route.params?.item;
+  useFocusEffect(
+    useCallback(() => {
+      const getDetailsPageData = async () => {
+        try {
+          const response = await axiosInstance.get(
+            `/document/userdocument/get/${route.params.item._id}`,
+          );
+          setItem(response.data.document);
+        } catch (error) {
+          console.log('error', JSON.stringify(error, null, 2));
+        }
+      };
+      setItem(route.params.item);
+      getDetailsPageData();
+    }, [route.params.item]),
+  );
 
   if (!item) {
     return (

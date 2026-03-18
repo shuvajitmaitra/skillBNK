@@ -33,9 +33,6 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import CrossCircle from '../../assets/Icons/CrossCircle';
-import {loadMyNotes} from '../../actions/myNoteApiCall';
-import store from '../../store';
-import {selectNote, setNotes} from '../../store/reducer/notesReducer';
 import RequireFieldStar from '../../constants/RequireFieldStar';
 import {
   convertSize,
@@ -280,12 +277,6 @@ const handleCreateDocument = async (document: DocumentForm) => {
     });
   }
 
-  const preDocuments = [
-    {_id: String(Math.random()), ...document},
-    ...store.getState().notes.notes,
-  ];
-  store.dispatch(setNotes(preDocuments));
-
   try {
     const response = await axiosInstance.post('/document/userdocument/add', {
       description: document.description || EMPTY_EDITOR_STATE,
@@ -310,35 +301,20 @@ const handleEditDocument = async (document: DocumentForm) => {
   if (!document.title.trim()) {
     return showToast({message: 'Title is required', background: 'red'});
   }
-
-  const preDocument = {...store.getState().notes.selectedNote, ...document};
-  store.dispatch(selectNote(preDocument));
-
   try {
     const response = await axiosInstance.patch(
-      `/content/note/edit/${document._id}`,
+      `/document/userdocument/update/${document._id}`,
       {
         description: document.description || EMPTY_EDITOR_STATE,
-        title: document.title,
+        name: document.title,
         tags: document.tags,
         thumbnail: document.thumbnail,
         attachments: document.attachments,
-        purpose: document.purpose || {
-          category: '',
-          resourceId: '',
-        },
       },
     );
 
     if (response.data.success) {
-      store.dispatch(selectNote(response.data.note));
       showToast({message: 'Document updated successfully!'});
-      loadMyNotes({
-        page: 1,
-        limit: 50,
-        sort: 'newest',
-        query: '',
-      });
     }
   } catch (error: any) {
     showToast({
@@ -355,7 +331,6 @@ const AddNewDocumentsScreen = () => {
   const navigation = useNavigation();
   const route =
     useRoute<RouteProp<RootStackParamList, 'AddNewDocumentsScreen'>>();
-  console.log('route', JSON.stringify(route, null, 2));
 
   const selectedDocument = route.params;
 
