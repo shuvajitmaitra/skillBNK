@@ -27,7 +27,7 @@ const TextRender = ({text}: {text: string}) => {
   if (!text) {
     return null;
   }
-
+  console.log('text', JSON.stringify(text, null, 2));
   try {
     const obj = JSON.parse(text);
     if (typeof obj === 'object' && obj !== null) {
@@ -49,6 +49,7 @@ const TextRender = ({text}: {text: string}) => {
       );
     }
   } catch (error) {
+    console.log('Text Renderer', JSON.stringify(error, null, 2));
     if (!text) {
       return;
     }
