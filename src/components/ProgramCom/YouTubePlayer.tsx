@@ -98,6 +98,7 @@ const YouTubePlayer = ({
           }
         }
       } catch (e) {
+        console.log('e', JSON.stringify(e, null, 2));
         // ignore polling errors
       }
     }, 1000); // 1s polling

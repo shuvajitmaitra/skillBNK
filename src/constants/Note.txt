@@ -10,9 +10,10 @@
 
 spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 
-*Work Update – Mar 16, 2026*
+*Work Update – Mar 18, 2026*
 
 *SkillBNK app latest version (3.16.4) released on TestFlight*
+*Android APK: https://github.com/shuvajitmaitra/skillBNK/releases/download/1.0/skillBNK-3.15.4.apk*
 
 *skillBNK Mobile App following task completed*
 - Added functionalities to upload attachments.
@@ -28,6 +29,7 @@ spb_WxAZbIYXGEqiQj1qqnzRyKinYRs2Uk7zOkNtVUSEmb
 - APi integration for to get template details.
 - Added comments section in the template details screen.
 - Added assessments screen and render it dynamically.
+- Comment not working issue fixed in the my documents
 
 📌 Note: 100% of today’s tasks have been successfully completed.
 

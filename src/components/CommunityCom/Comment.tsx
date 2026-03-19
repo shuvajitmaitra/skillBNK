@@ -38,7 +38,15 @@ import {RootState} from '../../types/redux/root';
 import {showToast} from '../HelperFunction';
 
 const Comment = memo(
-  ({comment: commentData, isLast}: {comment: TComment; isLast?: boolean}) => {
+  ({
+    comment: commentData,
+    isLast,
+    isPreview,
+  }: {
+    comment: TComment;
+    isLast?: boolean;
+    isPreview?: boolean;
+  }) => {
     const [comment, setComment] = useState(commentData);
     const {selectedComment} = useSelector((state: RootState) => state.comment);
     const dispatch = useDispatch();
@@ -237,16 +245,19 @@ const Comment = memo(
               </Text>
             </View>
           )}
-          {(user._id === comment.user._id ||
-            (user._id !== comment.user._id && !comment.parentId)) && (
-            <>
-              <TouchableOpacity
-                onPress={event => handleShowPopover(event)}
-                style={styles.threeDotContainer}>
-                <ThreeDotGrayIcon />
-              </TouchableOpacity>
-            </>
-          )}
+          {!isPreview &&
+            (user._id === comment.user._id ||
+              (user._id !== comment.user._id && !comment.parentId)) && (
+              <>
+                <TouchableOpacity
+                  onPress={event => {
+                    handleShowPopover(event);
+                  }}
+                  style={styles.threeDotContainer}>
+                  <ThreeDotGrayIcon />
+                </TouchableOpacity>
+              </>
+            )}
         </View>
         {/* <>
         {comment.repliesCount > 0 && (

@@ -86,7 +86,7 @@ const CommentField: React.FC<CommentFieldProps> = ({
               </Text>
             </View>
           )}
-          <Comment comment={comment} />
+          <Comment comment={comment} isPreview={true} />
         </React.Fragment>
       );
     },
@@ -96,6 +96,7 @@ const CommentField: React.FC<CommentFieldProps> = ({
   return (
     <View>
       <Text style={styles.comments}>Comments</Text>
+
       <View style={styles.writeComment}>
         <Image
           source={
